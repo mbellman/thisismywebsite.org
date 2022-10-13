@@ -1,41 +1,27 @@
-import { createPane } from './ui';
+import { PaneCarousel } from './ui';
 
 import './page.scss';
 
-interface AppState {
-  pane: HTMLDivElement;
-  rotation: number;
+class AppState {
+  public carousel = new PaneCarousel(5, 800);
+  public degrees = 0;
 }
 
 function update(dt: number, state: AppState): void {
-  const frame = state.pane.querySelector('.w-pane--frame') as HTMLDivElement;
+  state.degrees += 50 * dt;
 
-  state.rotation += 50 * dt;
-
-  frame.style.transform = `rotate3d(0, 1, 0, ${state.rotation}deg)`;
+  state.carousel.revolve(state.degrees);
 }
 
 function main(): void {
-  const appState: AppState = {
-    pane: null,
-    rotation: 0
-  };
-
-  const root = document.createElement('div');
-  const pane = createPane();
-
-  appState.pane = pane;
-
-  root.appendChild(pane);
-
-  document.body.appendChild(root);
+  const state = new AppState();
 
   let time = Date.now();
 
   function frame() {
     const delta = (Date.now() - time) / 1000;
 
-    update(delta, appState);
+    update(delta, state);
 
     time = Date.now();
   
