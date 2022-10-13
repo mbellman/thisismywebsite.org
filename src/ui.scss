@@ -1,0 +1,22 @@
+@mixin square($size) {
+  height: $size;
+  width: $size;
+}
+
+@mixin fill() {
+  @include square(100%);
+}
+
+.w {
+  &-pane {
+    @include square(200px);
+    perspective: 800px;
+
+    &--frame {
+      @include fill();
+      background-color: blue;
+      border-radius: 10px;
+      transform: rotate3d(0, 1, 0, 45deg);
+    }
+  }
+}
