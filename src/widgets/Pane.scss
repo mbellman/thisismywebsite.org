@@ -1,21 +1,6 @@
-@mixin size($width, $height) {
-  height: $height;
-  width: $width;
-}
-
-@mixin square($size) {
-  @include size($size, $size);
-}
-
-@mixin fill() {
-  @include square(100%);
-}
+@use '../mixins.scss' as *;
 
 .w {
-  &-pane-carousel {
-    position: relative;
-  }
-
   &-pane {
     @include size($width: 300px, $height: 300px);
     perspective: 800px;
@@ -49,13 +34,5 @@
         opacity: 0.7;
       }
     }
-  }
-
-  &-particle {
-    position: absolute;
-    border-radius: 50%;
-    background-color: rgb(57, 176, 255);
-    box-shadow: 0 0 10px 0 rgb(112, 198, 255);
-    z-index: 90;
   }
 }

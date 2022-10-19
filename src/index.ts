@@ -1,15 +1,11 @@
-import { PaneCarousel, Particles } from './ui';
+import PaneCarousel from './widgets/PaneCarousel';
+import Particles from './widgets/Particles';
 
 import './page.scss';
 
-class AppState {
-  public carousel = new PaneCarousel(7, '80%');
-  public particles = new Particles(100);
-  public degrees = 0;
-}
-
 function main(): void {
-  const state = new AppState();
+  new PaneCarousel(7, '80%');
+  new Particles(100);
 }
 
 main();
