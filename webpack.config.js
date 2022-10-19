@@ -1,9 +1,13 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const mode = process.env.npm_lifecycle_script?.includes('webpack-dev-server')
+  ? 'development'
+  : 'production';
+
 module.exports = {
   devtool: false,
-  mode: 'development',
+  mode,
   entry: './src/index.ts',
   output: {
     path: path.resolve(__dirname, 'build'),
