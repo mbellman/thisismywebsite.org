@@ -41,12 +41,24 @@ function mod(a: number, m: number): number {
   return ((a % m) + m) % m;
 }
 
-function degreesToRadians(degrees: number): number {
-  return degrees * (Math.PI / 180);
+function rgb(r: number, g: number, b: number): Color {
+  return {
+    r: r / 255,
+    g: g / 255,
+    b: b / 255
+  };
 }
 
-function colorToRgb({ r, g, b }: Color): string {
-  return `rgb(${r}, ${g}, ${b})`;
+function toRgb(color: Color): string {
+  return `rgb(${color.r * 255}, ${color.g * 255}, ${color.b * 255})`;
+}
+
+function multiply(color: Color, factor: number): Color {
+  return {
+    r: color.r * factor,
+    g: color.g * factor,
+    b: color.b * factor
+  };
 }
 
 export class Pane {
@@ -64,22 +76,13 @@ export class Pane {
     degrees %= 360;
 
     const frame = this.element.querySelector<HTMLDivElement>('.w-pane--frame');
-    const shimmer = this.element.querySelector<HTMLDivElement>('.w-pane--shimmer');
-
     const radians = degrees * (Math.PI / 180);
     const scale = Math.pow(0.8 + Math.cos(radians) * 0.2, 2);
     const zIndex = Math.round(180 - Math.sin(radians / 2) * 180);
 
     this.element.style.left = `${50 + Math.sin(radians) * 50}%`;
     this.element.style.zIndex = `${zIndex}`;
-
-    const sunAngle = 60;
-    const sunAngleDelta = Math.abs(degrees - sunAngle);
-    const sunAngleDeltaInRadians = degreesToRadians(sunAngleDelta);
-    const sunFactor = Math.pow(Math.cos(sunAngleDeltaInRadians), 5) * 0.5;
-
     frame.style.transform = `rotate3d(0, 1, 0, ${degrees}deg) scale(${scale})`;
-    // shimmer.style.opacity = String(sunFactor);
   }
 }
 
@@ -90,7 +93,7 @@ export class PaneCarousel {
   private currentIndex = 0;
   private nextAnimationFrame: number = null;
 
-  public constructor(total: number, width: number) {
+  public constructor(total: number, widthStyle: string) {
     for (let i = 0; i < total; i++) {
       const pane = new Pane(this.root, i);
 
@@ -100,7 +103,7 @@ export class PaneCarousel {
     }
 
     this.root.classList.add('w-pane-carousel');
-    this.root.style.width = `${width}px`;
+    this.root.style.width = widthStyle;
 
     document.body.appendChild(this.root);
 
@@ -133,10 +136,62 @@ export class PaneCarousel {
     } else {
       window.cancelAnimationFrame(this.nextAnimationFrame);
 
-      this.rotation = clerp(this.rotation, this.targetRotation, 0.1);
+      this.rotation = clerp(this.rotation, this.targetRotation, 0.075);
       this.nextAnimationFrame = window.requestAnimationFrame(() => this.revolveToTargetRotation());
     }
 
     this.revolve(this.rotation);
+  }
+}
+
+export class Particles {
+  private root = document.createElement('div');
+  private particles: HTMLDivElement[] = [];
+
+  public constructor(total: number) {
+    document.body.appendChild(this.root);
+
+    for (let i = 0; i < total; i++) {
+      this.createParticle();
+    }
+
+    this.updateParticles();
+  }
+
+  private createParticle(): void {
+    const particle = document.createElement('div');
+
+    particle.classList.add('w-particle');
+
+    this.root.appendChild(particle);
+
+    this.particles.push(particle);
+  }
+
+  private updateParticles(): void {
+    const t = Date.now() / 1000;
+    const baseColor = rgb(57, 176, 255);
+
+    for (let i = 0; i < this.particles.length; i++) {
+      const particle = this.particles[i];
+
+      const startX = 600 + Math.sin(i * 1.1) * 300;
+      const startY = 300 + Math.cos(i * 2.3) * window.innerHeight;
+      const ySpeed = 0.1 + Math.sin(i * 1.7) * 0.02;
+      const x = startX + Math.sin(t + i * 1.3) * 30;
+      const y = mod(startY - Date.now() * ySpeed, window.innerHeight);
+
+      const diameter = 5 + Math.sin(t + i) * 3;
+      const color = toRgb(multiply(baseColor, 0.5 + y / window.innerHeight));
+
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      particle.style.width = `${diameter}px`;
+      particle.style.height = `${diameter}px`;
+      particle.style.opacity = `${diameter / 5}`;
+      particle.style.backgroundColor = `${color}`;
+    }
+
+    window.requestAnimationFrame(() => this.updateParticles());
   }
 }
