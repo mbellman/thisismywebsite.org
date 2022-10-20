@@ -1,4 +1,11 @@
+import { mod } from '../utilities';
 import './Pane.scss';
+
+interface Position3d {
+  x: number;
+  y: number;
+  z: number;
+}
 
 function createPaneRoot(): HTMLDivElement {
   const pane = document.createElement('div');
@@ -18,24 +25,24 @@ function createPaneRoot(): HTMLDivElement {
 export default class Pane {
   private element = createPaneRoot();
 
-  public constructor(root: Element, index: number) {
+  public constructor(root: Element) {
     root.appendChild(this.element);
   }
 
-  public onClick(fn: () => void): void {
-    this.element.querySelector('.w-pane--frame').addEventListener('click', fn);
+  public get $root(): Readonly<HTMLDivElement> {
+    return this.element;
   }
 
-  public revolve(degrees: number): void {
-    degrees %= 360;
+  public onClick(fn: () => void): void {
+    this.$frame.addEventListener('click', fn);
+  }
 
-    const frame = this.element.querySelector<HTMLDivElement>('.w-pane--frame');
-    const radians = degrees * (Math.PI / 180);
-    const scale = Math.pow(0.8 + Math.cos(radians) * 0.2, 2);
-    const zIndex = Math.round(180 - Math.sin(radians / 2) * 180);
+  public update({ x, y, z }: Position3d, yAxisRotation: number): void {
+    this.element.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${yAxisRotation * (180 / Math.PI)}deg)`;
+    this.element.style.zIndex = `${500 + Math.round(z)}`;
+  }
 
-    this.element.style.left = `${50 + Math.sin(radians) * 50}%`;
-    this.element.style.zIndex = `${zIndex}`;
-    frame.style.transform = `rotate3d(0, 1, 0, ${degrees}deg) scale(${scale})`;
+  private get $frame(): HTMLDivElement {
+    return this.element.querySelector<HTMLDivElement>('.w-pane--frame');
   }
 }

@@ -6,7 +6,6 @@
     perspective: 800px;
     pointer-events: none;
     position: absolute;
-    transform: translateX(-125px);
 
     &--frame {
       @include square(300px);

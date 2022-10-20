@@ -9,9 +9,9 @@ export default class PaneCarousel {
   private currentIndex = 0;
   private nextAnimationFrame: number = null;
 
-  public constructor(total: number, widthStyle: string) {
+  public constructor(total: number) {
     for (let i = 0; i < total; i++) {
-      const pane = new Pane(this.root, i);
+      const pane = new Pane(this.root);
 
       pane.onClick(() => this.focusByIndex(i));
 
@@ -19,7 +19,6 @@ export default class PaneCarousel {
     }
 
     this.root.classList.add('w-pane-carousel');
-    this.root.style.width = widthStyle;
 
     document.body.appendChild(this.root);
 
@@ -32,17 +31,32 @@ export default class PaneCarousel {
     this.revolveToTargetRotation();
   }
 
+  public update(): void {
+    this.revolveToTargetRotation();
+  }
+
   private get targetRotation(): number {
     return 360 - (this.currentIndex / this.panes.length) * 360;
   }
 
   private revolve(degrees: number): void {
-    const total = this.panes.length;
+    const carouselBounds = this.root.getBoundingClientRect();
 
-    for (let i = 0; i < total; i++) {
-      const rotation = (i / total) * 360 + degrees;
+    for (let i = 0; i < this.panes.length; i++) {
+      const pane = this.panes[i];
+      const halfWidth = pane.$root.clientWidth / 2;
+      const halfHeight = pane.$root.clientHeight / 2;
+      const yAxisRotationDegrees = i / this.panes.length * 360 + degrees;
+      const yAxisRotation = yAxisRotationDegrees % 360 * (Math.PI / 180);
+      const rotation = mod(yAxisRotation, Math.PI * 2);
 
-      this.panes[i].revolve(rotation);
+      const position = {
+        x: (carouselBounds.width / 2) + Math.sin(rotation) * (carouselBounds.width / 2) - halfWidth,
+        y: (carouselBounds.top + halfHeight) / window.innerHeight * 1000 - 500,
+        z: -Math.sin(rotation / 2) * 1000
+      };
+
+      pane.update(position, yAxisRotation);
     }
   }
 
