@@ -15,6 +15,10 @@ export default class Particles {
     this.updateParticles();
   }
 
+  public get $root(): HTMLDivElement {
+    return this.root;
+  }
+
   private createParticle(): void {
     const particle = document.createElement('div');
 
@@ -28,6 +32,9 @@ export default class Particles {
   private updateParticles(): void {
     const t = Date.now() / 1000;
     const baseColor = rgb(57, 176, 255);
+    const windowWidth = window.innerWidth;
+    const halfWindowWidth = windowWidth / 2;
+    const quarterWindowWidth = halfWindowWidth / 2;
 
     for (let i = 0; i < this.particles.length; i++) {
       const particle = this.particles[i];
@@ -36,7 +43,7 @@ export default class Particles {
       const speedFactor = 0.6 + 0.4 * (baseSize / 8);
       const ySpeed = (0.1 + Math.sin(i * 1.7) * 0.02) * speedFactor;
 
-      const startX = 600 + Math.sin(i * 1.1) * 300;
+      const startX = halfWindowWidth + Math.sin(i * 1.1) * quarterWindowWidth;
       const startY = 300 + Math.cos(i * 2.3) * window.innerHeight;
       const x = startX + Math.sin(t + i * 1.3) * 30;
       const y = mod(startY - Date.now() * ySpeed, window.innerHeight);

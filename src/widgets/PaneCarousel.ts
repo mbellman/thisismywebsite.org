@@ -1,28 +1,37 @@
-import Pane from './Pane';
+import Pane, { Position3d } from './Pane';
+import Stage from './Stage';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
 
 export default class PaneCarousel {
-  private root = document.createElement('div');
   private panes: Pane[] = [];
   private rotation = 0;
+
+  private offset: Position3d = {
+    x: 0,
+    y: 0,
+    z: 0
+  };
+
   private currentIndex = 0;
   private nextAnimationFrame: number = null;
 
   public constructor(total: number) {
     for (let i = 0; i < total; i++) {
-      const pane = new Pane(this.root);
+      const pane = new Pane();
 
       pane.onClick(() => this.focusByIndex(i));
 
       this.panes.push(pane);
     }
 
-    this.root.classList.add('w-pane-carousel');
-
-    document.body.appendChild(this.root);
-
     this.revolve(0);
+  }
+
+  public addToStage(stage: Stage): void {
+    for (const pane of this.panes) {
+      stage.append(pane.$root);
+    }
   }
 
   public focusByIndex(index: number): void {
@@ -31,7 +40,9 @@ export default class PaneCarousel {
     this.revolveToTargetRotation();
   }
 
-  public update(): void {
+  public setOffset(offset: Position3d): void {
+    this.offset = offset;
+
     this.revolveToTargetRotation();
   }
 
@@ -40,7 +51,7 @@ export default class PaneCarousel {
   }
 
   private revolve(degrees: number): void {
-    const carouselBounds = this.root.getBoundingClientRect();
+    const carouselWidth = document.body.clientWidth;
 
     for (let i = 0; i < this.panes.length; i++) {
       const pane = this.panes[i];
@@ -51,8 +62,8 @@ export default class PaneCarousel {
       const rotation = mod(yAxisRotation, Math.PI * 2);
 
       const position = {
-        x: (carouselBounds.width / 2) + Math.sin(rotation) * (carouselBounds.width / 2) - halfWidth,
-        y: (carouselBounds.top + halfHeight) / window.innerHeight * 1000 - 500,
+        x: (carouselWidth / 2) + Math.sin(rotation) * (carouselWidth / 2) - halfWidth,
+        y: (this.offset.y + halfHeight) / window.innerHeight * 1000 - 500,
         z: -Math.sin(rotation / 2) * 1000
       };
 

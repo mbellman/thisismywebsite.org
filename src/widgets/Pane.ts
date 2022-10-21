@@ -1,7 +1,7 @@
-import { mod } from '../utilities';
 import './Pane.scss';
 
-interface Position3d {
+// @todo move elsewhere
+export interface Position3d {
   x: number;
   y: number;
   z: number;
@@ -24,10 +24,6 @@ function createPaneRoot(): HTMLDivElement {
 
 export default class Pane {
   private element = createPaneRoot();
-
-  public constructor(root: Element) {
-    root.appendChild(this.element);
-  }
 
   public get $root(): Readonly<HTMLDivElement> {
     return this.element;
