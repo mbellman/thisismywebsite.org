@@ -1,9 +1,9 @@
 .w {
   &-particle {
-    position: absolute;
-    border-radius: 50%;
     background-color: rgb(57, 176, 255);
+    border-radius: 50%;
     box-shadow: 0 0 10px 0 rgb(112, 198, 255);
     pointer-events: none;
+    position: absolute;
   }
 }
