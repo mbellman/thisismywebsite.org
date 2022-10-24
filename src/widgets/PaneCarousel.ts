@@ -63,7 +63,7 @@ export default class PaneCarousel {
 
       const position = {
         x: (carouselWidth / 2) + Math.sin(rotation) * (carouselWidth / 2) - halfWidth,
-        y: (this.offset.y + halfHeight) / window.innerHeight * 1000 - 500,
+        y: window.innerHeight / 2 + this.offset.y - halfHeight,
         z: -Math.sin(rotation / 2) * 1000
       };
 

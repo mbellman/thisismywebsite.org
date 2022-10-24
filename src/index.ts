@@ -12,16 +12,14 @@ function main(): void {
   carousel.addToStage(stage);
   stage.append(particles.$root);
 
-  let m = 0;
+  let y = 0;// window.innerHeight / 2;
+
+  carousel.setOffset({ x: 0, y, z: 0 });
 
   document.addEventListener('wheel', e => {
-    m += e.deltaY * 0.2;
+    y += e.deltaY * 0.2;
 
-    carousel.setOffset({
-      x: 0,
-      y: m,
-      z: 0
-    })
+    carousel.setOffset({ x: 0, y, z: 0 });
   });
 }
 
