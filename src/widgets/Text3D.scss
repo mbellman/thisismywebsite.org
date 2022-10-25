@@ -1,0 +1,10 @@
+.w {
+  &-text3d {
+    color: rgb(210, 233, 255);
+    display: inline-block;
+    font-family: Arial, Helvetica, sans-serif;
+    pointer-events: none;
+    position: absolute;
+    text-shadow: 0 0 5px white;
+  }
+}

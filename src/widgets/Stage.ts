@@ -1,15 +1,19 @@
 import './Stage.scss';
 
 export default class Stage {
-  private element = document.createElement('div');
+  private root = document.createElement('div');
 
   public constructor() {
-    this.element.classList.add('w-stage');
+    this.root.classList.add('w-stage');
 
-    document.body.appendChild(this.element);
+    document.body.appendChild(this.root);
+  }
+
+  public get $root(): HTMLDivElement {
+    return this.root;
   }
 
   public append(child: Element) {
-    this.element.appendChild(child);
+    this.root.appendChild(child);
   }
 }

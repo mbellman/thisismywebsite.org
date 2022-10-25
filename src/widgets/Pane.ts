@@ -1,7 +1,7 @@
 import './Pane.scss';
 
 // @todo move elsewhere
-export interface Position3d {
+export interface Position3D {
   x: number;
   y: number;
   z: number;
@@ -33,7 +33,7 @@ export default class Pane {
     this.$frame.addEventListener('click', fn);
   }
 
-  public update({ x, y, z }: Position3d, yAxisRotation: number): void {
+  public update({ x, y, z }: Position3D, yAxisRotation: number): void {
     this.element.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${yAxisRotation * (180 / Math.PI)}deg)`;
     this.element.style.zIndex = `${500 + Math.round(z)}`;
   }

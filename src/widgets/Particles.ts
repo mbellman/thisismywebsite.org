@@ -6,8 +6,6 @@ export default class Particles {
   private particles: HTMLDivElement[] = [];
 
   public constructor(total: number) {
-    document.body.appendChild(this.root);
-
     for (let i = 0; i < total; i++) {
       this.createParticle();
     }
@@ -17,6 +15,10 @@ export default class Particles {
 
   public get $root(): HTMLDivElement {
     return this.root;
+  }
+
+  public appendTo(element: HTMLDivElement): void {
+    element.appendChild(this.$root);
   }
 
   private createParticle(): void {

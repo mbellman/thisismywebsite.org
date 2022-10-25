@@ -1,4 +1,4 @@
-import Pane, { Position3d } from './Pane';
+import Pane, { Position3D } from './Pane';
 import Stage from './Stage';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
@@ -7,7 +7,7 @@ export default class PaneCarousel {
   private panes: Pane[] = [];
   private rotation = 0;
 
-  private offset: Position3d = {
+  private offset: Position3D = {
     x: 0,
     y: 0,
     z: 0
@@ -28,9 +28,9 @@ export default class PaneCarousel {
     this.revolve(0);
   }
 
-  public addToStage(stage: Stage): void {
+  public appendTo(element: HTMLDivElement): void {
     for (const pane of this.panes) {
-      stage.append(pane.$root);
+      element.appendChild(pane.$root);
     }
   }
 
@@ -40,7 +40,7 @@ export default class PaneCarousel {
     this.revolveToTargetRotation();
   }
 
-  public setOffset(offset: Position3d): void {
+  public setOffset(offset: Position3D): void {
     this.offset = offset;
 
     this.revolveToTargetRotation();
@@ -62,9 +62,9 @@ export default class PaneCarousel {
       const rotation = mod(yAxisRotation, Math.PI * 2);
 
       const position = {
-        x: (carouselWidth / 2) + Math.sin(rotation) * (carouselWidth / 2) - halfWidth,
-        y: window.innerHeight / 2 + this.offset.y - halfHeight,
-        z: -Math.sin(rotation / 2) * 1000
+        x: (carouselWidth / 2) + Math.sin(rotation) * (carouselWidth / 2) - halfWidth + this.offset.x,
+        y: window.innerHeight / 2 - halfHeight + this.offset.y,
+        z: -Math.sin(rotation / 2) * 1000 + this.offset.z
       };
 
       pane.update(position, yAxisRotation);
