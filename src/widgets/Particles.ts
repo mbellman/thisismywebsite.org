@@ -1,11 +1,13 @@
+import Widget from './Widget';
 import { mod, multiply, rgb, toRgb } from '../utilities';
 import './Particles.scss';
 
-export default class Particles {
-  private root = document.createElement('div');
+export default class Particles extends Widget {
   private particles: HTMLDivElement[] = [];
 
   public constructor(total: number) {
+    super();
+
     for (let i = 0; i < total; i++) {
       this.createParticle();
     }
@@ -13,12 +15,11 @@ export default class Particles {
     this.updateParticles();
   }
 
-  public get $root(): HTMLDivElement {
-    return this.root;
-  }
-
-  public appendTo(element: HTMLDivElement): void {
-    element.appendChild(this.$root);
+  /**
+   * @override
+   */
+  protected createRoot(): HTMLDivElement {
+    return document.createElement('div');
   }
 
   private createParticle(): void {

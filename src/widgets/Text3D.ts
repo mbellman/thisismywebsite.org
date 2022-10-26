@@ -1,20 +1,12 @@
+import Widget from './Widget';
 import { Position3D } from './Pane';
 import './Text3D.scss';
 
-export default class Text3D {
-  private root = document.createElement('div');
-
+export default class Text3D extends Widget {
   public constructor(text: string) {
-    this.root.classList.add('w-text3d');
+    super();
+
     this.root.innerHTML = text;
-  }
-
-  public get $root(): HTMLDivElement {
-    return this.root;
-  }
-
-  public appendTo(element: HTMLDivElement): void {
-    element.appendChild(this.$root);
   }
 
   public setTransform(position: Position3D, yRotation: number = 0): void {
@@ -35,5 +27,16 @@ export default class Text3D {
 
   public setSize(size: number): void {
     this.root.style.fontSize = `${size}px`;
+  }
+
+  /**
+   * @override
+   */
+  protected createRoot(): HTMLDivElement {
+    const root = document.createElement('div');
+
+    root.classList.add('w-text3d');
+
+    return root;
   }
 }

@@ -1,9 +1,9 @@
+import Widget from './Widget';
 import Pane, { Position3D } from './Pane';
-import Stage from './Stage';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
 
-export default class PaneCarousel {
+export default class PaneCarousel extends Widget {
   private panes: Pane[] = [];
   private rotation = 0;
 
@@ -17,6 +17,8 @@ export default class PaneCarousel {
   private nextAnimationFrame: number = null;
 
   public constructor(total: number) {
+    super();
+
     for (let i = 0; i < total; i++) {
       const pane = new Pane();
 
@@ -28,6 +30,9 @@ export default class PaneCarousel {
     this.revolve(0);
   }
 
+  /**
+   * @override
+   */
   public appendTo(element: HTMLDivElement): void {
     for (const pane of this.panes) {
       element.appendChild(pane.$root);
@@ -44,6 +49,15 @@ export default class PaneCarousel {
     this.offset = offset;
 
     this.revolveToTargetRotation();
+  }
+
+  /**
+   * @override
+   */
+  protected createRoot(): HTMLDivElement {
+    // The pane carousel has no root element; we simply
+    // append the panes directly in appendTo()
+    return null;
   }
 
   private get targetRotation(): number {
