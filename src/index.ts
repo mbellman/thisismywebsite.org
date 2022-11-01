@@ -2,7 +2,7 @@ import Stage from './widgets/Stage';
 import PaneCarousel from './widgets/PaneCarousel';
 import Particles from './widgets/Particles';
 import Text3D from './widgets/Text3D';
-import { animate, debounce } from './utilities';
+import { animate, debounce, lerp } from './utilities';
 
 import './page.scss';
 
@@ -21,7 +21,16 @@ function main(): void {
   title.setSize(30);
   title.setTransform({ x: 0, y: -220, z: 0 });
 
-  animate(() => {
+  let slideIndex = 0;
+  let currentYOffset = 0;
+
+  const goToSlide = debounce((index: number) => {
+    if (index < 0) index = 0;
+
+    slideIndex = index;
+  }, 500);
+
+  animate(dt => {
     const t = Date.now() / 1000;
 
     title.setTransform({
@@ -29,27 +38,23 @@ function main(): void {
       y: -220 + Math.sin(t) * 10,
       z: 0
     }, Math.sin(t * 0.8) * 0.1);
+
+    currentYOffset = lerp(currentYOffset, -slideIndex * 500, dt * 5);
+
+    carousel.setOffset({
+      x: 0,
+      y: currentYOffset,
+      z: 0
+    });
   });
 
-  let slideIndex = 0;
-
-  function goToNextSlide() {
-    slideIndex++;
-  }
-
-  function goToPreviousSlide() {
-    if (--slideIndex < 0) {
-      slideIndex = 0;
+  document.addEventListener('wheel', e => {
+    if (e.deltaY > 15) {
+      goToSlide(slideIndex + 1);
+    } else if (e.deltaY < -15) {
+      goToSlide(slideIndex - 1);
     }
-  }
-
-  document.addEventListener('wheel', debounce(e => {
-    if (e.deltaY > 20) {
-      goToNextSlide();
-    } else if (e.deltaY < -20) {
-      goToPreviousSlide();
-    }
-  }, 500));
+  });
 }
 
 main();

@@ -48,7 +48,7 @@ export default class PaneCarousel extends Widget {
   public setOffset(offset: Position3D): void {
     this.offset = offset;
 
-    this.revolveToTargetRotation();
+    this.revolve(this.rotation);
   }
 
   /**
