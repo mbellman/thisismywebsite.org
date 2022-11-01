@@ -4,6 +4,7 @@ import './Particles.scss';
 
 export default class Particles extends Widget {
   private particles: HTMLDivElement[] = [];
+  private yOffset = 0;
 
   public constructor(total: number) {
     super();
@@ -13,6 +14,10 @@ export default class Particles extends Widget {
     }
 
     this.updateParticles();
+  }
+
+  public setYOffset(yOffset: number): void {
+    this.yOffset = yOffset;
   }
 
   /**
@@ -49,7 +54,7 @@ export default class Particles extends Widget {
       const startX = halfWindowWidth + Math.sin(i * 1.1) * streamWidth;
       const startY = 300 + Math.cos(i * 2.3) * window.innerHeight;
       const x = startX + Math.sin(t + i * 1.3) * 30;
-      const y = mod(startY - Date.now() * ySpeed, window.innerHeight);
+      const y = mod(this.yOffset + startY - Date.now() * ySpeed, window.innerHeight);
 
       const heightRatio = y / window.innerHeight;
       const decay = 1 + heightRatio;

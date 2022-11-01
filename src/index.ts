@@ -33,19 +33,21 @@ function main(): void {
   animate(dt => {
     const t = Date.now() / 1000;
 
+    currentYOffset = lerp(currentYOffset, -slideIndex * 500, dt * 5);
+
     title.setTransform({
       x: 0,
-      y: -220 + Math.sin(t) * 10,
+      y: -220 + Math.sin(t) * 10 + currentYOffset * 0.8,
       z: 0
     }, Math.sin(t * 0.8) * 0.1);
-
-    currentYOffset = lerp(currentYOffset, -slideIndex * 500, dt * 5);
 
     carousel.setOffset({
       x: 0,
       y: currentYOffset,
       z: 0
     });
+
+    particles.setYOffset(currentYOffset * 0.4);
   });
 
   document.addEventListener('wheel', e => {
