@@ -17,6 +17,7 @@ function main(): void {
   particles.appendTo(stage.$root);
 
   carousel.setOffset({ x: 0, y: 0, z: 0 });
+  carousel.setRadius(800);
 
   title.setSize(30);
   title.setTransform({ x: 0, y: -220, z: 0 });

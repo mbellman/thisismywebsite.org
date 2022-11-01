@@ -5,6 +5,7 @@ import './PaneCarousel.scss';
 
 export default class PaneCarousel extends Widget {
   private panes: Pane[] = [];
+  private radius = 600;
   private rotation = 0;
 
   private offset: Position3D = {
@@ -51,6 +52,10 @@ export default class PaneCarousel extends Widget {
     this.revolve(this.rotation);
   }
 
+  public setRadius(radius: number): void {
+    this.radius = radius;
+  }
+
   /**
    * @override
    */
@@ -65,20 +70,20 @@ export default class PaneCarousel extends Widget {
   }
 
   private revolve(degrees: number): void {
-    const carouselWidth = document.body.clientWidth;
+    const halfBodyWidth = document.body.clientWidth / 2;
 
     for (let i = 0; i < this.panes.length; i++) {
       const pane = this.panes[i];
-      const halfWidth = pane.$root.clientWidth / 2;
-      const halfHeight = pane.$root.clientHeight / 2;
+      const halfPaneWidth = pane.$root.clientWidth / 2;
+      const halfPaneHeight = pane.$root.clientHeight / 2;
       const yAxisRotationDegrees = i / this.panes.length * 360 + degrees;
       const yAxisRotation = yAxisRotationDegrees % 360 * (Math.PI / 180);
       const rotation = mod(yAxisRotation, Math.PI * 2);
 
       const position = {
-        x: (carouselWidth / 2) + Math.sin(rotation) * (carouselWidth / 2) - halfWidth + this.offset.x,
-        y: window.innerHeight / 2 - halfHeight + this.offset.y,
-        z: -Math.sin(rotation / 2) * 1000 + this.offset.z
+        x: this.offset.x + Math.sin(rotation) * this.radius + halfBodyWidth - halfPaneWidth,
+        y: this.offset.y + window.innerHeight / 2 - halfPaneHeight,
+        z: this.offset.z + Math.cos(rotation) * this.radius - this.radius
       };
 
       pane.update(position, yAxisRotation);
