@@ -17,20 +17,6 @@ export default class PaneCarousel extends Widget {
   private currentIndex = 0;
   private nextAnimationFrame: number = null;
 
-  public constructor(total: number) {
-    super();
-
-    for (let i = 0; i < total; i++) {
-      const pane = new Pane();
-
-      pane.onClick(() => this.focusByIndex(i));
-
-      this.panes.push(pane);
-    }
-
-    this.revolve(0);
-  }
-
   /**
    * @override
    */
@@ -38,6 +24,15 @@ export default class PaneCarousel extends Widget {
     for (const pane of this.panes) {
       element.appendChild(pane.$root);
     }
+  }
+
+  public addPane(pane: Pane): void {
+    const index = this.panes.length;
+
+    pane.onClick(() => this.focusByIndex(index));
+
+    this.panes.push(pane);
+    this.revolve(0);
   }
 
   public focusByIndex(index: number): void {

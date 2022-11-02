@@ -9,6 +9,10 @@ export interface Position3D {
 }
 
 export default class Pane extends Widget {
+  public insert(content: string): void {
+    this.$frame.innerHTML += content;
+  }
+
   public onClick(fn: () => void): void {
     this.$frame.addEventListener('click', fn);
   }

@@ -16,8 +16,8 @@ export default class Text3D extends Widget {
     const yRotationDegrees = (yRotation * 180 / Math.PI) % 360;
 
     const translation: Position3D = {
-      x: (pageWidth / 2) - halfWidth + position.x,
-      y: window.innerHeight / 2 - halfHeight + position.y,
+      x: position.x + (pageWidth / 2) - halfWidth,
+      y: position.y + window.innerHeight / 2 - halfHeight,
       z: position.z
     };
 

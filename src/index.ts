@@ -1,5 +1,6 @@
 import Stage from './widgets/Stage';
 import PaneCarousel from './widgets/PaneCarousel';
+import Pane from './widgets/Pane';
 import Particles from './widgets/Particles';
 import Text3D from './widgets/Text3D';
 import { animate, debounce, lerp } from './utilities';
@@ -9,8 +10,16 @@ import './page.scss';
 function main(): void {
   const stage = new Stage();
   const title = new Text3D('This is some text!');
-  const carousel = new PaneCarousel(7);
+  const carousel = new PaneCarousel();
   const particles = new Particles(100);
+
+  for (let i = 0; i < 7; i++) {
+    const pane = new Pane();
+
+    pane.insert('Hello!');
+
+    carousel.addPane(pane);
+  }
 
   title.appendTo(stage.$root);
   carousel.appendTo(stage.$root);
