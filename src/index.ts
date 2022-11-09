@@ -3,14 +3,18 @@ import PaneCarousel from './widgets/PaneCarousel';
 import Pane from './widgets/Pane';
 import Particles from './widgets/Particles';
 import Text3D from './widgets/Text3D';
-import { animate, debounce, lerp } from './utilities';
+import { animate, debounce, lerp, multiply, rgb, toRgb } from './utilities';
 
 import './page.scss';
 
 function createDemoBlock(): string {
   return `
     <div class="demo-block">
-      Demo!
+      <h2 class="demo-block--title">
+        Demo!
+      </h2>
+      <div class="demo-block--image">
+      </div>
     </div>
   `;
 }
@@ -48,6 +52,9 @@ function main(): void {
   let slideIndex = 0;
   let currentYOffset = 0;
 
+  const bodyBgColorTop = rgb(55, 9, 129);
+  const bodyBgColorBottom = rgb(108, 75, 184);
+
   const goToSlide = debounce((index: number) => {
     if (index < 0) index = 0;
 
@@ -72,6 +79,11 @@ function main(): void {
     });
 
     particles.setYOffset(currentYOffset * 0.4);
+
+    const bgTop = multiply(bodyBgColorTop, 1 + -currentYOffset / 2000);
+    const bgBottom = multiply(bodyBgColorBottom, 1 + -currentYOffset / 2000);
+
+    document.body.style.background = `linear-gradient(to bottom, ${toRgb(bgTop)}, ${toRgb(bgBottom)})`;
   });
 
   document.addEventListener('wheel', e => {
