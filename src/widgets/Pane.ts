@@ -2,7 +2,7 @@ import Widget from './Widget';
 import './Pane.scss';
 
 // @todo move elsewhere
-export interface Position3D {
+export interface Vector3 {
   x: number;
   y: number;
   z: number;
@@ -17,8 +17,12 @@ export default class Pane extends Widget {
     this.$frame.addEventListener('click', fn);
   }
 
-  public update({ x, y, z }: Position3D, yAxisRotation: number): void {
-    this.root.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${yAxisRotation * (180 / Math.PI)}deg)`;
+  public update({ x, y, z }: Vector3, rotation: Vector3): void {
+    const rX = rotation.x * (180 / Math.PI);
+    const rY = rotation.y * (180 / Math.PI);
+    const rZ = rotation.z * (180 / Math.PI);
+
+    this.root.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg)`;
     this.root.style.zIndex = `${500 + Math.round(z)}`;
   }
 

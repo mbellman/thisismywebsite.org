@@ -21,7 +21,7 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'swc-loader'
+        loader: 'ts-loader'
       },
       {
         test: /.scss$/,

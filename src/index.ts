@@ -7,26 +7,40 @@ import { animate, debounce, lerp } from './utilities';
 
 import './page.scss';
 
-function main(): void {
-  const stage = new Stage();
-  const title = new Text3D('This is some text!');
-  const carousel = new PaneCarousel();
-  const particles = new Particles(100);
+function createDemoBlock(): string {
+  return `
+    <div class="demo-block">
+      Demo!
+    </div>
+  `;
+}
 
-  for (let i = 0; i < 7; i++) {
+function createDemoCarousel(): PaneCarousel {
+  const carousel = new PaneCarousel();
+
+  for (let i = 0; i < 10; i++) {
     const pane = new Pane();
 
-    pane.insert('Hello!');
+    pane.insert(createDemoBlock());
 
     carousel.addPane(pane);
   }
 
-  title.appendTo(stage.$root);
-  carousel.appendTo(stage.$root);
-  particles.appendTo(stage.$root);
-
   carousel.setOffset({ x: 0, y: 0, z: 0 });
   carousel.setRadius(800);
+
+  return carousel;
+}
+
+function main(): void {
+  const stage = new Stage();
+  const title = new Text3D('This is some text!');
+  const particles = new Particles(100);
+  const demoCarousel = createDemoCarousel();
+
+  title.appendTo(stage.$root);
+  demoCarousel.appendTo(stage.$root);
+  particles.appendTo(stage.$root);
 
   title.setSize(30);
   title.setTransform({ x: 0, y: -220, z: 0 });
@@ -51,7 +65,7 @@ function main(): void {
       z: 0
     }, Math.sin(t * 0.8) * 0.1);
 
-    carousel.setOffset({
+    demoCarousel.setOffset({
       x: 0,
       y: currentYOffset,
       z: 0

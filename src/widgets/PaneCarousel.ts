@@ -1,5 +1,5 @@
 import Widget from './Widget';
-import Pane, { Position3D } from './Pane';
+import Pane, { Vector3 } from './Pane';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
 
@@ -8,7 +8,7 @@ export default class PaneCarousel extends Widget {
   private radius = 600;
   private rotation = 0;
 
-  private offset: Position3D = {
+  private offset: Vector3 = {
     x: 0,
     y: 0,
     z: 0
@@ -41,7 +41,7 @@ export default class PaneCarousel extends Widget {
     this.revolveToTargetRotation();
   }
 
-  public setOffset(offset: Position3D): void {
+  public setOffset(offset: Vector3): void {
     this.offset = offset;
 
     this.revolve(this.rotation);
@@ -68,20 +68,26 @@ export default class PaneCarousel extends Widget {
     const halfBodyWidth = document.body.clientWidth / 2;
 
     for (let i = 0; i < this.panes.length; i++) {
+      const oscillation = Math.sin(Date.now() / 1000 + i * 2);
       const pane = this.panes[i];
       const halfPaneWidth = pane.$root.clientWidth / 2;
       const halfPaneHeight = pane.$root.clientHeight / 2;
       const yAxisRotationDegrees = i / this.panes.length * 360 + degrees;
-      const yAxisRotation = yAxisRotationDegrees % 360 * (Math.PI / 180);
-      const rotation = mod(yAxisRotation, Math.PI * 2);
+      const baseYAxisRotation = yAxisRotationDegrees % 360 * (Math.PI / 180);
 
-      const position = {
-        x: this.offset.x + Math.sin(rotation) * this.radius + halfBodyWidth - halfPaneWidth,
-        y: this.offset.y + window.innerHeight / 2 - halfPaneHeight,
-        z: this.offset.z + Math.cos(rotation) * this.radius - this.radius
+      const rotation = {
+        x: 0,
+        y: mod(baseYAxisRotation, Math.PI * 2) + oscillation * 0.05,
+        z: 0
       };
 
-      pane.update(position, yAxisRotation);
+      const position = {
+        x: this.offset.x + Math.sin(baseYAxisRotation) * this.radius + halfBodyWidth - halfPaneWidth,
+        y: this.offset.y + window.innerHeight / 2 - halfPaneHeight + oscillation * 5,
+        z: this.offset.z + Math.cos(baseYAxisRotation) * this.radius - this.radius
+      };
+
+      pane.update(position, rotation);
     }
   }
 

@@ -1,5 +1,5 @@
 import Widget from './Widget';
-import { Position3D } from './Pane';
+import { Vector3 } from './Pane';
 import './Text3D.scss';
 
 export default class Text3D extends Widget {
@@ -9,13 +9,13 @@ export default class Text3D extends Widget {
     this.root.innerHTML = text;
   }
 
-  public setTransform(position: Position3D, yRotation: number = 0): void {
+  public setTransform(position: Vector3, yRotation: number = 0): void {
     const pageWidth = window.innerWidth;
     const halfWidth = this.$root.clientWidth / 2;
     const halfHeight = this.$root.clientHeight / 2;
     const yRotationDegrees = (yRotation * 180 / Math.PI) % 360;
 
-    const translation: Position3D = {
+    const translation: Vector3 = {
       x: position.x + (pageWidth / 2) - halfWidth,
       y: position.y + window.innerHeight / 2 - halfHeight,
       z: position.z
