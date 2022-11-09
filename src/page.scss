@@ -5,7 +5,7 @@ body {
   overflow: hidden;
 }
 
-.demo-block {
+.creation-block {
   padding: 20px;
 
   &--title {
@@ -17,8 +17,14 @@ body {
 
   &--image {
     background-color: #aaf;
-    height: 100px;
+    border-radius: 5px;
+    display: flex;
     margin: 10px 0;
-    opacity: 0.5;
+    opacity: 0.8;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+    }
   }
 }
