@@ -5,7 +5,7 @@ export default abstract class Widget {
     this.root = this.createRoot();
   }
 
-  public get $root(): Readonly<HTMLDivElement> {
+  public get $root(): HTMLDivElement {
     return this.root;
   }
 

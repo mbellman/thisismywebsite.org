@@ -38,6 +38,16 @@ export default class PaneCarousel extends Widget {
   public focusByIndex(index: number): void {
     this.currentIndex = mod(index, this.panes.length);
 
+    for (let i = 0; i < this.panes.length; i++) {
+      const pane = this.panes[i];
+
+      if (i === this.currentIndex) {
+        pane.$root.classList.add('active');
+      } else {
+        pane.$root.classList.remove('active');
+      }
+    }
+
     this.revolveToTargetRotation();
   }
 

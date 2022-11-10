@@ -1,16 +1,21 @@
 body {
   background: linear-gradient(to bottom, rgb(55, 9, 129), rgb(108, 75, 184));
+  font-family: Arial, Helvetica, sans-serif;
   height: 100vh;
   margin: 0;
   overflow: hidden;
+}
+
+@mixin pane-text {
+  color: white;
+  text-shadow: 0 0 2px #aff, 0 1px 0 black;
 }
 
 .creation-block {
   padding: 20px;
 
   &--title {
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
+    @include pane-text;
     font-size: 20px;
     margin: 0;
   }
@@ -18,13 +23,24 @@ body {
   &--image {
     background-color: #aaf;
     border-radius: 5px;
+    box-shadow: 0 1px 3px 0 black;
     display: flex;
     margin: 10px 0;
-    opacity: 0.8;
     overflow: hidden;
 
     img {
       width: 100%;
     }
+  }
+
+  &--description {
+    @include pane-text;
+    font-size: 14px;
+  }
+}
+
+.w-pane.active {
+  .creation-block--image {
+    opacity: 1;
   }
 }

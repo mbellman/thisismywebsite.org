@@ -8,7 +8,7 @@ import { creations, Creation } from './creations';
 
 import './page.scss';
 
-function createCreationBlock({ name, imageUrl }: Partial<Creation> = {}): string {
+function createCreationBlock({ name, imageUrl, description }: Partial<Creation> = {}): string {
   return `
     <div class="creation-block">
       <h2 class="creation-block--title">
@@ -16,6 +16,9 @@ function createCreationBlock({ name, imageUrl }: Partial<Creation> = {}): string
       </h2>
       <div class="creation-block--image">
         <img src="${imageUrl}">
+      </div>
+      <div class="creation-block--description">
+        ${description}
       </div>
     </div>
   `;
@@ -41,7 +44,7 @@ function createDemoCarousel(): PaneCarousel {
 
 function main(): void {
   const stage = new Stage();
-  const title = new Text3D('This is some text!');
+  const title = new Text3D('Cool Projects');
   const particles = new Particles(100);
   const demoCarousel = createDemoCarousel();
 
