@@ -16,10 +16,14 @@
       cursor: pointer;
       overflow: hidden;
       pointer-events: all;
-      transition: box-shadow 0.2s;
+      transition: all 0.2s;
 
       &:hover {
         box-shadow: 0 0 1px 3px white;
+      }
+
+      &:active {
+        transform: scale(0.95);
       }
     }
 

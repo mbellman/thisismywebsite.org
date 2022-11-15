@@ -2,10 +2,18 @@ import Widget from './Widget';
 import { Vector3 } from './Pane';
 import './Text3D.scss';
 
+type CSSStyleDeclarationKeys = Exclude<keyof CSSStyleDeclaration, number | 'length' | 'parentRule'>;
+
+type StyleProperties = Record<CSSStyleDeclarationKeys, string>;
+
 export default class Text3D extends Widget {
   public constructor(text: string) {
     super();
 
+    this.root.innerHTML = text;
+  }
+
+  public setText(text: string): void {
     this.root.innerHTML = text;
   }
 
@@ -25,8 +33,10 @@ export default class Text3D extends Widget {
     this.root.style.zIndex = `${500 + Math.round(translation.z)}`;
   }
 
-  public setSize(size: number): void {
-    this.root.style.fontSize = `${size}px`;
+  public setStyle(styles: Partial<StyleProperties>): void {
+    Object.keys(styles).forEach((key: CSSStyleDeclarationKeys) => {
+      (this.root.style[key] as string) = styles[key];
+    });
   }
 
   /**

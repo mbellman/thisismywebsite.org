@@ -11,9 +11,6 @@ import './page.scss';
 function createProjectBlock({ name, imageUrl, description }: Partial<Project> = {}): string {
   return `
     <div class="creation-block">
-      <h2 class="creation-block--title">
-        ${name || 'Demo!'}
-      </h2>
       <div class="creation-block--image">
         <img src="${imageUrl}">
       </div>
@@ -45,19 +42,32 @@ function createDemoCarousel(): PaneCarousel {
 function main(): void {
   const stage = new Stage();
   const title = new Text3D('Cool Projects');
+  const projectTitle = new Text3D(projects[0].name);
   const particles = new Particles(100);
   const demoCarousel = createDemoCarousel();
 
+  demoCarousel.onFocus(index => {
+    projectTitle.setText(projects[index].name);
+  });
+
   title.appendTo(stage.$root);
+  projectTitle.appendTo(stage.$root);
   demoCarousel.appendTo(stage.$root);
   particles.appendTo(stage.$root);
 
-  title.setSize(30);
-  title.setTransform({ x: 0, y: -220, z: 0 });
+  title.setStyle({
+    fontSize: '48px'
+  });
+
+  projectTitle.setStyle({
+    fontSize: '24px'
+  });
 
   let slideIndex = 0;
   let currentYOffset = 0;
 
+  const titleBaseY = -275;
+  const projectTitleBaseY = -190;
   const bodyBgColorTop = rgb(55, 9, 129);
   const bodyBgColorBottom = rgb(108, 75, 184);
 
@@ -74,9 +84,15 @@ function main(): void {
 
     title.setTransform({
       x: 0,
-      y: -220 + Math.sin(t) * 10 + currentYOffset * 0.8,
+      y: titleBaseY + Math.sin(t) * 10 + currentYOffset * 0.8,
       z: 0
     }, Math.sin(t * 0.8) * 0.1);
+
+    projectTitle.setTransform({
+      x: 0,
+      y: projectTitleBaseY + Math.sin(t + 3) * 5 + currentYOffset * 0.8,
+      z: 0
+    }, Math.sin(t * 0.8 + 2) * 0.1);
 
     demoCarousel.setOffset({
       x: 0,

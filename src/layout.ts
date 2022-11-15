@@ -51,7 +51,7 @@ export const projects: Project[] = [
     description: 'A prototype Java-to-JavaScript transpiler, with architectural support for other languages.'
   },
   {
-    name: 'Cosmodrone (2018)',
+    name: 'Cosmodrone (2016)',
     imageUrl: 'https://i.imgur.com/V2z4O2P.png',
     description: 'A prototype space drone/station maintenance game written in a custom 2D engine.'
   }

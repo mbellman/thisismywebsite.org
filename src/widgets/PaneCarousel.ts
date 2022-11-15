@@ -3,10 +3,13 @@ import Pane, { Vector3 } from './Pane';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
 
+type FocusHandler = (index: number) => void;
+
 export default class PaneCarousel extends Widget {
   private panes: Pane[] = [];
   private radius = 600;
   private rotation = 0;
+  private focusHandler: FocusHandler = null;
 
   private offset: Vector3 = {
     x: 0,
@@ -49,6 +52,11 @@ export default class PaneCarousel extends Widget {
     }
 
     this.revolveToTargetRotation();
+    this.focusHandler?.(this.currentIndex);
+  }
+
+  public onFocus(focusHandler: FocusHandler): void {
+    this.focusHandler = focusHandler;
   }
 
   public setOffset(offset: Vector3): void {

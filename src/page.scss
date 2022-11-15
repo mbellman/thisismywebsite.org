@@ -14,12 +14,6 @@ body {
 .creation-block {
   padding: 20px;
 
-  &--title {
-    @include pane-text;
-    font-size: 20px;
-    margin: 0;
-  }
-
   &--image {
     background-color: #aaf;
     border-radius: 5px;
