@@ -4,11 +4,11 @@ import Pane from './widgets/Pane';
 import Particles from './widgets/Particles';
 import Text3D from './widgets/Text3D';
 import { animate, debounce, lerp, multiply, rgb, toRgb } from './utilities';
-import { creations, Creation } from './creations';
+import { projects, Project } from './layout';
 
 import './page.scss';
 
-function createCreationBlock({ name, imageUrl, description }: Partial<Creation> = {}): string {
+function createProjectBlock({ name, imageUrl, description }: Partial<Project> = {}): string {
   return `
     <div class="creation-block">
       <h2 class="creation-block--title">
@@ -29,9 +29,9 @@ function createDemoCarousel(): PaneCarousel {
 
   for (let i = 0; i < 10; i++) {
     const pane = new Pane();
-    const creation = creations[i];
+    const project = projects[i];
 
-    pane.insert(createCreationBlock(creation));
+    pane.insert(createProjectBlock(project));
 
     carousel.addPane(pane);
   }
