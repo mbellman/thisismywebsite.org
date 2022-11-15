@@ -44,17 +44,6 @@ export function multiply(color: Color, factor: number): Color {
   };
 }
 
-type AnimationFunction = (dt: number) => boolean | void;
-
-export function animate(fn: AnimationFunction, start: number = Date.now()): void {
-  const now = Date.now();
-  const dt = (now - start) / 1000;
-
-  if (fn(dt) !== false) {
-    requestAnimationFrame(() => animate(fn, now));
-  }
-}
-
 export function debounce<T extends any, R extends any[]>(fn: (...args: R) => T, timeout: number): (...args: R) => T {
   let lastCallTime = 0;
 

@@ -55,6 +55,10 @@ export default class PaneCarousel extends Widget {
     this.focusHandler?.(this.currentIndex);
   }
 
+  public getRotation(): number {
+    return this.rotation;
+  }
+
   public onFocus(focusHandler: FocusHandler): void {
     this.focusHandler = focusHandler;
   }

@@ -11,7 +11,7 @@ body {
   text-shadow: 0 0 2px #aff, 0 1px 0 black;
 }
 
-.creation-block {
+.project-block {
   padding: 20px;
 
   &--image {
@@ -34,7 +34,7 @@ body {
 }
 
 .w-pane.active {
-  .creation-block--image {
+  .project-block--image {
     opacity: 1;
   }
 }
