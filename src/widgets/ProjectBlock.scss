@@ -1,0 +1,23 @@
+@use '../mixins.scss' as *;
+
+.project-block {
+  opacity: 0;
+  padding: 20px;
+  transition: opacity 0.2s;
+
+  &--image-container {
+    background-color: #aaf;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px 0 black;
+    display: flex;
+    margin: 10px 0;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  &--description {
+    font-size: 14px;
+  }
+}

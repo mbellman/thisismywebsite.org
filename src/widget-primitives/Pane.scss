@@ -13,9 +13,11 @@
       background: linear-gradient(to bottom, rgba(170, 214, 255, 0.5), rgba(145, 211, 255, 0.2));
       border-radius: 10px;
       box-shadow: 0 0 1px 0 rgb(101, 232, 255);
+      color: white;
       cursor: pointer;
       overflow: hidden;
       pointer-events: all;
+      text-shadow: 0 0 2px #aff, 0 1px 0 black;
       transition: all 0.2s;
 
       &:hover {

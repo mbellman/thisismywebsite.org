@@ -3,6 +3,8 @@ export default abstract class Widget {
 
   public constructor() {
     this.root = this.createRoot();
+
+    this.init();
   }
 
   public get $root(): HTMLDivElement {
@@ -12,6 +14,8 @@ export default abstract class Widget {
   public appendTo(element: HTMLDivElement): void {
     element.appendChild(this.$root);
   }
+
+  protected init(): void {}
 
   protected abstract createRoot(): HTMLDivElement;
 }

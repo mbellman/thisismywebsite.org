@@ -3,34 +3,23 @@ import PaneCarousel from './widget-primitives/PaneCarousel';
 import Pane from './widget-primitives/Pane';
 import Particles from './widget-primitives/Particles';
 import Text3D from './widget-primitives/Text3D';
+import ProjectBlock from './widgets/ProjectBlock';
 import { debounce, lerp, multiply, rgb, toRgb } from './utilities';
 import { animate, tween } from './animation';
-import { projects, Project } from './layout';
+import { projects } from './layout';
 
 import './page.scss';
-
-function createProjectBlock({ name, imageUrl, description }: Partial<Project> = {}): string {
-  return `
-    <div class="project-block">
-      <div class="project-block--image">
-        <img src="${imageUrl}">
-      </div>
-      <div class="project-block--description">
-        ${description}
-      </div>
-    </div>
-  `;
-}
 
 function createProjectsCarousel(): PaneCarousel {
   const carousel = new PaneCarousel();
 
   for (let i = 0; i < 10; i++) {
-    const pane = new Pane();
     const project = projects[i];
+    const pane = new Pane();
+    const projectBlock = new ProjectBlock();
 
-    pane.insert(createProjectBlock(project));
-
+    projectBlock.update(project);
+    pane.append(projectBlock.$root);
     carousel.addPane(pane);
   }
 

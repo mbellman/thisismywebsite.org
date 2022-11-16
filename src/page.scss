@@ -5,36 +5,3 @@ body {
   margin: 0;
   overflow: hidden;
 }
-
-@mixin pane-text {
-  color: white;
-  text-shadow: 0 0 2px #aff, 0 1px 0 black;
-}
-
-.project-block {
-  padding: 20px;
-
-  &--image {
-    background-color: #aaf;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px 0 black;
-    display: flex;
-    margin: 10px 0;
-    overflow: hidden;
-
-    img {
-      width: 100%;
-    }
-  }
-
-  &--description {
-    @include pane-text;
-    font-size: 14px;
-  }
-}
-
-.w-pane.active {
-  .project-block--image {
-    opacity: 1;
-  }
-}

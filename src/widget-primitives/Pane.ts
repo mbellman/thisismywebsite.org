@@ -9,8 +9,8 @@ export interface Vector3 {
 }
 
 export default class Pane extends Widget {
-  public insert(content: string): void {
-    this.$frame.innerHTML += content;
+  public append(element: HTMLElement): void {
+    this.$frame.appendChild(element);
   }
 
   public onClick(fn: () => void): void {
