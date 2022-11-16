@@ -47,7 +47,7 @@ export default class Particles extends Widget {
     for (let i = 0; i < this.particles.length; i++) {
       const particle = this.particles[i];
       
-      const baseSize = 5 + Math.sin(i * 1.8) * 3;
+      const baseSize = 4 + Math.sin(i * 1.8) * 3;
       const speedFactor = 0.6 + 0.4 * (baseSize / 8);
       const ySpeed = (0.1 + Math.sin(i * 1.7) * 0.02) * speedFactor;
 

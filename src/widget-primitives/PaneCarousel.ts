@@ -39,6 +39,8 @@ export default class PaneCarousel extends Widget {
   }
 
   public focusByIndex(index: number): void {
+    const didChangeIndex = index !== this.currentIndex;
+
     this.currentIndex = mod(index, this.panes.length);
 
     for (let i = 0; i < this.panes.length; i++) {
@@ -52,7 +54,10 @@ export default class PaneCarousel extends Widget {
     }
 
     this.revolveToTargetRotation();
-    this.focusHandler?.(this.currentIndex);
+
+    if (didChangeIndex) {
+      this.focusHandler?.(this.currentIndex);
+    }
   }
 
   public getRotation(): number {
