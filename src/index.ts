@@ -1,8 +1,8 @@
-import Stage from './widgets/Stage';
-import PaneCarousel from './widgets/PaneCarousel';
-import Pane from './widgets/Pane';
-import Particles from './widgets/Particles';
-import Text3D from './widgets/Text3D';
+import Stage from './widget-primitives/Stage';
+import PaneCarousel from './widget-primitives/PaneCarousel';
+import Pane from './widget-primitives/Pane';
+import Particles from './widget-primitives/Particles';
+import Text3D from './widget-primitives/Text3D';
 import { debounce, lerp, multiply, rgb, toRgb } from './utilities';
 import { animate, tween } from './animation';
 import { projects, Project } from './layout';
