@@ -2,6 +2,8 @@ export interface Project {
   name: string;
   imageUrl: string;
   description: string;
+  githubUrl?: string;
+  demoUrl?: string;
 }
 
 export const projects: Project[] = [

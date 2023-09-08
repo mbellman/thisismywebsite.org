@@ -24,6 +24,7 @@ export default class ProjectBlock extends Widget {
           <img>
         </div>
         <div class="project-block--description"></div>
+        <div class="project-block--links"></div>
       </div>
     `;
 
