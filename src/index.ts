@@ -51,21 +51,27 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
 function main(): void {
   const stage = new Stage();
 
-  const intro = stage.add(
-    new Text3D('I\'m Malcolm.', { y: -100 })
-  );
-
-  const subIntro = stage.add(
-    new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.', { y: -50 })
-  );
+  const { intro, subIntro } = stage.set({
+    intro: {
+      widget: new Text3D('I\'m Malcolm.'),
+      position: { y: -100 }
+    },
+    subIntro: {
+      widget: new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.'),
+      position: { y: -50 }
+    }
+  });
 
   const projectsHeading = stage.add(
-    new Text3D('Cool Projects', { y: 210 })
+    new Text3D('Cool Projects')
   );
 
   const projectTitle = stage.add(
-    new Text3D(projects[0].name, { y: 290 })
+    new Text3D(projects[0].name)
   );
+    
+  projectsHeading.basePosition.y = 210;
+  projectTitle.basePosition.y = 290;
 
   const particles = stage.add(
     new Particles(20)

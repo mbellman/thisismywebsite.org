@@ -12,13 +12,10 @@ interface Transform {
 }
 
 export default class Text3D extends Widget {
-  private basePosition: Vector3;
-
-  public constructor(text: string, basePosition: Partial<Vector3> = {}) {
+  public constructor(text: string) {
     super();
 
     this.root.innerHTML = text;
-    this.basePosition = { x: 0, y: 0, z: 0, ...basePosition };
   }
 
   public setText(text: string): void {
