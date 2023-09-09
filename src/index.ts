@@ -7,16 +7,17 @@ import ProjectBlock from './widgets/ProjectBlock';
 import { debounce, lerp, multiply, rgb, toRgb } from './utilities';
 import { animate, tween } from './animation';
 import { projects } from './layout';
-
 import './page.scss';
 
-function createProjectsCarousel(): PaneCarousel {
+function createProjectsCarousel(stage: Stage): PaneCarousel {
   const carousel = new PaneCarousel();
 
   for (let i = 0; i < 10; i++) {
     const project = projects[i];
     const pane = new Pane();
     const projectBlock = new ProjectBlock();
+
+    stage.add(pane);
 
     projectBlock.update(project);
     pane.append(projectBlock.$root);
@@ -49,12 +50,28 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
 
 function main(): void {
   const stage = new Stage();
-  const intro = new Text3D('I\'m Malcolm.');
-  const subIntro = new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.');
-  const projectsHeading = new Text3D('Cool Projects');
-  const projectTitle = new Text3D(projects[0].name);
-  const particles = new Particles(20);
-  const projectsCarousel = createProjectsCarousel();
+
+  const intro = stage.add(
+    new Text3D('I\'m Malcolm.', { y: -100 })
+  );
+
+  const subIntro = stage.add(
+    new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.', { y: -50 })
+  );
+
+  const projectsHeading = stage.add(
+    new Text3D('Cool Projects', { y: 210 })
+  );
+
+  const projectTitle = stage.add(
+    new Text3D(projects[0].name, { y: 290 })
+  );
+
+  const particles = stage.add(
+    new Particles(20)
+  );
+
+  const projectsCarousel = createProjectsCarousel(stage);
 
   subIntro.$root.querySelector('a:first-child').addEventListener('click', e => {
     e.preventDefault();
@@ -72,16 +89,9 @@ function main(): void {
     }, 100);
   });
 
-  projectsCarousel.onFocus(index => {
+  projectsCarousel.onIndexChange(index => {
     changeProjectTitle(projectTitle, index);
   });
-
-  intro.appendTo(stage.$root);
-  subIntro.appendTo(stage.$root);
-  projectsHeading.appendTo(stage.$root);
-  projectTitle.appendTo(stage.$root);
-  projectsCarousel.appendTo(stage.$root);
-  particles.appendTo(stage.$root);
 
   intro.setStyle({
     fontSize: '30px'
@@ -102,10 +112,6 @@ function main(): void {
   let slideIndex = 0;
   let currentYOffset = 0;
 
-  const INTRO_Y = -100;
-  const SUB_INTRO_Y = -50;
-  const PROJECTS_HEADING_Y = 210;
-  const PROJECT_NAME_Y = 290;
   const PROJECT_CAROUSEL_OFFSET = 500;
   const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
   const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
@@ -120,34 +126,49 @@ function main(): void {
     const t = Date.now() / 1000;
 
     currentYOffset = lerp(currentYOffset, -slideIndex * 500, dt * 5);
+    stage.origin.y = currentYOffset;
 
-    intro.setTransform({
-      x: 0,
-      y: INTRO_Y + Math.sin(t) + currentYOffset,
-      z: 0
-    }, Math.sin(t) * 0.1)
+    intro.transform({
+      position: {
+        y: Math.sin(t),
+        z: -50 + 50 * Math.cos(t)
+      },
+      rotation: {
+        y: Math.sin(t) * 0.1,
+      }
+    })
 
-    subIntro.setTransform({
-      x: 0,
-      y: SUB_INTRO_Y + Math.sin(t) + currentYOffset,
-      z: 0
-    }, Math.cos(t) * 0.1)
+    subIntro.transform({
+      position: {
+        y: Math.sin(t)
+      },
+      rotation: {
+        y: Math.cos(t) * 0.1
+      }
+    });
 
-    projectsHeading.setTransform({
-      x: 0,
-      y: PROJECTS_HEADING_Y + Math.sin(t) * 10 + currentYOffset,
-      z: 0
-    }, Math.sin(t * 0.8) * 0.1);
+    projectsHeading.transform({
+      position: {
+        y: Math.sin(t) * 10,
+        z: -50 + 50 * Math.sin(t)
+      },
+      rotation: {
+        y: Math.sin(t * 0.6) * 0.1
+      }
+    });
 
-    projectTitle.setTransform({
-      x: 0,
-      y: PROJECT_NAME_Y + Math.sin(t + 3) * 5 + currentYOffset,
-      z: 0
-    }, Math.sin(t * 0.8 + 2) * 0.1);
+    projectTitle.transform({
+      position: {
+        y: Math.sin(t + 3) * 5,
+      },
+      rotation: {
+        y: Math.sin(t * 0.8 + 2) * 0.1
+      }
+    });
 
     projectsCarousel.setOffset({
       x: 0,
-      y: PROJECT_CAROUSEL_OFFSET + currentYOffset,
+      y: PROJECT_CAROUSEL_OFFSET,
       z: 0
     });
 

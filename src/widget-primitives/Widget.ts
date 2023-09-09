@@ -1,4 +1,7 @@
+import Stage from './Stage';
+
 export default abstract class Widget {
+  public stage: Stage = null;
   protected root: HTMLDivElement = null;
 
   public constructor() {
@@ -9,10 +12,6 @@ export default abstract class Widget {
 
   public get $root(): HTMLDivElement {
     return this.root;
-  }
-
-  public appendTo(element: HTMLDivElement): void {
-    element.appendChild(this.$root);
   }
 
   protected init(): void {}

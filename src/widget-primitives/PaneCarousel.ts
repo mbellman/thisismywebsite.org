@@ -3,13 +3,13 @@ import Pane, { Vector3 } from './Pane';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
 
-type FocusHandler = (index: number) => void;
+type IndexChangeHandler = (index: number) => void;
 
 export default class PaneCarousel extends Widget {
   private panes: Pane[] = [];
   private radius = 600;
   private rotation = 0;
-  private focusHandler: FocusHandler = null;
+  private indexChangeHandler: IndexChangeHandler = null;
 
   private offset: Vector3 = {
     x: 0,
@@ -19,15 +19,6 @@ export default class PaneCarousel extends Widget {
 
   private currentIndex = 0;
   private nextAnimationFrame: number = null;
-
-  /**
-   * @override
-   */
-  public appendTo(element: HTMLDivElement): void {
-    for (const pane of this.panes) {
-      element.appendChild(pane.$root);
-    }
-  }
 
   public addPane(pane: Pane): void {
     const index = this.panes.length;
@@ -56,7 +47,7 @@ export default class PaneCarousel extends Widget {
     this.revolveToTargetRotation();
 
     if (didChangeIndex) {
-      this.focusHandler?.(this.currentIndex);
+      this.indexChangeHandler?.(this.currentIndex);
     }
   }
 
@@ -64,8 +55,8 @@ export default class PaneCarousel extends Widget {
     return this.rotation;
   }
 
-  public onFocus(focusHandler: FocusHandler): void {
-    this.focusHandler = focusHandler;
+  public onIndexChange(indexChangeHandler: IndexChangeHandler): void {
+    this.indexChangeHandler = indexChangeHandler;
   }
 
   public setOffset(offset: Vector3): void {

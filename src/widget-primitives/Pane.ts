@@ -18,11 +18,19 @@ export default class Pane extends Widget {
   }
 
   public update({ x, y, z }: Vector3, rotation: Vector3): void {
+    const origin = { x: 0, y: 0, z: 0, ...this.stage.origin };
+
+    const translation = {
+      x: x + origin.x,
+      y: y + origin.y,
+      z: z + origin.z
+    };
+
     const rX = rotation.x * (180 / Math.PI);
     const rY = rotation.y * (180 / Math.PI);
     const rZ = rotation.z * (180 / Math.PI);
 
-    this.root.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg)`;
+    this.root.style.transform = `translate3d(${translation.x}px, ${translation.y}px, ${translation.z}px) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg)`;
     this.root.style.zIndex = `${500 + Math.round(z)}`;
   }
 

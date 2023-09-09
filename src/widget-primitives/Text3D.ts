@@ -6,27 +6,41 @@ type CSSStyleDeclarationKeys = Exclude<keyof CSSStyleDeclaration, number | 'leng
 
 type StyleProperties = Record<CSSStyleDeclarationKeys, string>;
 
+interface Transform {
+  position?: Partial<Vector3>;
+  rotation?: Partial<Vector3>;
+}
+
 export default class Text3D extends Widget {
-  public constructor(text: string) {
+  private basePosition: Vector3;
+
+  public constructor(text: string, basePosition: Partial<Vector3> = {}) {
     super();
 
     this.root.innerHTML = text;
+    this.basePosition = { x: 0, y: 0, z: 0, ...basePosition };
   }
 
   public setText(text: string): void {
     this.root.innerHTML = text;
   }
 
-  public setTransform(position: Vector3, yRotation: number = 0): void {
+  public transform({ position = {}, rotation = {} }: Transform): void {
+    // Set defaults
+    position = { x: 0, y: 0, z: 0, ...position };
+    rotation = { x: 0, y: 0, z: 0, ...rotation };
+
+    const origin = { x: 0, y: 0, z: 0, ...this.stage.origin };
+
     const pageWidth = window.innerWidth;
     const halfWidth = this.$root.clientWidth / 2;
     const halfHeight = this.$root.clientHeight / 2;
-    const yRotationDegrees = (yRotation * 180 / Math.PI) % 360;
+    const yRotationDegrees = (rotation.y * 180 / Math.PI) % 360;
 
     const translation: Vector3 = {
-      x: position.x + (pageWidth / 2) - halfWidth,
-      y: position.y + window.innerHeight / 2 - halfHeight,
-      z: position.z
+      x: origin.x + this.basePosition.x + position.x + (pageWidth / 2) - halfWidth,
+      y: origin.y + this.basePosition.y + position.y + window.innerHeight / 2 - halfHeight,
+      z: origin.z + this.basePosition.z + position.z
     };
 
     this.root.style.transform = `translate3d(${translation.x}px, ${translation.y}px, ${translation.z}px) rotateY(${yRotationDegrees}deg)`;
