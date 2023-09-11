@@ -7,6 +7,8 @@ import ProjectBlock from './widgets/ProjectBlock';
 import { debounce, lerp, multiply, rgb, toRgb } from './utilities';
 import { animate, tween } from './animation';
 import { projects } from './layout';
+import { createHandDetector, detectHands, drawHands } from './gestures';
+import { getCameraFeed } from './webcam';
 import './page.scss';
 
 function createProjectsCarousel(stage: Stage): PaneCarousel {
@@ -48,7 +50,20 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
   }));
 }
 
+async function initializeGestures() {
+  const video = await getCameraFeed();
+  const detector = await createHandDetector();
+
+  setInterval(async () => {
+    const hands = await detectHands(detector, video);
+
+    // drawHands(hands, video);
+  }, 100);
+}
+
 function main(): void {
+  initializeGestures();
+
   const stage = new Stage();
 
   const { intro, subIntro } = stage.set({
