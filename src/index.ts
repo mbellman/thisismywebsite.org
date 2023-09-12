@@ -7,7 +7,7 @@ import ProjectBlock from './widgets/ProjectBlock';
 import { debounce, lerp, multiply, rgb, toRgb } from './utilities';
 import { animate, tween } from './animation';
 import { projects } from './layout';
-import { createHandDetector, detectHands, drawHands } from './gestures';
+import { createGestureAnalyzer, createHandDetector, detectHands, drawHands } from './gestures';
 import { getCameraFeed } from './webcam';
 import './page.scss';
 
@@ -53,11 +53,10 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
 async function initializeGestures() {
   const video = await getCameraFeed();
   const detector = await createHandDetector();
+  const analyzer = createGestureAnalyzer(detector, true);
 
-  setInterval(async () => {
-    const hands = await detectHands(detector, video);
-
-    // drawHands(hands, video);
+  setInterval(() => {
+    analyzer.analyze(video);
   }, 100);
 }
 

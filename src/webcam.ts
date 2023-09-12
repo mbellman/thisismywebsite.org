@@ -1,25 +1,12 @@
 export async function getCameraFeed(): Promise<HTMLVideoElement> {
   const video = document.createElement('video');
-  const canvas = document.createElement('canvas');
 
-  {
-    video.width = 320;
-    video.height = 240;
-    video.style.position = 'absolute';
-    video.style.visibility = 'hidden';
-  
-    document.body.appendChild(video);
-  }
+  video.width = 320;
+  video.height = 240;
+  video.style.position = 'absolute';
+  video.style.visibility = 'hidden';
 
-  {
-    canvas.width = 320;
-    canvas.height = 240;
-    canvas.style.position = 'absolute';
-  
-    canvas.setAttribute('id', 'canvas');
-  
-    document.body.appendChild(canvas);
-  }
+  document.body.appendChild(video);
 
   await window.navigator.mediaDevices.getUserMedia({
     video: {
