@@ -47,16 +47,34 @@ export function createGestureAnalyzer(detector: HandDetector, debug: boolean = f
   };
 
   if (debug) {
-    const canvas = document.createElement('canvas');
+    {
+      const canvas = document.createElement('canvas');
 
-    canvas.width = 320;
-    canvas.height = 240;
-    canvas.style.position = 'absolute';
-    canvas.style.top = '0';
+      canvas.width = 320;
+      canvas.height = 240;
+      canvas.style.position = 'absolute';
+      canvas.style.top = '0';
+      canvas.style.right = '0';
+      canvas.style.opacity = '0.5';
+    
+      canvas.setAttribute('id', 'canvas');
+    
+      document.body.appendChild(canvas);
+    }
+
+    {
+      const readout = document.createElement('div');
+
+      readout.style.width = '320px';
+      readout.style.position = 'absolute';
+      readout.style.top = '240px';
+      readout.style.right = '0';
+      readout.style.color = '#fff';
+
+      readout.setAttribute('id', 'readout');
   
-    canvas.setAttribute('id', 'canvas');
-  
-    document.body.appendChild(canvas);
+      document.body.appendChild(readout);
+    }
   }
 
   const analyzer: GestureAnalyzer = {
@@ -69,7 +87,9 @@ export function createGestureAnalyzer(detector: HandDetector, debug: boolean = f
     analyze: async (image) => {
       const hands = await detector.estimateHands(image);
 
-      drawHands(document.getElementById('canvas') as HTMLCanvasElement, hands);
+      if (debug) {
+        debugHands(document.getElementById('canvas') as HTMLCanvasElement, hands);
+      }
 
       // @todo
     }
@@ -78,17 +98,42 @@ export function createGestureAnalyzer(detector: HandDetector, debug: boolean = f
   return analyzer;
 }
 
-// @temporary
-export function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
-  const ctx = canvas.getContext('2d');
+export function debugHands(canvas: HTMLCanvasElement, hands: Hand[]) {
+  // Draw hand keypoints
+  {
+    const ctx = canvas.getContext('2d');
 
-  ctx.fillStyle = '#f00';
+    // Background
+    {
+      ctx.fillStyle = '#00a';
+  
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  
+    // Keypoints
+    {
+      ctx.fillStyle = '#f00';
+  
+      for (const hand of hands) {
+        for (const { x, y } of hand.keypoints) {
+          ctx.fillRect(x - 2, y - 2, 4, 4);
+        }
+      }
+    }
+  }
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Print data
+  {
+    const readout = document.getElementById('readout');
 
-  for (const hand of hands) {
-    for (const { x, y } of hand.keypoints) {
-      ctx.fillRect(x - 2, y - 2, 4, 4);
+    readout.innerHTML = '';
+
+    for (const hand of hands) {
+      readout.innerHTML += `${hand.handedness}:<br />`;
+
+      for (const { name, x, y } of hand.keypoints) {
+        readout.innerHTML += `${name} (${Math.round(x)}, ${Math.round(y)})<br />`;
+      }
     }
   }
 }

@@ -7,7 +7,7 @@ import ProjectBlock from './widgets/ProjectBlock';
 import { debounce, lerp, multiply, rgb, toRgb } from './utilities';
 import { animate, tween } from './animation';
 import { projects } from './layout';
-import { createGestureAnalyzer, createHandDetector, detectHands, drawHands } from './gestures';
+import { createGestureAnalyzer, createHandDetector } from './gestures';
 import { getCameraFeed } from './webcam';
 import './page.scss';
 
