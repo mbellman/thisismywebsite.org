@@ -1,4 +1,5 @@
 import { SupportedModels, createDetector, HandDetector, Hand } from '@tensorflow-models/hand-pose-detection';
+import './gestures.scss';
 
 let debugOutput: HTMLElement = null;
 
@@ -12,6 +13,10 @@ const TARGET_KEYPOINTS = [
 type Point = {
   x: number;
   y: number;
+};
+
+type Point3D = Point & {
+  z: number;
 };
 
 type PointRecord = Point & {
@@ -42,6 +47,25 @@ function timeSince(time: number) {
   return Date.now() - time;
 }
 
+function normalize({ x, y, z }: Point3D): Point3D {
+  const magnitude = Math.sqrt(x*x + y*y + z*z);
+
+  return {
+    x: x / magnitude,
+    y: y / magnitude,
+    z: z / magnitude
+  };
+}
+
+function createGestureCursor() {
+  const cursor = document.createElement('div');
+
+  cursor.classList.add('gesture-cursor');
+  document.body.appendChild(cursor);
+
+  return cursor;
+}
+
 class PointRecordQueue {
   private queue: PointRecord[] = [];
   private size: number;
@@ -56,6 +80,10 @@ class PointRecordQueue {
     }
 
     this.queue.push(record);
+  }
+
+  public forEach(handler: (record: PointRecord) => void) {
+    this.queue.forEach(handler);
   }
 
   public get(index: number): PointRecord {
@@ -99,6 +127,7 @@ export async function detectHands(detector: HandDetector, image: HTMLVideoElemen
 export function createGestureAnalyzer(detector: HandDetector, debug: boolean = false): GestureAnalyzer {
   const handCenterQueue = new PointRecordQueue(2);
   const indexTipQueue = new PointRecordQueue(2);
+  const cursor = createGestureCursor();
 
   const events: Record<string, GestureEventHandler[]> = {
     swipeUp: [],
@@ -146,7 +175,39 @@ export function createGestureAnalyzer(detector: HandDetector, debug: boolean = f
     }
   }
 
-  function analyzeHands(hands: Hand[]) {
+  function handleGestureCursor(hands: Hand[]) {
+    if (hands.length !== 1) {
+      cursor.style.opacity = '0';
+
+      return;
+    }
+
+    const pageWidth2 = window.innerWidth / 2;
+    const pageHeight2 = window.innerHeight / 2;
+    const { keypoints3D } = hands[0];
+    
+    const indexFinger = [
+      keypoints3D.find(point => point.name === 'index_finger_mcp'),
+      keypoints3D.find(point => point.name === 'index_finger_tip')
+    ];
+
+    const v: Point3D = normalize({
+      x: indexFinger.at(-1).x - indexFinger[0].x,
+      y: indexFinger.at(-1).y - indexFinger[0].y,
+      z: indexFinger.at(-1).z - indexFinger[0].z
+    });
+
+    cursor.style.opacity = '1';
+    cursor.style.left = `${pageWidth2 - pageWidth2 * v.x}px`;
+    cursor.style.top = `${pageHeight2 + pageHeight2 * v.y}px`;
+
+    if (debug) {
+      printDebug('');
+      printDebug(`${v.x}, ${v.y}, ${v.z}`);
+    }
+  }
+
+  function handleSwipeGestures(hands: Hand[]) {
     if (hands.length === 1) {
       const { keypoints } = hands[0];
       const indexTip = keypoints.find(point => point.name === 'index_finger_tip');
@@ -172,26 +233,35 @@ export function createGestureAnalyzer(detector: HandDetector, debug: boolean = f
       });
     }
 
+    if (debug) {
+      printDebug('');
+      printDebug('Hand center:');
+      handCenterQueue.forEach(record => printDebug(`${record.x, record.y}`));
+
+      printDebug('');
+      printDebug('Index tips:');
+      indexTipQueue.forEach(record => printDebug(`${record.x, record.y}`));
+    }
+
     if (timeSince(indexTipQueue.get(-1)?.time) < 100) {
       const time = indexTipQueue.getTimeFrom(0, -1);
-      const delta = indexTipQueue.getDeltaFrom(0, -1);
-
+      const indexDelta = indexTipQueue.getDeltaFrom(0, -1);
       const handDelta = handCenterQueue.getDeltaFrom(0, -1);
 
       if (Math.abs(handDelta.x) < 50 && Math.abs(handDelta.y) < 50) {
-        if (delta.x > 40) {
+        if (indexDelta.x > 40) {
           emit('swipeLeft');
         }
   
-        if (delta.x < -40) {
+        if (indexDelta.x < -40) {
           emit('swipeRight');
         }
   
-        if (delta.y > 40) {
+        if (indexDelta.y > 40) {
           emit('swipeDown');
         }
   
-        if (delta.y < -40) {
+        if (indexDelta.y < -40) {
           emit('swipeUp');
         }
       }
@@ -212,7 +282,8 @@ export function createGestureAnalyzer(detector: HandDetector, debug: boolean = f
         debugHands(document.getElementById('canvas') as HTMLCanvasElement, hands);
       }
 
-      analyzeHands(hands);
+      handleGestureCursor(hands);
+      handleSwipeGestures(hands);
     }
   };
 
