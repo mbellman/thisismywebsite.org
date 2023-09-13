@@ -1,5 +1,23 @@
 import { SupportedModels, createDetector, HandDetector, Hand } from '@tensorflow-models/hand-pose-detection';
 
+let debugOutput: HTMLElement = null;
+
+const TARGET_KEYPOINTS = [
+  'index_finger_tip',
+  'middle_finger_tip',
+  'ring_finger_tip',
+  'pinky_finger_tip'
+];
+
+type Point = {
+  x: number;
+  y: number;
+};
+
+type PointRecord = Point & {
+  time: number;
+};
+
 type GestureEventHandler = () => void;
 
 type GestureAnalyzer = {
@@ -17,6 +35,46 @@ function removeFromArray<T>(array: T[], value: T) {
     } else {
       i++;
     }
+  }
+}
+
+function timeSince(time: number) {
+  return Date.now() - time;
+}
+
+class PointRecordQueue {
+  private queue: PointRecord[] = [];
+  private size: number;
+
+  public constructor(size: number) {
+    this.size = size;
+  }
+
+  public add(record: PointRecord): void {
+    if (this.queue.length === this.size) {
+      this.queue.shift();
+    }
+
+    this.queue.push(record);
+  }
+
+  public get(index: number): PointRecord {
+    return this.queue.at(index);
+  }
+
+  public getDeltaFrom(start: number, end: number): Point {
+    return {
+      x: this.get(end).x - this.get(start).x,
+      y: this.get(end).y - this.get(start).y
+    };
+  }
+
+  public getTimeFrom(start: number, end: number): number {
+    return this.get(end).time - this.get(start).time;
+  }
+
+  public takeLast(count: number): PointRecord[] {
+    return this.queue.slice(-count);
   }
 }
 
@@ -39,6 +97,9 @@ export async function detectHands(detector: HandDetector, image: HTMLVideoElemen
 }
 
 export function createGestureAnalyzer(detector: HandDetector, debug: boolean = false): GestureAnalyzer {
+  const handCenterQueue = new PointRecordQueue(2);
+  const indexTipQueue = new PointRecordQueue(2);
+
   const events: Record<string, GestureEventHandler[]> = {
     swipeUp: [],
     swipeDown: [],
@@ -63,17 +124,77 @@ export function createGestureAnalyzer(detector: HandDetector, debug: boolean = f
     }
 
     {
-      const readout = document.createElement('div');
+      debugOutput = document.createElement('div');
 
-      readout.style.width = '320px';
-      readout.style.position = 'absolute';
-      readout.style.top = '240px';
-      readout.style.right = '0';
-      readout.style.color = '#fff';
+      debugOutput.style.width = '320px';
+      debugOutput.style.position = 'absolute';
+      debugOutput.style.top = '240px';
+      debugOutput.style.right = '0';
+      debugOutput.style.fontWeight = 'bold';
+      debugOutput.style.color = '#fff';
+      debugOutput.style.zIndex = '10';
 
-      readout.setAttribute('id', 'readout');
+      debugOutput.setAttribute('id', 'debugOutput');
   
-      document.body.appendChild(readout);
+      document.body.appendChild(debugOutput);
+    }
+  }
+
+  function emit(eventName: string) {
+    for (const handler of events[eventName]) {
+      handler();
+    }
+  }
+
+  function analyzeHands(hands: Hand[]) {
+    if (hands.length === 1) {
+      const { keypoints } = hands[0];
+      const indexTip = keypoints.find(point => point.name === 'index_finger_tip');
+
+      const averageX = keypoints.reduce((acc, { x }) => {
+        return acc + x;
+      }, 0) / keypoints.length;
+
+      const averageY = keypoints.reduce((acc, { y }) => {
+        return acc + y;
+      }, 0) / keypoints.length;
+
+      handCenterQueue.add({
+        x: averageX,
+        y: averageY,
+        time: Date.now()
+      });
+
+      indexTipQueue.add({
+        x: indexTip.x,
+        y: indexTip.y,
+        time: Date.now()
+      });
+    }
+
+    if (timeSince(indexTipQueue.get(-1)?.time) < 100) {
+      const time = indexTipQueue.getTimeFrom(0, -1);
+      const delta = indexTipQueue.getDeltaFrom(0, -1);
+
+      const handDelta = handCenterQueue.getDeltaFrom(0, -1);
+
+      if (Math.abs(handDelta.x) < 50 && Math.abs(handDelta.y) < 50) {
+        if (delta.x > 40) {
+          emit('swipeLeft');
+        }
+  
+        if (delta.x < -40) {
+          emit('swipeRight');
+        }
+  
+        if (delta.y > 40) {
+          emit('swipeDown');
+        }
+  
+        if (delta.y < -40) {
+          emit('swipeUp');
+        }
+      }
     }
   }
 
@@ -91,11 +212,19 @@ export function createGestureAnalyzer(detector: HandDetector, debug: boolean = f
         debugHands(document.getElementById('canvas') as HTMLCanvasElement, hands);
       }
 
-      // @todo
+      analyzeHands(hands);
     }
   };
 
   return analyzer;
+}
+
+export function clearDebug() {
+  debugOutput.innerHTML = '';
+}
+
+export function printDebug(text: string | number) {
+  debugOutput.innerHTML += `${text}<br />`;
 }
 
 export function debugHands(canvas: HTMLCanvasElement, hands: Hand[]) {
@@ -124,15 +253,15 @@ export function debugHands(canvas: HTMLCanvasElement, hands: Hand[]) {
 
   // Print data
   {
-    const readout = document.getElementById('readout');
-
-    readout.innerHTML = '';
+    clearDebug();
 
     for (const hand of hands) {
-      readout.innerHTML += `${hand.handedness}:<br />`;
+      printDebug(`${hand.handedness}:`);
 
       for (const { name, x, y } of hand.keypoints) {
-        readout.innerHTML += `${name} (${Math.round(x)}, ${Math.round(y)})<br />`;
+        if (TARGET_KEYPOINTS.includes(name)) {
+          printDebug(`${name} (${Math.round(x)}, ${Math.round(y)})`);
+        }
       }
     }
   }

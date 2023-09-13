@@ -10,15 +10,14 @@ export default class PaneCarousel extends Widget {
   private radius = 600;
   private rotation = 0;
   private indexChangeHandler: IndexChangeHandler = null;
+  private currentIndex = 0;
+  private nextAnimationFrame: number = null;
 
   private offset: Vector3 = {
     x: 0,
     y: 0,
     z: 0
   };
-
-  private currentIndex = 0;
-  private nextAnimationFrame: number = null;
 
   public addPane(pane: Pane): void {
     const index = this.panes.length;
@@ -27,6 +26,10 @@ export default class PaneCarousel extends Widget {
 
     this.panes.push(pane);
     this.revolve(0);
+  }
+
+  public getCurrentIndex(): number {
+    return this.currentIndex;
   }
 
   public focusByIndex(index: number): void {

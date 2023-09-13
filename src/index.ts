@@ -50,7 +50,7 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
   }));
 }
 
-async function initializeGestures() {
+async function initializeGestureAnalyzer() {
   const video = await getCameraFeed();
   const detector = await createHandDetector();
   const analyzer = createGestureAnalyzer(detector, true);
@@ -58,20 +58,32 @@ async function initializeGestures() {
   setInterval(() => {
     analyzer.analyze(video);
   }, 100);
+
+  return analyzer;
 }
 
-function main(): void {
-  initializeGestures();
-
+async function main() {
+  const analyzer = await initializeGestureAnalyzer();
   const stage = new Stage();
+
+  // const { intro, subIntro } = stage.set({
+  //   intro: {
+  //     widget: new Text3D('I\'m Malcolm.'),
+  //     position: { y: -100 }
+  //   },
+  //   subIntro: {
+  //     widget: new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.'),
+  //     position: { y: -50 }
+  //   }
+  // });
 
   const { intro, subIntro } = stage.set({
     intro: {
-      widget: new Text3D('I\'m Malcolm.'),
+      widget: new Text3D('Dummy text'),
       position: { y: -100 }
     },
     subIntro: {
-      widget: new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.'),
+      widget: new Text3D('More dummy text down here, doesn\'t particularly matter what it says'),
       position: { y: -50 }
     }
   });
@@ -93,7 +105,7 @@ function main(): void {
 
   const projectsCarousel = createProjectsCarousel(stage);
 
-  subIntro.$root.querySelector('a:first-child').addEventListener('click', e => {
+  subIntro.$root.querySelector('a:first-child')?.addEventListener('click', e => {
     e.preventDefault();
 
     setTimeout(() => {
@@ -101,7 +113,7 @@ function main(): void {
     }, 100);
   });
 
-  subIntro.$root.querySelector('a:nth-child(2)').addEventListener('click', e => {
+  subIntro.$root.querySelector('a:nth-child(2)')?.addEventListener('click', e => {
     e.preventDefault();
 
     setTimeout(() => {
@@ -141,6 +153,26 @@ function main(): void {
 
     slideIndex = index;
   }, 500);
+
+  analyzer.on('swipeUp', () => {
+    goToSlide(slideIndex + 1);
+  });
+
+  analyzer.on('swipeDown', () => {
+    goToSlide(slideIndex - 1);
+  });
+
+  analyzer.on('swipeLeft', () => {
+    if (slideIndex === 1) {
+      projectsCarousel.focusByIndex(projectsCarousel.getCurrentIndex() + 1);
+    }
+  });
+
+  analyzer.on('swipeRight', () => {
+    if (slideIndex === 1) {
+      projectsCarousel.focusByIndex(projectsCarousel.getCurrentIndex() - 1);
+    }
+  });
 
   animate(dt => {
     const t = Date.now() / 1000;
