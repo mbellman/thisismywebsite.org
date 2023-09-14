@@ -19,7 +19,7 @@ type PointRecord = Point & {
 
 type GestureEventHandler = () => void;
 
-type GestureAnalyzer = {
+export type GestureAnalyzer = {
   on: (eventName: string, handler: GestureEventHandler) => void;
   off: (eventName: string, handler: GestureEventHandler) => void;
   analyze: (image: HTMLVideoElement) => void;
