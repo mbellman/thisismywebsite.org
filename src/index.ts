@@ -53,11 +53,14 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
 async function initializeGestureAnalyzer() {
   const video = await getCameraFeed();
   const detector = await createHandDetector();
-  const analyzer = createGestureAnalyzer(detector, true);
+
+  const analyzer = createGestureAnalyzer(detector, {
+    debug: true
+  });
 
   setInterval(() => {
     analyzer.analyze(video);
-  }, 100);
+  }, 50);
 
   return analyzer;
 }
