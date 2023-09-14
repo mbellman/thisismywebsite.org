@@ -1,3 +1,4 @@
+import { initializeDebugConsole } from './debug';
 import { createGestureAnalyzer, createHandDetector } from './gestures';
 import { setupPage } from './page-home';
 import { getCameraFeed } from './webcam';

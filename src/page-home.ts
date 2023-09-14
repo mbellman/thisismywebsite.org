@@ -9,6 +9,7 @@ import { animate, tween } from './animation';
 import { projects } from './layout';
 import { GestureAnalyzer } from './gestures';
 import './page-home.scss';
+import { printDebug } from './debug';
 
 function createProjectsCarousel(stage: Stage): PaneCarousel {
   const carousel = new PaneCarousel();
@@ -95,7 +96,7 @@ export function setupPage(analyzer: GestureAnalyzer) {
     e.preventDefault();
 
     setTimeout(() => {
-      slideIndex = 1;
+      levelIndex = 1;
     }, 100);
   });
 
@@ -103,7 +104,7 @@ export function setupPage(analyzer: GestureAnalyzer) {
     e.preventDefault();
 
     setTimeout(() => {
-      slideIndex = 2;
+      levelIndex = 2;
     }, 100);
   });
 
@@ -127,43 +128,51 @@ export function setupPage(analyzer: GestureAnalyzer) {
     fontSize: '24px'
   });
 
-  let slideIndex = 0;
+  let levelIndex = 0;
   let currentYOffset = 0;
 
   const PROJECT_CAROUSEL_OFFSET = 500;
   const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
   const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
 
-  const goToSlide = debounce((index: number) => {
-    if (index < 0) index = 0;
+  const goToLevel = debounce((level: number) => {
+    if (level < 0) level = 0;
 
-    slideIndex = index;
+    levelIndex = level;
   }, 500);
 
-  analyzer.on('swipeUp', () => {
-    goToSlide(slideIndex + 1);
+  analyzer.on('swipeUp', delta => {
+    goToLevel(levelIndex + 1);
+
+    printDebug(`${delta.x}, ${delta.y}`);
   });
 
-  analyzer.on('swipeDown', () => {
-    goToSlide(slideIndex - 1);
+  analyzer.on('swipeDown', delta => {
+    goToLevel(levelIndex - 1);
+
+    printDebug(`${delta.x}, ${delta.y}`);
   });
 
-  analyzer.on('swipeLeft', () => {
-    if (slideIndex === 1) {
+  analyzer.on('swipeLeft', delta => {
+    if (levelIndex === 1) {
       projectsCarousel.focusByIndex(projectsCarousel.getCurrentIndex() + 1);
     }
+
+    printDebug(`${delta.x}, ${delta.y}`);
   });
 
-  analyzer.on('swipeRight', () => {
-    if (slideIndex === 1) {
+  analyzer.on('swipeRight', delta => {
+    if (levelIndex === 1) {
       projectsCarousel.focusByIndex(projectsCarousel.getCurrentIndex() - 1);
     }
+
+    printDebug(`${delta.x}, ${delta.y}`);
   });
 
   animate(dt => {
     const t = Date.now() / 1000;
 
-    currentYOffset = lerp(currentYOffset, -slideIndex * 500, dt * 5);
+    currentYOffset = lerp(currentYOffset, -levelIndex * 500, dt * 5);
     stage.origin.y = currentYOffset;
 
     intro.transform({
@@ -220,9 +229,9 @@ export function setupPage(analyzer: GestureAnalyzer) {
 
   document.addEventListener('wheel', e => {
     if (e.deltaY > 15) {
-      goToSlide(slideIndex + 1);
+      goToLevel(levelIndex + 1);
     } else if (e.deltaY < -15) {
-      goToSlide(slideIndex - 1);
+      goToLevel(levelIndex - 1);
     }
   });
 }
