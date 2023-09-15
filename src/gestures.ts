@@ -71,6 +71,26 @@ function createGestureCursor(): GestureCursor {
   };
 }
 
+function createDebugCanvas({
+  width = 320,
+  height = 240,
+  top = 0,
+  id = ''
+} = {}) {
+  const canvas = document.createElement('canvas');
+
+  canvas.width = width;
+  canvas.height = height;
+  canvas.style.position = 'absolute';
+  canvas.style.top = `${top}px`;
+  canvas.style.left = '0';
+  canvas.style.opacity = '0.5';
+
+  canvas.setAttribute('id', id);
+
+  document.body.appendChild(canvas);
+}
+
 class PointRecordQueue {
   private queue: PointRecord[] = [];
   private size: number;
@@ -154,18 +174,26 @@ export function createGestureAnalyzer(detector: HandDetector, {
   };
 
   if (debug) {
-    const canvas = document.createElement('canvas');
+    createDebugCanvas({
+      width: 320,
+      height: 240,
+      top: 0,
+      id: 'hands-canvas'
+    });
 
-    canvas.width = 320;
-    canvas.height = 240;
-    canvas.style.position = 'absolute';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.opacity = '0.5';
-  
-    canvas.setAttribute('id', 'canvas');
-  
-    document.body.appendChild(canvas);
+    createDebugCanvas({
+      width: 320,
+      height: 80,
+      top: 250,
+      id: 'y-canvas'
+    });
+
+    createDebugCanvas({
+      width: 320,
+      height: 80,
+      top: 340,
+      id: 'x-canvas'
+    });
   }
 
   let lastEmittedEventTime: number = 0;
@@ -374,7 +402,10 @@ export function createGestureAnalyzer(detector: HandDetector, {
       handleSwipeGestures(hands);
 
       if (debug) {
-        drawHands(document.getElementById('canvas') as HTMLCanvasElement, hands);
+        drawHands(document.getElementById('hands-canvas') as HTMLCanvasElement, hands);
+        drawYVelocity(document.getElementById('y-canvas') as HTMLCanvasElement);
+        drawXVelocity(document.getElementById('x-canvas') as HTMLCanvasElement);
+
         updateDebugConsole();
       }
     }
@@ -383,15 +414,16 @@ export function createGestureAnalyzer(detector: HandDetector, {
   return analyzer;
 }
 
-export function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
+function fillCanvasBackground(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+  ctx.fillStyle = '#00a';
+
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
   const ctx = canvas.getContext('2d');
 
-  // Background
-  {
-    ctx.fillStyle = '#00a';
-
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
+  fillCanvasBackground(canvas, ctx);
 
   // Keypoints
   {
@@ -403,4 +435,16 @@ export function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
       }
     }
   }
+}
+
+function drawYVelocity(canvas: HTMLCanvasElement) {
+  const ctx = canvas.getContext('2d');
+
+  fillCanvasBackground(canvas, ctx);
+}
+
+function drawXVelocity(canvas: HTMLCanvasElement) {
+  const ctx = canvas.getContext('2d');
+
+  fillCanvasBackground(canvas, ctx);
 }
