@@ -115,6 +115,12 @@ class PointRecordQueue {
     this.queue.forEach(handler);
   }
 
+  public forEachReversed(handler: (record: PointRecord) => void) {
+    for (let i = this.queue.length - 1; i >= 0; i--) {
+      handler(this.queue[i]);
+    }
+  }
+
   public get(index: number): PointRecord {
     return this.queue.at(index);
   }
@@ -237,6 +243,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
     const pageHeight2 = window.innerHeight / 2;
     const { keypoints3D } = hands[0];
     
+    // @todo use finger index
     const indexFinger = [
       keypoints3D.find(point => point.name === 'index_finger_mcp'),
       keypoints3D.find(point => point.name === 'index_finger_tip')
@@ -262,9 +269,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
     cursor.element.style.top = `${cursor.position.y}px`;
   }
 
-  const indexTipQueue = new PointRecordQueue(5);
-  const handCenterQueue = new PointRecordQueue(5);
-
+  // @todo use finger index
   function addToFingerQueue({ keypoints }: Hand, fingerName: string, queue: PointRecordQueue) {
     const tip = keypoints.find(point => point.name === fingerName);
 
@@ -326,46 +331,74 @@ export function createGestureAnalyzer(detector: HandDetector, {
     };
   }
 
+  const indexTipQueue = new PointRecordQueue(5);
+  const palmCenterQueue = new PointRecordQueue(5);
+  const deltaQueue = new PointRecordQueue(90);
+
   function handleSwipeGestures(hands: Hand[]) {
     if (hands.length === 0) {
       indexTipQueue.empty();
-      handCenterQueue.empty();
+      palmCenterQueue.empty();
     }
 
     if (hands.length === 1) {
       // Track index tip motion
       addToFingerQueue(hands[0], 'index_finger_tip', indexTipQueue);
 
+      // Track x/y/time deltas
+      const dx = indexTipQueue.get(-1).x - indexTipQueue.get(-2).x;
+      const dy = indexTipQueue.get(-1).y - indexTipQueue.get(-2).y;
+      const dt = indexTipQueue.get(-1).time - indexTipQueue.get(-2).time;
+
+      deltaQueue.add({
+        x: dx,
+        y: dy,
+        time: dt
+      });
+
       // Track general hand motion
-      const handCenter: PointRecord = {
+      const palmCenter: PointRecord = {
         x: 0,
         y: 0,
         time: Date.now()
       };
 
-      for (const { x, y } of hands[0].keypoints) {
-        handCenter.x += x;
-        handCenter.y += y;
+      const palmPoints = [
+        hands[0].keypoints[0],
+        hands[0].keypoints[5],
+        hands[0].keypoints[9],
+        hands[0].keypoints[13],
+        hands[0].keypoints[17]
+      ];
+
+      for (const { x, y } of palmPoints) {
+        palmCenter.x += x;
+        palmCenter.y += y;
       }
 
-      handCenter.x /= hands[0].keypoints.length;
-      handCenter.y /= hands[0].keypoints.length;
+      palmCenter.x /= palmPoints.length;
+      palmCenter.y /= palmPoints.length;
 
-      handCenterQueue.add(handCenter)
+      palmCenterQueue.add(palmCenter)
+    } else {
+      deltaQueue.add({
+        x: 0,
+        y: 0,
+        time: timeSince(deltaQueue.get(-1)?.time || Date.now())
+      });
     }
 
     if (timeSince(indexTipQueue.get(-1)?.time) < 100) {
       const indexDelta = getLastMotionDelta(indexTipQueue);
-      const handCenterMotion = getAverageMotionDelta(handCenterQueue);
+      const palmCenterMotion = getAverageMotionDelta(palmCenterQueue);
       const indexMagnitude = magnitude(indexDelta);
-      const handCenterMagnitude = magnitude(handCenterMotion);
+      const palmCenterMagnitude = magnitude(palmCenterMotion);
 
-      if (indexMagnitude > 15 && handCenterMagnitude < 3) {
+      if (indexMagnitude > 15 && palmCenterMagnitude < 2) {
         indexTipQueue.empty();
-        handCenterQueue.empty();
+        palmCenterQueue.empty();
 
-        printDebug('Index: ' + indexMagnitude);
-        printDebug('Hand: ' + handCenterMagnitude);
+        printDebug('Hand: ' + palmCenterMagnitude);
 
         if (Math.abs(indexDelta.x) > Math.abs(indexDelta.y)) {
           if (indexDelta.x < 0) {
@@ -402,9 +435,8 @@ export function createGestureAnalyzer(detector: HandDetector, {
       handleSwipeGestures(hands);
 
       if (debug) {
-        drawHands(document.getElementById('hands-canvas') as HTMLCanvasElement, hands);
-        drawYVelocity(document.getElementById('y-canvas') as HTMLCanvasElement);
-        drawXVelocity(document.getElementById('x-canvas') as HTMLCanvasElement);
+        drawHands(document.getElementById('hands-canvas') as HTMLCanvasElement, hands, palmCenterQueue);
+        drawDeltas(deltaQueue);
 
         updateDebugConsole();
       }
@@ -420,7 +452,7 @@ function fillCanvasBackground(canvas: HTMLCanvasElement, ctx: CanvasRenderingCon
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
+function drawHands(canvas: HTMLCanvasElement, hands: Hand[], palmCenterQueue: PointRecordQueue) {
   const ctx = canvas.getContext('2d');
 
   fillCanvasBackground(canvas, ctx);
@@ -435,16 +467,80 @@ function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
       }
     }
   }
+
+  // Palm movement
+  {
+    ctx.strokeStyle = '#f0f';
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+
+    palmCenterQueue.forEach(record => {
+      ctx.lineTo(record.x, record.y);
+    });
+
+    ctx.stroke();
+  }
 }
 
-function drawYVelocity(canvas: HTMLCanvasElement) {
-  const ctx = canvas.getContext('2d');
+function drawDeltas(queue: PointRecordQueue) {
+  const xCanvas = document.getElementById('x-canvas') as HTMLCanvasElement;
+  const yCanvas = document.getElementById('y-canvas') as HTMLCanvasElement;
+  const xCtx = xCanvas.getContext('2d');
+  const yCtx = yCanvas.getContext('2d');
+  const midpoint = xCanvas.height / 2;
 
-  fillCanvasBackground(canvas, ctx);
-}
+  fillCanvasBackground(xCanvas, xCtx);
+  fillCanvasBackground(yCanvas, yCtx);
 
-function drawXVelocity(canvas: HTMLCanvasElement) {
-  const ctx = canvas.getContext('2d');
+  {
+    xCtx.strokeStyle = '#ff0';
+    xCtx.lineWidth = 1;
 
-  fillCanvasBackground(canvas, ctx);
+    xCtx.beginPath();
+    xCtx.lineTo(0, midpoint + 15);
+    xCtx.lineTo(yCanvas.width, midpoint + 15);
+    xCtx.stroke();
+  
+    xCtx.beginPath();
+    xCtx.lineTo(0, midpoint - 15);
+    xCtx.lineTo(yCanvas.width, midpoint - 15);
+    xCtx.stroke();
+  }
+
+  {
+    yCtx.strokeStyle = '#ff0';
+    yCtx.lineWidth = 1;
+
+    yCtx.beginPath();
+    yCtx.lineTo(0, midpoint + 15);
+    yCtx.lineTo(yCanvas.width, midpoint + 15);
+    yCtx.stroke();
+  
+    yCtx.beginPath();
+    yCtx.lineTo(0, midpoint - 15);
+    yCtx.lineTo(yCanvas.width, midpoint - 15);
+    yCtx.stroke();
+  }
+
+  let x = xCanvas.width - 2;
+
+  xCtx.strokeStyle = '#f00';
+  xCtx.lineWidth = 2;
+
+  yCtx.strokeStyle = '#f00';
+  yCtx.lineWidth = 2;
+
+  xCtx.beginPath();
+  yCtx.beginPath();
+
+  queue.forEachReversed(record => {
+    xCtx.lineTo(x, midpoint + record.x);
+    yCtx.lineTo(x, midpoint + record.y);
+
+    x -= 4;
+  });
+
+  xCtx.stroke();
+  yCtx.stroke();
 }

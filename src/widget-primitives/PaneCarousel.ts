@@ -12,6 +12,7 @@ export default class PaneCarousel extends Widget {
   private indexChangeHandler: IndexChangeHandler = null;
   private currentIndex = 0;
   private nextAnimationFrame: number = null;
+  private lastRevolveToTargetTime: number = 0;
 
   private offset: Vector3 = {
     x: 0,
@@ -113,12 +114,16 @@ export default class PaneCarousel extends Widget {
   }
 
   private revolveToTargetRotation(): void {
+    const dt = Math.min(0.1, (Date.now() - this.lastRevolveToTargetTime) / 1000);
+
+    this.lastRevolveToTargetTime = Date.now();
+
     if (Math.abs(this.rotation - this.targetRotation) < 0.1) {
       this.rotation = this.targetRotation;
     } else {
       window.cancelAnimationFrame(this.nextAnimationFrame);
 
-      this.rotation = clerp(this.rotation, this.targetRotation, 0.075);
+      this.rotation = clerp(this.rotation, this.targetRotation, dt * 5);
       this.nextAnimationFrame = window.requestAnimationFrame(() => this.revolveToTargetRotation());
     }
 

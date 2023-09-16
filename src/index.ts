@@ -13,7 +13,7 @@ async function initializeGestureAnalyzer() {
 
   setInterval(() => {
     analyzer.analyze(video);
-  }, 50);
+  }, 20);
 
   return analyzer;
 }
