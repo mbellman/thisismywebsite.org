@@ -232,59 +232,73 @@ export function createGestureAnalyzer(detector: HandDetector, {
     }
   }
 
-  let lastX: number;
-  let lastY: number;
+  const cursorQueue = new PointRecordQueue(4);
+  let dominantHandName: string;
+
+  function getTargetHand(hands: Hand[]): Hand {
+    switch (hands.length) {
+      case 0:
+        return null;
+      case 1:
+        dominantHandName = hands[0].handedness;
+
+        return hands[0];
+      case 2:
+        return hands.find(hand => hand.handedness === dominantHandName) || hands[0];
+    }
+  }
 
   function handleGestureCursor(hands: Hand[]) {
-    if (hands.length !== 1) {
+    const hand = getTargetHand(hands);
+
+    if (!hand) {
       cursor.element.style.opacity = '0';
 
       return;
     }
 
+    const { keypoints3D } = hand;
     const pageWidth2 = window.innerWidth / 2;
     const pageHeight2 = window.innerHeight / 2;
-    const { keypoints3D } = hands[0];
     
-    // @todo use finger index
-    const indexFinger = [
-      keypoints3D.find(point => point.name === 'index_finger_mcp'),
-      keypoints3D.find(point => point.name === 'index_finger_tip')
-    ];
+    const indexBase = keypoints3D[5];
+    const indexTip = keypoints3D[8];
 
     const v: Point3D = normalize({
-      x: indexFinger.at(-1).x - indexFinger[0].x,
-      y: indexFinger.at(-1).y - indexFinger[0].y,
-      z: indexFinger.at(-1).z - indexFinger[0].z
+      x: indexTip.x - indexBase.x,
+      y: indexTip.y - indexBase.y,
+      z: indexTip.z - indexBase.z
     });
 
-    if (v.z > 0) {
-      cursor.element.style.opacity = '0';
-
-      return;
-    }
-
-    let bias =  1.5 - Math.abs(Math.abs(v.x) - Math.abs(v.y));
+    let bias =  1.5 - 0.5 * Math.abs(Math.abs(v.x) - Math.abs(v.y));
     if (bias < 1) bias = 1;
 
     v.x *= bias;
     v.y *= bias;
 
-    const cx = (pageWidth2 - v.x * pageWidth2);
-    const cy = (pageHeight2 + v.y * pageHeight2);
+    const sx = (pageWidth2 - v.x * pageWidth2);
+    const sy = (pageHeight2 + v.y * pageHeight2);
 
-    const wcx = (cx * 0.25 + (lastX || cx) * 1.75) / 2;
-    const wcy = (cy * 0.25 + (lastY || cy) * 1.75) / 2;
+    const lastX = cursorQueue.get(-1)?.x || sx;
+    const lastY = cursorQueue.get(-1)?.y || sy;
 
-    lastX = wcx;
-    lastY = wcy;
+    const cx = (sx * 0.25 + (lastX || sx) * 1.75) / 2;
+    const cy = (sy * 0.25 + (lastY || sy) * 1.75) / 2;
 
-    cursor.position.x = wcx;
-    cursor.position.y = wcy;
+    cursor.position.x = Math.round(cx);
+    cursor.position.y = Math.round(cy);
 
     cursor.element.style.opacity = '1';
     cursor.element.style.left = `${cursor.position.x}px`;
     cursor.element.style.top = `${cursor.position.y}px`;
+
+    cursorQueue.add({
+      x: cursor.position.x,
+      y: cursor.position.y,
+      time: Date.now()
+    });
+
+    printDebug(`${dominantHandName}: ${cursor.position.x}, ${cursor.position.y}`);
   }
 
   // @todo use finger index
@@ -357,15 +371,21 @@ export function createGestureAnalyzer(detector: HandDetector, {
   const deltaQueue = new PointRecordQueue(90);
 
   function handleSwipeGestures(hands: Hand[]) {
-    if (hands.length === 0) {
+    const hand = getTargetHand(hands);
+
+    if (!hand) {
       indexTipQueue.empty();
       palmCenterQueue.empty();
-    }
 
-    if (hands.length === 1) {
+      deltaQueue.add({
+        x: 0,
+        y: 0,
+        time: timeSince(deltaQueue.get(-1)?.time || Date.now())
+      });
+    } else {
       // Track index tip motion
       // @todo use finger index
-      addToFingerQueue(hands[0], 'index_finger_tip', indexTipQueue);
+      addToFingerQueue(hand, 'index_finger_tip', indexTipQueue);
 
       // Track x/y/time deltas
       const dx = indexTipQueue.get(-1).x - indexTipQueue.get(-2).x;
@@ -386,11 +406,11 @@ export function createGestureAnalyzer(detector: HandDetector, {
       };
 
       const palmPoints = [
-        hands[0].keypoints[0],
-        hands[0].keypoints[5],
-        hands[0].keypoints[9],
-        hands[0].keypoints[13],
-        hands[0].keypoints[17]
+        hand.keypoints[0],
+        hand.keypoints[5],
+        hand.keypoints[9],
+        hand.keypoints[13],
+        hand.keypoints[17]
       ];
 
       for (const { x, y } of palmPoints) {
@@ -402,12 +422,6 @@ export function createGestureAnalyzer(detector: HandDetector, {
       palmCenter.y /= palmPoints.length;
 
       palmCenterQueue.add(palmCenter)
-    } else {
-      deltaQueue.add({
-        x: 0,
-        y: 0,
-        time: timeSince(deltaQueue.get(-1)?.time || Date.now())
-      });
     }
 
     if (timeSince(indexTipQueue.get(-1)?.time) < 100) {
@@ -419,8 +433,6 @@ export function createGestureAnalyzer(detector: HandDetector, {
       if (indexMagnitude > 15 && palmCenterMagnitude < 2) {
         // indexTipQueue.empty();
         palmCenterQueue.empty();
-
-        printDebug('Hand: ' + palmCenterMagnitude);
 
         if (Math.abs(indexDelta.x) > Math.abs(indexDelta.y)) {
           if (indexDelta.x < 0) {

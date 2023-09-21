@@ -13,9 +13,21 @@ async function initializeGestureAnalyzer() {
     debug: true
   });
 
+  let paused = false;
+
+  window.addEventListener('blur', () => {
+    paused = true;
+  });
+
+  window.addEventListener('focus', () => {
+    paused = false;
+  });
+
   setInterval(() => {
-    analyzer.analyze(video);
-  }, 0);
+    if (!paused) {
+      analyzer.analyze(video);
+    }
+  }, 20);
 
   return analyzer;
 }
