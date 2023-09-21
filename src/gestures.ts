@@ -235,7 +235,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
   const cursorQueue = new PointRecordQueue(4);
   let dominantHandName: string;
 
-  function getTargetHand(hands: Hand[]): Hand {
+  function getActiveHand(hands: Hand[]): Hand {
     switch (hands.length) {
       case 0:
         return null;
@@ -249,7 +249,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
   }
 
   function handleGestureCursor(hands: Hand[]) {
-    const hand = getTargetHand(hands);
+    const hand = getActiveHand(hands);
 
     if (!hand) {
       cursor.element.style.opacity = '0';
@@ -371,7 +371,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
   const deltaQueue = new PointRecordQueue(90);
 
   function handleSwipeGestures(hands: Hand[]) {
-    const hand = getTargetHand(hands);
+    const hand = getActiveHand(hands);
 
     if (!hand) {
       indexTipQueue.empty();
