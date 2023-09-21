@@ -8,6 +8,7 @@ export function initializeDebugConsole() {
   container.style.top = '0';
   container.style.right = '0';
   container.style.fontWeight = 'bold';
+  container.style.pointerEvents = 'none';
   container.style.color = '#fff';
   container.style.zIndex = '10';
 

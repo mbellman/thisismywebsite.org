@@ -232,6 +232,9 @@ export function createGestureAnalyzer(detector: HandDetector, {
     }
   }
 
+  let lastX: number;
+  let lastY: number;
+
   function handleGestureCursor(hands: Hand[]) {
     if (hands.length !== 1) {
       cursor.element.style.opacity = '0';
@@ -261,8 +264,23 @@ export function createGestureAnalyzer(detector: HandDetector, {
       return;
     }
 
-    cursor.position.x = lerp(cursor.position.x, pageWidth2 - pageWidth2 * v.x, 0.5);
-    cursor.position.y = lerp(cursor.position.y, pageHeight2 + pageHeight2 * v.y, 0.5);
+    let bias =  1.5 - Math.abs(Math.abs(v.x) - Math.abs(v.y));
+    if (bias < 1) bias = 1;
+
+    v.x *= bias;
+    v.y *= bias;
+
+    const cx = (pageWidth2 - v.x * pageWidth2);
+    const cy = (pageHeight2 + v.y * pageHeight2);
+
+    const wcx = (cx * 0.25 + (lastX || cx) * 1.75) / 2;
+    const wcy = (cy * 0.25 + (lastY || cy) * 1.75) / 2;
+
+    lastX = wcx;
+    lastY = wcy;
+
+    cursor.position.x = wcx;
+    cursor.position.y = wcy;
 
     cursor.element.style.opacity = '1';
     cursor.element.style.left = `${cursor.position.x}px`;
@@ -272,10 +290,13 @@ export function createGestureAnalyzer(detector: HandDetector, {
   // @todo use finger index
   function addToFingerQueue({ keypoints }: Hand, fingerName: string, queue: PointRecordQueue) {
     const tip = keypoints.find(point => point.name === fingerName);
+    const last = queue.get(-1);
+    const wx = (tip.x * 0.25 + (last?.x || tip.x) * 1.75) / 2;
+    const wy = (tip.y * 0.25 + (last?.y || tip.y) * 1.75) / 2;
 
     queue.add({
-      x: Math.round(tip.x),
-      y: Math.round(tip.y),
+      x: Math.round(wx),
+      y: Math.round(wy),
       time: Date.now()
     });
   }
@@ -331,7 +352,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
     };
   }
 
-  const indexTipQueue = new PointRecordQueue(5);
+  const indexTipQueue = new PointRecordQueue(20);
   const palmCenterQueue = new PointRecordQueue(5);
   const deltaQueue = new PointRecordQueue(90);
 
@@ -343,6 +364,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
 
     if (hands.length === 1) {
       // Track index tip motion
+      // @todo use finger index
       addToFingerQueue(hands[0], 'index_finger_tip', indexTipQueue);
 
       // Track x/y/time deltas
@@ -395,7 +417,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
       const palmCenterMagnitude = magnitude(palmCenterMotion);
 
       if (indexMagnitude > 15 && palmCenterMagnitude < 2) {
-        indexTipQueue.empty();
+        // indexTipQueue.empty();
         palmCenterQueue.empty();
 
         printDebug('Hand: ' + palmCenterMagnitude);
@@ -435,7 +457,9 @@ export function createGestureAnalyzer(detector: HandDetector, {
       handleSwipeGestures(hands);
 
       if (debug) {
-        drawHands(document.getElementById('hands-canvas') as HTMLCanvasElement, hands, palmCenterQueue);
+        const mainCanvas = document.getElementById('hands-canvas') as HTMLCanvasElement
+        drawHands(mainCanvas, hands);
+        drawPath(mainCanvas, indexTipQueue);
         drawDeltas(deltaQueue);
 
         updateDebugConsole();
@@ -452,7 +476,7 @@ function fillCanvasBackground(canvas: HTMLCanvasElement, ctx: CanvasRenderingCon
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-function drawHands(canvas: HTMLCanvasElement, hands: Hand[], palmCenterQueue: PointRecordQueue) {
+function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
   const ctx = canvas.getContext('2d');
 
   fillCanvasBackground(canvas, ctx);
@@ -467,20 +491,21 @@ function drawHands(canvas: HTMLCanvasElement, hands: Hand[], palmCenterQueue: Po
       }
     }
   }
+}
 
-  // Palm movement
-  {
-    ctx.strokeStyle = '#f0f';
-    ctx.lineWidth = 2;
+function drawPath(canvas: HTMLCanvasElement, path: PointRecordQueue) {
+  const ctx = canvas.getContext('2d');
 
-    ctx.beginPath();
+  ctx.strokeStyle = '#f0f';
+  ctx.lineWidth = 2;
 
-    palmCenterQueue.forEach(record => {
-      ctx.lineTo(record.x, record.y);
-    });
+  ctx.beginPath();
 
-    ctx.stroke();
-  }
+  path.forEach(record => {
+    ctx.lineTo(record.x, record.y);
+  });
+
+  ctx.stroke();
 }
 
 function drawDeltas(queue: PointRecordQueue) {

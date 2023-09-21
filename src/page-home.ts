@@ -8,8 +8,8 @@ import { debounce, lerp, multiply, rgb, toRgb } from './utilities';
 import { animate, tween } from './animation';
 import { projects } from './layout';
 import { GestureAnalyzer } from './gestures';
-import './page-home.scss';
 import { printDebug } from './debug';
+import './page-home.scss';
 
 function createProjectsCarousel(stage: Stage): PaneCarousel {
   const carousel = new PaneCarousel();

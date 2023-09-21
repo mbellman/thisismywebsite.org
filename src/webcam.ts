@@ -10,19 +10,24 @@ export async function getCameraFeed(): Promise<HTMLVideoElement> {
 
   document.body.appendChild(video);
 
-  await window.navigator.mediaDevices.getUserMedia({
-    video: {
-      width: 320,
-      height: 240,
-      frameRate: 30
-    }
-  }).then(stream => {
-    video.srcObject = stream;
+  return new Promise((resolve, reject) => {
+    window.navigator.mediaDevices.getUserMedia({
+      video: {
+        width: 320,
+        height: 240,
+        frameRate: 30
+      }
+    }).then(stream => {
+      video.srcObject = stream;
+  
+      video.onloadedmetadata = () => {
+        video.play();
 
-    video.onloadedmetadata = () => video.play();
-  }).catch(() => {
-    // ...
+        resolve(video);
+      };
+    }).catch(() => {
+      // @todo
+      reject(null);
+    });
   });
-
-  return video;
 }
