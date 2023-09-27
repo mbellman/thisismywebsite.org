@@ -27,7 +27,7 @@ async function initializeGestureAnalyzer() {
     if (!paused) {
       analyzer.analyze(video);
     }
-  }, 20);
+  }, 0);
 
   return analyzer;
 }

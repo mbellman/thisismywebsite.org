@@ -181,7 +181,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
 
   if (debug) {
     createDebugCanvas({
-      width: 320,
+      width: 480,
       height: 240,
       top: 0,
       id: 'hands-canvas'
@@ -490,6 +490,7 @@ function fillCanvasBackground(canvas: HTMLCanvasElement, ctx: CanvasRenderingCon
 
 function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
   const ctx = canvas.getContext('2d');
+  const scale = 480 / 800;
 
   fillCanvasBackground(canvas, ctx);
 
@@ -499,7 +500,7 @@ function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
 
     for (const hand of hands) {
       for (const { x, y } of hand.keypoints) {
-        ctx.fillRect(x - 2, y - 2, 4, 4);
+        ctx.fillRect(x * scale - 2, y * scale - 2, 4, 4);
       }
     }
   }
@@ -507,6 +508,7 @@ function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
 
 function drawPath(canvas: HTMLCanvasElement, path: PointRecordQueue) {
   const ctx = canvas.getContext('2d');
+  const scale = 480 / 800;
 
   ctx.strokeStyle = '#f0f';
   ctx.lineWidth = 2;
@@ -514,7 +516,7 @@ function drawPath(canvas: HTMLCanvasElement, path: PointRecordQueue) {
   ctx.beginPath();
 
   path.forEach(record => {
-    ctx.lineTo(record.x, record.y);
+    ctx.lineTo(record.x * scale, record.y * scale);
   });
 
   ctx.stroke();

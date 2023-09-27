@@ -1,8 +1,11 @@
 export async function getCameraFeed(): Promise<HTMLVideoElement> {
   const video = document.createElement('video');
 
-  video.width = 320;
-  video.height = 240;
+  const width = 800;
+  const height = 400;
+
+  video.width = width;
+  video.height = height;
   video.style.position = 'absolute';
   video.style.top = '0';
   video.style.left = '0';
@@ -13,8 +16,8 @@ export async function getCameraFeed(): Promise<HTMLVideoElement> {
   return new Promise((resolve, reject) => {
     window.navigator.mediaDevices.getUserMedia({
       video: {
-        width: 320,
-        height: 240,
+        width,
+        height,
         frameRate: 30
       }
     }).then(stream => {
