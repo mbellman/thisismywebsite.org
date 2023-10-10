@@ -11,8 +11,13 @@ export default class PaneCarousel extends Widget {
   private rotation = 0;
   private indexChangeHandler: IndexChangeHandler = null;
   private currentIndex = 0;
+  private lastRevolveToTargetTime = 0;
   private nextAnimationFrame: number = null;
-  private lastRevolveToTargetTime: number = 0;
+
+  private dragging = false;
+  private dragStartX = 0;
+  private dragStartRotation = 0;
+  private lastRevolveWithMomentumTime = 0;
 
   private offset: Vector3 = {
     x: 0,
@@ -20,10 +25,16 @@ export default class PaneCarousel extends Widget {
     z: 0
   };
 
+  public constructor() {
+    super()
+
+    this.bindStaticEvents();
+  }
+
   public addPane(pane: Pane): void {
     const index = this.panes.length;
 
-    this.bindEvents(pane, index);
+    this.bindPaneEvents(pane, index);
 
     this.panes.push(pane);
     this.revolve(0);
@@ -86,37 +97,50 @@ export default class PaneCarousel extends Widget {
     return 360 - (this.currentIndex / this.panes.length) * 360;
   }
 
-  private bindEvents(pane: Pane, index: number): void {
-    pane.$frame.addEventListener('click', () => this.focusByIndex(index));
-
-    let dragging = false;
-    let startRotation: number;
-    let startX: number;
+  private bindPaneEvents(pane: Pane, index: number): void {
+    pane.$frame.addEventListener('click', () => {
+      this.focusByIndex(index);
+    });
 
     pane.$frame.addEventListener('mousedown', (e) => {
-      dragging = true;
-      startRotation = this.rotation;
-      startX = e.clientX;
+      this.dragging = true;
+      this.dragStartX = e.clientX;
+      this.dragStartRotation = this.rotation;
 
       e.preventDefault();
     });
+  }
 
-    document.addEventListener('mousemove', (e) => {
-      if (dragging) {
-        const deltaX = e.clientX - startX;
+  private bindStaticEvents(): void {
+    let previousMouseX = 0;
+    let lastDeltaX = 0;
 
-        this.rotation = mod(startRotation + deltaX * 0.05, 360);
+    document.addEventListener('mousemove', e => {
+      if (this.dragging) {
+        const totalDeltaX = e.clientX - this.dragStartX;
+        const deltaX = e.clientX - previousMouseX;
+
+        if (Math.abs(deltaX) > 0) {
+          lastDeltaX = e.clientX - previousMouseX;
+        }
+
+        previousMouseX = e.clientX;
+
+        this.rotation = mod(this.dragStartRotation + totalDeltaX * 0.05, 360);
 
         this.revolve(this.rotation);
       }
     });
 
-    document.addEventListener('mouseup', () => {
-      dragging = false;
+    document.addEventListener('mouseup', e => {
+      this.dragging = false;
 
-      const targetIndex = this.panes.length - Math.round(this.panes.length * (this.rotation / 360));
+      if (lastDeltaX !== 0) {
+        this.revolveWithMomentum(lastDeltaX * 0.1);
+      }
 
-      this.focusByIndex(targetIndex);
+      previousMouseX = 0;
+      lastDeltaX = 0;
     });
   }
 
@@ -162,5 +186,24 @@ export default class PaneCarousel extends Widget {
     }
 
     this.revolve(this.rotation);
+  }
+
+  private revolveWithMomentum(momentum: number): void {
+    window.cancelAnimationFrame(this.nextAnimationFrame);
+
+    if (Math.abs(momentum) < 0.01) {
+      this.lastRevolveWithMomentumTime = 0;
+
+      return;
+    }
+
+    const dt = Math.min(0.025, (Date.now() - this.lastRevolveWithMomentumTime) / 1000);
+
+    this.lastRevolveWithMomentumTime = Date.now();
+    this.rotation = mod(this.rotation + momentum, 360);
+
+    this.revolve(this.rotation);
+
+    this.nextAnimationFrame = window.requestAnimationFrame(() => this.revolveWithMomentum(momentum * 0.975));
   }
 }
