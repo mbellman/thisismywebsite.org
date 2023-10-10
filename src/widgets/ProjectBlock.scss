@@ -11,6 +11,7 @@
     box-shadow: 0 1px 3px 0 black;
     display: flex;
     margin: 10px 0;
+    overflow: hidden;
 
     img {
       width: 100%;
@@ -19,5 +20,53 @@
 
   &--description {
     font-size: 14px;
+  }
+
+  &--links {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    position: relative;
+    z-index: 5;
+  }
+
+  &--github-button {
+    border: 0;
+    background-color: #ddd;
+    box-shadow: 0 0 0px 1px #aaa;
+    border-top: 1px solid #fff;
+    color: #555;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    padding: 5px 15px 8px;
+    font-weight: bold;
+    margin: 0 10px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #ccc;
+      color: #333;
+    }
+  }
+
+  &--demo-button {
+    border: 0;
+    background-color: #5f5;
+    cursor: pointer;
+    font-weight: bold;
+    color: #060;
+    padding: 5px 15px;
+    box-shadow: 0 0 5px 0 #afa;
+    margin: 0 10px;
+    transform: skew(-15deg, 0);
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #afa;
+      color: #0b0;
+      transform: skew(-15deg, 0) scale(1.1);
+    }
   }
 }

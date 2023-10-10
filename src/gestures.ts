@@ -202,7 +202,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
     });
   }
 
-  let lastEmittedEventTime: number = 0;
+  let lastEmittedEventTime = 0;
   let lastEmittedEventName: string;
   let suppressedEventName: string;
 
@@ -248,6 +248,10 @@ export function createGestureAnalyzer(detector: HandDetector, {
     }
   }
 
+  let maxVelocity = 0;
+  let lastVx = 0;
+  let lastVy = 0;
+
   function handleGestureCursor(hands: Hand[]) {
     const hand = getActiveHand(hands);
 
@@ -260,7 +264,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
     const { keypoints3D } = hand;
     const pageWidth2 = window.innerWidth / 2;
     const pageHeight2 = window.innerHeight / 2;
-    
+
     const indexBase = keypoints3D[5];
     const indexTip = keypoints3D[8];
 
@@ -282,8 +286,18 @@ export function createGestureAnalyzer(detector: HandDetector, {
     const lastX = cursorQueue.get(-1)?.x || sx;
     const lastY = cursorQueue.get(-1)?.y || sy;
 
-    const cx = (sx * 0.25 + (lastX || sx) * 1.75) / 2;
-    const cy = (sy * 0.25 + (lastY || sy) * 1.75) / 2;
+    const velocity = Math.abs(v.x - lastVx) + Math.abs(v.y - lastVy);
+
+    if (velocity > maxVelocity) maxVelocity = velocity;
+
+    lastVx = v.x;
+    lastVy = v.y;
+
+    const w1 = 0.25;// + velocity / maxVelocity;
+    const w2 = 1.75;//2 - w1;
+
+    const cx = (sx * w1 + lastX * w2) / 2;
+    const cy = (sy * w1 + lastY * w2) / 2;
 
     cursor.position.x = Math.round(cx);
     cursor.position.y = Math.round(cy);
@@ -470,6 +484,7 @@ export function createGestureAnalyzer(detector: HandDetector, {
 
       if (debug) {
         const mainCanvas = document.getElementById('hands-canvas') as HTMLCanvasElement
+
         drawHands(mainCanvas, hands);
         drawPath(mainCanvas, indexTipQueue);
         drawDeltas(deltaQueue);
@@ -490,7 +505,8 @@ function fillCanvasBackground(canvas: HTMLCanvasElement, ctx: CanvasRenderingCon
 
 function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
   const ctx = canvas.getContext('2d');
-  const scale = 480 / 800;
+  const xScale = canvas.width / 750;
+  const yScale = canvas.height / 400;
 
   fillCanvasBackground(canvas, ctx);
 
@@ -500,7 +516,7 @@ function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
 
     for (const hand of hands) {
       for (const { x, y } of hand.keypoints) {
-        ctx.fillRect(x * scale - 2, y * scale - 2, 4, 4);
+        ctx.fillRect(x * xScale - 2, y * yScale - 2, 4, 4);
       }
     }
   }
@@ -508,7 +524,8 @@ function drawHands(canvas: HTMLCanvasElement, hands: Hand[]) {
 
 function drawPath(canvas: HTMLCanvasElement, path: PointRecordQueue) {
   const ctx = canvas.getContext('2d');
-  const scale = 480 / 800;
+  const xScale = canvas.width / 750;
+  const yScale = canvas.height / 400;
 
   ctx.strokeStyle = '#f0f';
   ctx.lineWidth = 2;
@@ -516,7 +533,7 @@ function drawPath(canvas: HTMLCanvasElement, path: PointRecordQueue) {
   ctx.beginPath();
 
   path.forEach(record => {
-    ctx.lineTo(record.x * scale, record.y * scale);
+    ctx.lineTo(record.x * xScale, record.y * yScale);
   });
 
   ctx.stroke();

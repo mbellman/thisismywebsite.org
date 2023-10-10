@@ -1,7 +1,7 @@
 export async function getCameraFeed(): Promise<HTMLVideoElement> {
   const video = document.createElement('video');
 
-  const width = 800;
+  const width = 750;
   const height = 400;
 
   video.width = width;
@@ -9,7 +9,7 @@ export async function getCameraFeed(): Promise<HTMLVideoElement> {
   video.style.position = 'absolute';
   video.style.top = '0';
   video.style.left = '0';
-  video.style.visibility = 'hidden';
+  // video.style.visibility = 'hidden';
 
   document.body.appendChild(video);
 
@@ -18,7 +18,10 @@ export async function getCameraFeed(): Promise<HTMLVideoElement> {
       video: {
         width,
         height,
-        frameRate: 30
+        frameRate: {
+          exact: 30,
+          min: 30
+        }
       }
     }).then(stream => {
       video.srcObject = stream;

@@ -114,7 +114,7 @@ export default class PaneCarousel extends Widget {
   }
 
   private revolveToTargetRotation(): void {
-    const dt = Math.min(0.1, (Date.now() - this.lastRevolveToTargetTime) / 1000);
+    const dt = Math.min(0.025, (Date.now() - this.lastRevolveToTargetTime) / 1000);
 
     this.lastRevolveToTargetTime = Date.now();
 

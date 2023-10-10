@@ -33,9 +33,9 @@ async function initializeGestureAnalyzer() {
 }
 
 async function main() {
-  const analyzer = await initializeGestureAnalyzer();
+  // const analyzer = await initializeGestureAnalyzer();
 
-  // setupPage(analyzer);
+  setupPage();
 }
 
 main();

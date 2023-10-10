@@ -10,17 +10,22 @@ export const projects: Project[] = [
   {
     name: 'Gamma (2021, 2022)',
     imageUrl: 'https://i.imgur.com/yltQhss.png',
-    description: 'A performance-oriented 3D engine in C++, using SDL for the video/multimedia layer and an OpenGL graphics backend.'
+    description: 'A performance-oriented 3D engine in C++, using SDL for the video/multimedia layer and an OpenGL graphics backend.',
+    githubUrl: 'https://github.com/mbellman/gamma'
   },
   {
     name: 'Sound Painter (2021)',
     imageUrl: 'https://i.imgur.com/cYonbPK.png',
-    description: 'Visualizes music in real time using painterly brush strokes. Drag and drop a .mp3 or .wav file in to see the effect.'
+    description: 'Visualizes music in real time using painterly brush strokes. Drag and drop a .mp3 or .wav file in to see the effect.',
+    githubUrl: 'https://github.com/mbellman/sound-painter',
+    demoUrl: 'https://thisismywebsite.org/sound-painter'
   },
   {
     name: 'Pokemap (2021)',
     imageUrl: 'https://i.imgur.com/nXKIMm8.png',
-    description: 'Drag around a large, procedurally-generated map in the style of Pokemon Gold & Silver.'
+    description: 'Drag around a large, procedurally-generated map in the style of Pokemon Gold & Silver.',
+    githubUrl: 'https://github.com/mbellman/worldmap',
+    demoUrl: 'https://thisismywebsite.org/pokemap/'
   },
   {
     name: 'Polygarden (2020)',

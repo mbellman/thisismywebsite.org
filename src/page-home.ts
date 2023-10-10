@@ -50,30 +50,30 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
   }));
 }
 
-export function setupPage(analyzer: GestureAnalyzer) {
+export function setupPage(analyzer?: GestureAnalyzer) {
   const stage = new Stage();
-
-  // const { intro, subIntro } = stage.set({
-  //   intro: {
-  //     widget: new Text3D('I\'m Malcolm.'),
-  //     position: { y: -100 }
-  //   },
-  //   subIntro: {
-  //     widget: new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.'),
-  //     position: { y: -50 }
-  //   }
-  // });
 
   const { intro, subIntro } = stage.set({
     intro: {
-      widget: new Text3D('Dummy text'),
+      widget: new Text3D('I\'m Malcolm.'),
       position: { y: -100 }
     },
     subIntro: {
-      widget: new Text3D('More dummy text down here, doesn\'t particularly matter what it says'),
+      widget: new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.'),
       position: { y: -50 }
     }
   });
+
+  // const { intro, subIntro } = stage.set({
+  //   intro: {
+  //     widget: new Text3D('Dummy text'),
+  //     position: { y: -100 }
+  //   },
+  //   subIntro: {
+  //     widget: new Text3D('More dummy text down here, doesn\'t particularly matter what it says'),
+  //     position: { y: -50 }
+  //   }
+  // });
 
   const projectsHeading = stage.add(
     new Text3D('Cool Projects')
@@ -141,19 +141,19 @@ export function setupPage(analyzer: GestureAnalyzer) {
     levelIndex = level;
   }, 500);
 
-  analyzer.on('swipeUp', delta => {
+  analyzer?.on('swipeUp', delta => {
     goToLevel(levelIndex + 1);
 
     printDebug(`${delta.x}, ${delta.y}`);
   });
 
-  analyzer.on('swipeDown', delta => {
+  analyzer?.on('swipeDown', delta => {
     goToLevel(levelIndex - 1);
 
     printDebug(`${delta.x}, ${delta.y}`);
   });
 
-  analyzer.on('swipeLeft', delta => {
+  analyzer?.on('swipeLeft', delta => {
     if (levelIndex === 1) {
       projectsCarousel.focusByIndex(projectsCarousel.getCurrentIndex() + 1);
     }
@@ -161,7 +161,7 @@ export function setupPage(analyzer: GestureAnalyzer) {
     printDebug(`${delta.x}, ${delta.y}`);
   });
 
-  analyzer.on('swipeRight', delta => {
+  analyzer?.on('swipeRight', delta => {
     if (levelIndex === 1) {
       projectsCarousel.focusByIndex(projectsCarousel.getCurrentIndex() - 1);
     }
