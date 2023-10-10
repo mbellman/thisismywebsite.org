@@ -23,7 +23,7 @@ export default class PaneCarousel extends Widget {
   public addPane(pane: Pane): void {
     const index = this.panes.length;
 
-    pane.onClick(() => this.focusByIndex(index));
+    this.bindEvents(pane, index);
 
     this.panes.push(pane);
     this.revolve(0);
@@ -84,6 +84,40 @@ export default class PaneCarousel extends Widget {
 
   private get targetRotation(): number {
     return 360 - (this.currentIndex / this.panes.length) * 360;
+  }
+
+  private bindEvents(pane: Pane, index: number): void {
+    pane.$frame.addEventListener('click', () => this.focusByIndex(index));
+
+    let dragging = false;
+    let startRotation: number;
+    let startX: number;
+
+    pane.$frame.addEventListener('mousedown', (e) => {
+      dragging = true;
+      startRotation = this.rotation;
+      startX = e.clientX;
+
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (dragging) {
+        const deltaX = e.clientX - startX;
+
+        this.rotation = mod(startRotation + deltaX * 0.05, 360);
+
+        this.revolve(this.rotation);
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      dragging = false;
+
+      const targetIndex = this.panes.length - Math.round(this.panes.length * (this.rotation / 360));
+
+      this.focusByIndex(targetIndex);
+    });
   }
 
   private revolve(degrees: number): void {

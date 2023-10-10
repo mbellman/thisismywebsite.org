@@ -9,6 +9,10 @@ export interface Vector3 {
 }
 
 export default class Pane extends Widget {
+  public get $frame(): HTMLDivElement {
+    return this.root.querySelector<HTMLDivElement>('.w-pane--frame');
+  }
+
   public append(element: HTMLElement): void {
     this.$frame.appendChild(element);
   }
@@ -50,9 +54,5 @@ export default class Pane extends Widget {
     frame.appendChild(shimmer);
   
     return pane;
-  }
-
-  private get $frame(): HTMLDivElement {
-    return this.root.querySelector<HTMLDivElement>('.w-pane--frame');
   }
 }
