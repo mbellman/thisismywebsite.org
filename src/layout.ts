@@ -30,36 +30,45 @@ export const projects: Project[] = [
   {
     name: 'Polygarden (2020)',
     imageUrl: 'https://i.imgur.com/rwhLvrw.jpeg',
-    description: 'A gardening game demo.'
+    description: 'A gardening game demo.',
+    githubUrl: 'https://github.com/mbellman/polygarden'
   },
   {
     name: 'Quant (2020)',
     imageUrl: 'https://i.imgur.com/q8JlvMZ.png',
-    description: 'A stock charting tool with a handful of technicals and some primitive, but largely unreliable, reversal/trend detection techniques.'
+    description: 'A stock charting tool with a handful of technicals and some primitive, but largely unreliable, reversal/trend detection techniques.',
+    githubUrl: 'https://github.com/mbellman/quant'
   },
   {
     name: 'Adamantine (2019, 2020)',
     imageUrl: 'https://i.imgur.com/23HsqZG.png',
-    description: 'A first effort at writing a hardware-accelerated 3D engine from scratch.'
+    description: 'A first effort at writing a hardware-accelerated 3D engine from scratch.',
+    githubUrl: 'https://github.com/mbellman/adamantine'
   },
   {
     name: 'Dungeon Crawler (2019)',
     imageUrl: 'https://i.imgur.com/bj1Jgvx.png',
-    description: 'An unfinished tile-based dungeon crawler with an Ancient Egyptian aesthetic.'
+    description: 'An unfinished tile-based dungeon crawler with an Ancient Egyptian aesthetic.',
+    githubUrl: 'https://github.com/mbellman/dungeon-crawler'
   },
   {
     name: 'SoftEngine (2019)',
     imageUrl: 'https://i.imgur.com/4zBzFVl.png',
-    description: 'A 3D software rasterizer written in C++, using an SDL video/multimedia layer.'
+    description: 'A 3D software rasterizer written in C++, using an SDL video/multimedia layer.',
+    githubUrl: 'https://github.com/mbellman/softengine'
   },
   {
     name: 'Polybabel (2018)',
     imageUrl: 'https://i.imgur.com/STxm5vO.png',
-    description: 'A prototype Java-to-JavaScript transpiler, with architectural support for other languages.'
+    description: 'A prototype Java-to-JavaScript transpiler, with architectural support for other languages.',
+    githubUrl: 'https://github.com/mbellman/polybabel',
+    demoUrl: 'https://thisismywebsite.org/polybabel'
   },
   {
     name: 'Cosmodrone (2016)',
     imageUrl: 'https://i.imgur.com/V2z4O2P.png',
-    description: 'A prototype space drone/station maintenance game written in a custom 2D engine.'
+    description: 'A prototype space drone/station maintenance game written in a custom 2D engine.',
+    githubUrl: 'https://github.com/mbellman/cosmodrone',
+    demoUrl: 'https://thisismywebsite.org/games/cosmodrone'
   }
 ];
