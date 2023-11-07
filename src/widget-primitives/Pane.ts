@@ -2,9 +2,12 @@ import Widget from './Widget';
 import './Pane.scss';
 
 // @todo move elsewhere
-export interface Vector3 {
+export interface Vector2 {
   x: number;
   y: number;
+}
+
+export interface Vector3 extends Vector2 {
   z: number;
 }
 

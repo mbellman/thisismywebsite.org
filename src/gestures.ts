@@ -444,8 +444,8 @@ export function createGestureAnalyzer(detector: HandDetector, {
       const indexMagnitude = magnitude(indexDelta);
       const palmCenterMagnitude = magnitude(palmCenterMotion);
 
-      if (indexMagnitude > 15 && palmCenterMagnitude < 2) {
-        // indexTipQueue.empty();
+      if (indexMagnitude > 20 && palmCenterMagnitude < 2) {
+        indexTipQueue.empty();
         palmCenterQueue.empty();
 
         if (Math.abs(indexDelta.x) > Math.abs(indexDelta.y)) {

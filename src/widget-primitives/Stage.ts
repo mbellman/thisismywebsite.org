@@ -8,7 +8,12 @@ type WidgetConfig = {
 };
 
 export default class Stage {
-  public origin: Partial<Vector3> = {};
+  public origin: Vector3 = {
+    x: 0,
+    y: 0,
+    z: 0
+  };
+
   private root = document.createElement('div');
 
   public constructor() {
@@ -21,26 +26,12 @@ export default class Stage {
     return this.root;
   }
 
-  public add<W extends Widget>(widget: W): W {
+  public add<W extends Widget>(widget: W, position: Partial<Vector3> = {}): W {
     this.root.appendChild(widget.$root);
 
     widget.stage = this;
+    widget.basePosition = { x: 0, y: 0, z: 0, ...position };
 
     return widget;
-  }
-
-  public set<S extends Record<string, WidgetConfig>, K extends keyof S>(setup: S): Record<K, S[K]['widget']> {
-    const widgetMap: Record<string, Widget> = {};
-
-    for (const key in setup) {
-      const { widget, position = {} } = setup[key];
-
-      widgetMap[key] = widget;
-      widget.basePosition = { x: 0, y: 0, z: 0, ...position };
-
-      this.add(widget);
-    }
-
-    return widgetMap as any;
   }
 }

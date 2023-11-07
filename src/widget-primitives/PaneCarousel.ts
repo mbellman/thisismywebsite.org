@@ -108,6 +108,7 @@ export default class PaneCarousel extends Widget {
       this.dragStartRotation = this.rotation;
 
       e.preventDefault();
+      e.stopPropagation();
     });
   }
 
@@ -196,8 +197,6 @@ export default class PaneCarousel extends Widget {
 
       return;
     }
-
-    const dt = Math.min(0.025, (Date.now() - this.lastRevolveWithMomentumTime) / 1000);
 
     this.lastRevolveWithMomentumTime = Date.now();
     this.rotation = mod(this.rotation + momentum, 360);

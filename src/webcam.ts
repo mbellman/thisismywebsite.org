@@ -9,7 +9,7 @@ export async function getCameraFeed(): Promise<HTMLVideoElement> {
   video.style.position = 'absolute';
   video.style.top = '0';
   video.style.left = '0';
-  // video.style.visibility = 'hidden';
+  video.style.visibility = 'hidden';
 
   document.body.appendChild(video);
 

@@ -1,10 +1,15 @@
 import Widget from './Widget';
 import { mod, multiply, rgb, toRgb } from '../utilities';
+import { Vector2 } from './Pane';
 import './Particles.scss';
 
 export default class Particles extends Widget {
   private particles: HTMLDivElement[] = [];
-  private yOffset = 0;
+
+  private offset: Vector2 = {
+    x: 0,
+    y: 0
+  };
 
   public constructor(total: number) {
     super();
@@ -16,8 +21,8 @@ export default class Particles extends Widget {
     this.updateParticles();
   }
 
-  public setYOffset(yOffset: number): void {
-    this.yOffset = yOffset;
+  public setOffset(offset: Vector2): void {
+    this.offset = offset;
   }
 
   /**
@@ -53,8 +58,8 @@ export default class Particles extends Widget {
 
       const startX = halfWindowWidth + Math.sin(i * 1.1) * streamWidth;
       const startY = 300 + Math.cos(i * 2.3) * window.innerHeight;
-      const x = startX + Math.sin(t + i * 1.3) * 30;
-      const y = mod(this.yOffset + startY - Date.now() * ySpeed, window.innerHeight);
+      const x = this.offset.x + startX + Math.sin(t + i * 1.3) * 30;
+      const y = mod(this.offset.y + startY - Date.now() * ySpeed, window.innerHeight);
 
       const heightRatio = y / window.innerHeight;
       const decay = 1 + heightRatio;
