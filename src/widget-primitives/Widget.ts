@@ -1,6 +1,11 @@
 import { Vector3 } from './Pane';
 import Stage from './Stage';
 
+export interface Transform {
+  position?: Partial<Vector3>;
+  rotation?: Partial<Vector3>;
+}
+
 export default abstract class Widget {
   public stage: Stage = null;
 
@@ -21,6 +26,8 @@ export default abstract class Widget {
   public get $root(): HTMLDivElement {
     return this.root;
   }
+  
+  public transform(transform: Transform): void {}
 
   protected init(): void {}
 

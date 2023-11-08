@@ -1,4 +1,4 @@
-import Widget from './Widget';
+import Widget, { Transform } from './Widget';
 import { mod, multiply, rgb, toRgb } from '../utilities';
 import { Vector2 } from './Pane';
 import './Particles.scss';
@@ -21,8 +21,11 @@ export default class Particles extends Widget {
     this.updateParticles();
   }
 
-  public setOffset(offset: Vector2): void {
-    this.offset = offset;
+  public transform({ position: { x, y } }: Transform) {
+    this.offset = {
+      x: x || 0,
+      y: y || 0
+    };
   }
 
   /**

@@ -1,4 +1,4 @@
-import Widget from './Widget';
+import Widget, { Transform } from './Widget';
 import Pane, { Vector3 } from './Pane';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
@@ -13,11 +13,9 @@ export default class PaneCarousel extends Widget {
   private currentIndex = 0;
   private lastRevolveToTargetTime = 0;
   private nextAnimationFrame: number = null;
-
   private dragging = false;
   private dragStartX = 0;
   private dragStartRotation = 0;
-  private lastRevolveWithMomentumTime = 0;
 
   private offset: Vector3 = {
     x: 0,
@@ -74,14 +72,17 @@ export default class PaneCarousel extends Widget {
     this.indexChangeHandler = indexChangeHandler;
   }
 
-  public setOffset(offset: Vector3): void {
-    this.offset = offset;
-
-    this.revolve(this.rotation);
-  }
-
   public setRadius(radius: number): void {
     this.radius = radius;
+  }
+
+  /**
+   * @override
+   */
+  public transform({ position }: Transform) {
+    this.offset = { x: 0, y: 0, z: 0, ...position };
+
+    this.revolve(this.rotation);
   }
 
   /**
@@ -168,7 +169,12 @@ export default class PaneCarousel extends Widget {
         z: this.offset.z + Math.cos(baseYAxisRotation) * this.radius - this.radius
       };
 
-      pane.update(position, rotation);
+      pane.transform({ position, rotation });
+
+      // @temporary
+      const blur = 5 * -position.z / (-position.z + 1500);
+
+      pane.$frame.style.filter = `blur(${blur}px`;
     }
   }
 
@@ -193,12 +199,9 @@ export default class PaneCarousel extends Widget {
     window.cancelAnimationFrame(this.nextAnimationFrame);
 
     if (Math.abs(momentum) < 0.01) {
-      this.lastRevolveWithMomentumTime = 0;
-
       return;
     }
 
-    this.lastRevolveWithMomentumTime = Date.now();
     this.rotation = mod(this.rotation + momentum, 360);
 
     this.revolve(this.rotation);

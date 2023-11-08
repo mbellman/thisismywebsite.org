@@ -26,7 +26,10 @@ function createProjectsCarousel(stage: Stage): PaneCarousel {
     carousel.addPane(pane);
   }
 
-  carousel.setOffset({ x: 0, y: 0, z: 0 });
+  carousel.transform({
+    position: { x: 0, y: 0, z: 0 }
+  });
+
   carousel.setRadius(800);
 
   return carousel;
@@ -269,15 +272,19 @@ export function setupPage(analyzer?: GestureAnalyzer) {
       }
     });
 
-    projectsCarousel.setOffset({
-      x: 0,
-      y: PROJECT_CAROUSEL_OFFSET,
-      z: 0
+    projectsCarousel.transform({
+      position: {
+        x: 0,
+        y: PROJECT_CAROUSEL_OFFSET,
+        z: 0
+      }
     });
 
-    particles.setOffset({
-      x: stage.origin.x * 0.6,
-      y: stage.origin.y * 0.4
+    particles.transform({
+      position: {
+        x: stage.origin.x * 0.6,
+        y: stage.origin.y * 0.4
+      }
     });
 
     const bgTop = multiply(BODY_BG_COLOR_TOP, 1 + -stage.origin.y / 2000);

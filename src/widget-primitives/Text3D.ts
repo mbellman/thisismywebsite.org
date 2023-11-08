@@ -1,15 +1,10 @@
-import Widget from './Widget';
+import Widget, { Transform } from './Widget';
 import { Vector3 } from './Pane';
 import './Text3D.scss';
 
 type CSSStyleDeclarationKeys = Exclude<keyof CSSStyleDeclaration, number | 'length' | 'parentRule'>;
 
 type StyleProperties = Record<CSSStyleDeclarationKeys, string>;
-
-interface Transform {
-  position?: Partial<Vector3>;
-  rotation?: Partial<Vector3>;
-}
 
 export default class Text3D extends Widget {
   public constructor(text: string) {
@@ -22,6 +17,9 @@ export default class Text3D extends Widget {
     this.root.innerHTML = text;
   }
 
+  /**
+   * @override
+   */
   public transform({ position = {}, rotation = {} }: Transform): void {
     // Set defaults
     position = { x: 0, y: 0, z: 0, ...position };

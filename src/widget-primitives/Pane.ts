@@ -1,4 +1,4 @@
-import Widget from './Widget';
+import Widget, { Transform } from './Widget';
 import './Pane.scss';
 
 // @todo move elsewhere
@@ -24,7 +24,10 @@ export default class Pane extends Widget {
     this.$frame.addEventListener('click', fn);
   }
 
-  public update({ x, y, z }: Vector3, rotation: Vector3): void {
+  /**
+   * @override
+   */
+  public transform({ position: { x, y, z }, rotation }: Transform) {
     const origin = { x: 0, y: 0, z: 0, ...this.stage.origin };
 
     const translation = {
