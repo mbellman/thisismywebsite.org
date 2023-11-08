@@ -122,7 +122,7 @@ export default class PaneCarousel extends Widget {
         const totalDeltaX = e.clientX - this.dragStartX;
         const deltaX = e.clientX - previousMouseX;
 
-        if (Math.abs(deltaX) > 0) {
+        if (Math.abs(deltaX) > 0 && previousMouseX > 0) {
           lastDeltaX = e.clientX - previousMouseX;
         }
 
@@ -199,6 +199,10 @@ export default class PaneCarousel extends Widget {
     window.cancelAnimationFrame(this.nextAnimationFrame);
 
     if (Math.abs(momentum) < 0.01) {
+      const index = Math.round((mod(-this.rotation, 360) / 360) * this.panes.length);
+
+      this.focusByIndex(index);
+
       return;
     }
 

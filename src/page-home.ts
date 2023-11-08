@@ -217,7 +217,7 @@ export function setupPage(analyzer?: GestureAnalyzer) {
 
     dragging = false;
 
-    document.body.style.cursor = 'pointer';
+    document.body.style.cursor = 'grab';
   });
 
   animate(dt => {
