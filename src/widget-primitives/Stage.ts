@@ -1,14 +1,10 @@
-import Widget from './Widget';
-import { Vector3 } from './Pane';
+import Widget, { Vec3, defaultVec3 } from './Widget';
 import './Stage.scss';
 
-type WidgetConfig = {
-  widget: Widget;
-  position: Partial<Vector3>;
-};
-
 export default class Stage {
-  public origin: Vector3 = {
+  private widgets: Widget[] = [];
+
+  public origin: Vec3 = {
     x: 0,
     y: 0,
     z: 0
@@ -26,12 +22,22 @@ export default class Stage {
     return this.root;
   }
 
-  public add<W extends Widget>(widget: W, position: Partial<Vector3> = {}): W {
-    this.root.appendChild(widget.$root);
+  public add<W extends Widget>(widget: W, position: Partial<Vec3> = {}): W {
+    if (widget.$root) {
+      this.root.appendChild(widget.$root);
+    }
 
     widget.stage = this;
-    widget.basePosition = { x: 0, y: 0, z: 0, ...position };
+    widget.basePosition = defaultVec3(position);
+
+    this.widgets.push(widget);
 
     return widget;
+  }
+
+  public update() {
+    for (const widget of this.widgets) {
+      widget.update();
+    }
   }
 }

@@ -1,6 +1,6 @@
 import Stage from './widget-primitives/Stage';
 import PaneCarousel from './widget-primitives/PaneCarousel';
-import Pane, { Vector2, Vector3 } from './widget-primitives/Pane';
+import Pane from './widget-primitives/Pane';
 import Particles from './widget-primitives/Particles';
 import Text3D from './widget-primitives/Text3D';
 import ProjectBlock from './widgets/ProjectBlock';
@@ -9,6 +9,7 @@ import { animate, tween } from './animation';
 import { projects } from './layout';
 import { GestureAnalyzer } from './gestures';
 import { printDebug } from './debug';
+import { Vec2, Vec3 } from './widget-primitives/Widget';
 import './page-home.scss';
 
 function createProjectsCarousel(stage: Stage): PaneCarousel {
@@ -25,10 +26,6 @@ function createProjectsCarousel(stage: Stage): PaneCarousel {
     pane.append(projectBlock.$root);
     carousel.addPane(pane);
   }
-
-  carousel.transform({
-    position: { x: 0, y: 0, z: 0 }
-  });
 
   carousel.setRadius(800);
 
@@ -88,21 +85,20 @@ export function setupPage(analyzer?: GestureAnalyzer) {
   // const pane = stage.add(new Pane(), { y: 1200, z: -500, x: 0 });
 
   const projectsHeading = stage.add(
-    new Text3D('Cool Projects')
+    new Text3D('Cool Projects'),
+    { y: 210 }
   );
 
   const projectTitle = stage.add(
-    new Text3D(projects[0].name)
+    new Text3D(projects[0].name),
+    { y: 290 }
   );
-
-  projectsHeading.basePosition.y = 210;
-  projectTitle.basePosition.y = 290;
 
   const particles = stage.add(
     new Particles(20)
   );
 
-  const projectsCarousel = createProjectsCarousel(stage);
+  const projectsCarousel = stage.add(createProjectsCarousel(stage));
 
   projectsCarousel.onIndexChange(index => {
     changeProjectTitle(projectTitle, index);
@@ -126,7 +122,7 @@ export function setupPage(analyzer?: GestureAnalyzer) {
 
   let levelIndex = 0;
 
-  const targetStageOrigin: Vector3 = {
+  const targetStageOrigin: Vec3 = {
     x: 0,
     y: 0,
     z: 0
@@ -174,7 +170,7 @@ export function setupPage(analyzer?: GestureAnalyzer) {
   let lastClientX = 0;
   let lastClientY = 0;
 
-  const lastDelta: Vector2 = {
+  const lastDelta: Vec2 = {
     x: 0,
     y: 0
   };
@@ -291,6 +287,8 @@ export function setupPage(analyzer?: GestureAnalyzer) {
     const bgBottom = multiply(BODY_BG_COLOR_BOTTOM, 1 + -stage.origin.y / 2000);
 
     document.body.style.background = `linear-gradient(to bottom, ${toRgb(bgTop)}, ${toRgb(bgBottom)})`;
+
+    stage.update();
   });
 
   document.addEventListener('wheel', e => {

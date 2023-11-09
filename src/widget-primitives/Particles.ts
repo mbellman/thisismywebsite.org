@@ -1,12 +1,11 @@
-import Widget, { Transform } from './Widget';
+import Widget, { Transform, Vec2 } from './Widget';
 import { mod, multiply, rgb, toRgb } from '../utilities';
-import { Vector2 } from './Pane';
 import './Particles.scss';
 
 export default class Particles extends Widget {
   private particles: HTMLDivElement[] = [];
 
-  private offset: Vector2 = {
+  private offset: Vec2 = {
     x: 0,
     y: 0
   };
@@ -21,10 +20,13 @@ export default class Particles extends Widget {
     this.updateParticles();
   }
 
-  public transform({ position: { x, y } }: Transform) {
+  /**
+   * @override
+   */
+  public update(): void {
     this.offset = {
-      x: x || 0,
-      y: y || 0
+      x: this.offsetPosition.x || 0,
+      y: this.offsetPosition.y || 0
     };
   }
 

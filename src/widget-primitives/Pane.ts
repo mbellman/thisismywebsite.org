@@ -1,16 +1,6 @@
 import Widget, { Transform } from './Widget';
 import './Pane.scss';
 
-// @todo move elsewhere
-export interface Vector2 {
-  x: number;
-  y: number;
-}
-
-export interface Vector3 extends Vector2 {
-  z: number;
-}
-
 export default class Pane extends Widget {
   public get $frame(): HTMLDivElement {
     return this.root.querySelector<HTMLDivElement>('.w-pane--frame');
@@ -27,13 +17,14 @@ export default class Pane extends Widget {
   /**
    * @override
    */
-  public transform({ position: { x, y, z }, rotation }: Transform) {
+  public update(): void {
+    const { basePosition, offsetPosition, rotation } = this;
     const origin = { x: 0, y: 0, z: 0, ...this.stage.origin };
 
     const translation = {
-      x: x + origin.x,
-      y: y + origin.y,
-      z: z + origin.z
+      x: origin.x + basePosition.x + offsetPosition.x,
+      y: origin.y + basePosition.y + offsetPosition.y,
+      z: origin.z + basePosition.z + offsetPosition.z
     };
 
     const rX = rotation.x * (180 / Math.PI);
@@ -41,7 +32,7 @@ export default class Pane extends Widget {
     const rZ = rotation.z * (180 / Math.PI);
 
     this.root.style.transform = `translate3d(${translation.x}px, ${translation.y}px, ${translation.z}px) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg)`;
-    this.root.style.zIndex = `${500 + Math.round(z)}`;
+    this.root.style.zIndex = `${500 + Math.round(basePosition.z + offsetPosition.z)}`;
   }
 
   /**

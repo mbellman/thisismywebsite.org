@@ -1,5 +1,4 @@
-import Widget, { Transform } from './Widget';
-import { Vector3 } from './Pane';
+import Widget, { Vec3, defaultVec3 } from './Widget';
 import './Text3D.scss';
 
 type CSSStyleDeclarationKeys = Exclude<keyof CSSStyleDeclaration, number | 'length' | 'parentRule'>;
@@ -17,35 +16,35 @@ export default class Text3D extends Widget {
     this.root.innerHTML = text;
   }
 
-  /**
-   * @override
-   */
-  public transform({ position = {}, rotation = {} }: Transform): void {
-    // Set defaults
-    position = { x: 0, y: 0, z: 0, ...position };
-    rotation = { x: 0, y: 0, z: 0, ...rotation };
-
-    const origin = { x: 0, y: 0, z: 0, ...this.stage.origin };
-
-    const pageWidth = window.innerWidth;
-    const halfWidth = this.$root.clientWidth / 2;
-    const halfHeight = this.$root.clientHeight / 2;
-    const yRotationDegrees = (rotation.y * 180 / Math.PI) % 360;
-
-    const translation: Vector3 = {
-      x: origin.x + this.basePosition.x + position.x + (pageWidth / 2) - halfWidth,
-      y: origin.y + this.basePosition.y + position.y + window.innerHeight / 2 - halfHeight,
-      z: origin.z + this.basePosition.z + position.z
-    };
-
-    this.root.style.transform = `translate3d(${translation.x}px, ${translation.y}px, ${translation.z}px) rotateY(${yRotationDegrees}deg)`;
-    this.root.style.zIndex = `${500 + Math.round(translation.z)}`;
-  }
-
   public setStyle(styles: Partial<StyleProperties>): void {
     Object.keys(styles).forEach((key: CSSStyleDeclarationKeys) => {
       (this.root.style[key] as string) = styles[key];
     });
+  }
+
+  /**
+   * @override
+   */
+  public update(): void {
+    const { basePosition, offsetPosition, rotation } = this;
+    const origin = defaultVec3(this.stage.origin);
+
+    const pageWidth = window.innerWidth;
+    const halfWidth = this.$root.clientWidth / 2;
+    const halfHeight = this.$root.clientHeight / 2;
+
+    // @todo handle x/z rotation
+    const yRotationDegrees = (rotation.y * 180 / Math.PI) % 360;
+
+    const translation: Vec3 = {
+      x: origin.x + basePosition.x + offsetPosition.x + (pageWidth / 2) - halfWidth,
+      y: origin.y + basePosition.y + offsetPosition.y + window.innerHeight / 2 - halfHeight,
+      z: origin.z + basePosition.z + offsetPosition.z
+    };
+
+    // @todo handle x/z rotation
+    this.root.style.transform = `translate3d(${translation.x}px, ${translation.y}px, ${translation.z}px) rotateY(${yRotationDegrees}deg)`;
+    this.root.style.zIndex = `${500 + Math.round(translation.z)}`;
   }
 
   /**

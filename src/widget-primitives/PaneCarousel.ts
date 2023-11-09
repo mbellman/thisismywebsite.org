@@ -1,5 +1,5 @@
 import Widget, { Transform } from './Widget';
-import Pane, { Vector3 } from './Pane';
+import Pane from './Pane';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
 
@@ -8,7 +8,7 @@ type IndexChangeHandler = (index: number) => void;
 export default class PaneCarousel extends Widget {
   private panes: Pane[] = [];
   private radius = 600;
-  private rotation = 0;
+  private rotationAngle = 0;
   private indexChangeHandler: IndexChangeHandler = null;
   private currentIndex = 0;
   private lastRevolveToTargetTime = 0;
@@ -16,12 +16,6 @@ export default class PaneCarousel extends Widget {
   private dragging = false;
   private dragStartX = 0;
   private dragStartRotation = 0;
-
-  private offset: Vector3 = {
-    x: 0,
-    y: 0,
-    z: 0
-  };
 
   public constructor() {
     super()
@@ -64,10 +58,6 @@ export default class PaneCarousel extends Widget {
     }
   }
 
-  public getRotation(): number {
-    return this.rotation;
-  }
-
   public onIndexChange(indexChangeHandler: IndexChangeHandler): void {
     this.indexChangeHandler = indexChangeHandler;
   }
@@ -79,10 +69,8 @@ export default class PaneCarousel extends Widget {
   /**
    * @override
    */
-  public transform({ position }: Transform) {
-    this.offset = { x: 0, y: 0, z: 0, ...position };
-
-    this.revolve(this.rotation);
+  public update(): void {
+    this.revolve(this.rotationAngle);
   }
 
   /**
@@ -106,7 +94,7 @@ export default class PaneCarousel extends Widget {
     pane.$frame.addEventListener('mousedown', (e) => {
       this.dragging = true;
       this.dragStartX = e.clientX;
-      this.dragStartRotation = this.rotation;
+      this.dragStartRotation = this.rotationAngle;
 
       e.preventDefault();
       e.stopPropagation();
@@ -128,9 +116,9 @@ export default class PaneCarousel extends Widget {
 
         previousMouseX = e.clientX;
 
-        this.rotation = mod(this.dragStartRotation + totalDeltaX * 0.05, 360);
+        this.rotationAngle = mod(this.dragStartRotation + totalDeltaX * 0.05, 360);
 
-        this.revolve(this.rotation);
+        this.revolve(this.rotationAngle);
       }
     });
 
@@ -164,9 +152,9 @@ export default class PaneCarousel extends Widget {
       };
 
       const position = {
-        x: this.offset.x + Math.sin(baseYAxisRotation) * this.radius + halfBodyWidth - halfPaneWidth,
-        y: this.offset.y + window.innerHeight / 2 - halfPaneHeight + oscillation * 5,
-        z: this.offset.z + Math.cos(baseYAxisRotation) * this.radius - this.radius
+        x: this.offsetPosition.x + Math.sin(baseYAxisRotation) * this.radius + halfBodyWidth - halfPaneWidth,
+        y: this.offsetPosition.y + window.innerHeight / 2 - halfPaneHeight + oscillation * 5,
+        z: this.offsetPosition.z + Math.cos(baseYAxisRotation) * this.radius - this.radius
       };
 
       pane.transform({ position, rotation });
@@ -183,33 +171,28 @@ export default class PaneCarousel extends Widget {
 
     this.lastRevolveToTargetTime = Date.now();
 
-    if (Math.abs(this.rotation - this.targetRotation) < 0.1) {
-      this.rotation = this.targetRotation;
+    if (Math.abs(this.rotationAngle - this.targetRotation) < 0.1) {
+      this.rotationAngle = this.targetRotation;
     } else {
       window.cancelAnimationFrame(this.nextAnimationFrame);
 
-      this.rotation = clerp(this.rotation, this.targetRotation, dt * 5);
+      this.rotationAngle = clerp(this.rotationAngle, this.targetRotation, dt * 5);
       this.nextAnimationFrame = window.requestAnimationFrame(() => this.revolveToTargetRotation());
     }
-
-    this.revolve(this.rotation);
   }
 
   private revolveWithMomentum(momentum: number): void {
     window.cancelAnimationFrame(this.nextAnimationFrame);
 
     if (Math.abs(momentum) < 0.01) {
-      const index = Math.round((mod(-this.rotation, 360) / 360) * this.panes.length);
+      const index = Math.round((mod(-this.rotationAngle, 360) / 360) * this.panes.length);
 
       this.focusByIndex(index);
 
       return;
     }
 
-    this.rotation = mod(this.rotation + momentum, 360);
-
-    this.revolve(this.rotation);
-
+    this.rotationAngle = mod(this.rotationAngle + momentum, 360);
     this.nextAnimationFrame = window.requestAnimationFrame(() => this.revolveWithMomentum(momentum * 0.975));
   }
 }
