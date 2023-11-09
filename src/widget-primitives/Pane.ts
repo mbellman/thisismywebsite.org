@@ -1,4 +1,4 @@
-import Widget, { Transform } from './Widget';
+import Widget, { Transform, defaultVec3 } from './Widget';
 import './Pane.scss';
 
 export default class Pane extends Widget {
@@ -19,7 +19,7 @@ export default class Pane extends Widget {
    */
   public update(): void {
     const { basePosition, offsetPosition, rotation } = this;
-    const origin = { x: 0, y: 0, z: 0, ...this.stage.origin };
+    const origin = defaultVec3(this.stage.origin);
 
     const translation = {
       x: origin.x + basePosition.x + offsetPosition.x,

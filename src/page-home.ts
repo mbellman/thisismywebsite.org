@@ -44,14 +44,16 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
 
   tween({
     range: [0, 1],
-    duration: 0.5
+    duration: 0.5,
   }, opacity => projectTitle.setStyle({
     opacity: `${opacity}`
   }));
 }
 
 export function setupPage(analyzer?: GestureAnalyzer) {
-  const stage = new Stage();
+  const stage = new Stage({
+    draggable: true
+  });
 
   const intro = stage.add(new Text3D('I\'m Malcolm.'), { y: -100 });
   const subIntro = stage.add(new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.'), { y: -50 });
@@ -59,13 +61,9 @@ export function setupPage(analyzer?: GestureAnalyzer) {
   subIntro.$root.querySelector('a:first-child')?.addEventListener('click', e => {
     e.preventDefault();
 
-    targetStageOrigin.x = 0;
-    targetStageOrigin.y = -500;
-    targetStageOrigin.z = 0;
-
-    setTimeout(() => {
-      levelIndex = 1;
-    }, 100);
+    stage.setTargetOrigin({
+      y: -500
+    });
   });
 
   subIntro.$root.querySelector('a:nth-child(2)')?.addEventListener('click', e => {
@@ -82,7 +80,13 @@ export function setupPage(analyzer?: GestureAnalyzer) {
     // }, 100);
   });
 
-  // const pane = stage.add(new Pane(), { y: 1200, z: -500, x: 0 });
+  // const pane = stage.add(new Pane());
+
+  // pane.transform({
+  //   position: {
+  //     y: 1200, z: -500, x: window.innerWidth / 2 - pane.$root.clientWidth / 2
+  //   }
+  // })
 
   const projectsHeading = stage.add(
     new Text3D('Cool Projects'),
@@ -120,115 +124,28 @@ export function setupPage(analyzer?: GestureAnalyzer) {
     fontSize: '24px'
   });
 
-  let levelIndex = 0;
-
-  const targetStageOrigin: Vec3 = {
-    x: 0,
-    y: 0,
-    z: 0
-  }
-
   const PROJECT_CAROUSEL_OFFSET = 500;
   const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
   const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
 
-  const goToLevel = debounce((level: number) => {
-    if (level < 0) level = 0;
-
-    levelIndex = level;
-  }, 500);
-
   analyzer?.on('swipeUp', delta => {
-    goToLevel(levelIndex + 1);
-
     printDebug(`${delta.x}, ${delta.y}`);
   });
 
   analyzer?.on('swipeDown', delta => {
-    goToLevel(levelIndex - 1);
-
     printDebug(`${delta.x}, ${delta.y}`);
   });
 
   analyzer?.on('swipeLeft', delta => {
-    if (levelIndex === 1) {
-      projectsCarousel.focusByIndex(projectsCarousel.getCurrentIndex() + 1);
-    }
-
     printDebug(`${delta.x}, ${delta.y}`);
   });
 
   analyzer?.on('swipeRight', delta => {
-    if (levelIndex === 1) {
-      projectsCarousel.focusByIndex(projectsCarousel.getCurrentIndex() - 1);
-    }
-
     printDebug(`${delta.x}, ${delta.y}`);
   });
 
-  let dragging = false;
-  let lastClientX = 0;
-  let lastClientY = 0;
-
-  const lastDelta: Vec2 = {
-    x: 0,
-    y: 0
-  };
-
-  stage.$root.addEventListener('mousedown', e => {
-    dragging = true;
-
-    lastClientX = e.clientX;
-    lastClientY = e.clientY;
-
-    targetStageOrigin.x = stage.origin.x;
-    targetStageOrigin.y = stage.origin.y;
-    targetStageOrigin.z = stage.origin.z;
-
-    document.body.style.cursor = 'grabbing';
-  });
-
-  document.addEventListener('mousemove', e => {
-    if (dragging) {
-      lastDelta.x = e.clientX - lastClientX;
-      lastDelta.y = e.clientY - lastClientY;
-
-      targetStageOrigin.x += lastDelta.x;
-      targetStageOrigin.y += lastDelta.y;
-
-      stage.origin.x = targetStageOrigin.x;
-      stage.origin.y = targetStageOrigin.y;
-      stage.origin.z = targetStageOrigin.z;
-
-      lastClientX = e.clientX;
-      lastClientY = e.clientY;
-    }
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (dragging) {
-      targetStageOrigin.x += lastDelta.x * 20;
-      targetStageOrigin.y += lastDelta.y * 20;
-    }
-
-    dragging = false;
-
-    document.body.style.cursor = 'grab';
-  });
-
-  animate(dt => {
+  function animateWidgets() {
     const t = Date.now() / 1000;
-
-    stage.origin.x = lerp(stage.origin.x, targetStageOrigin.x, dt * 5);
-    stage.origin.y = lerp(stage.origin.y, targetStageOrigin.y, dt * 5);
-    stage.origin.z = lerp(stage.origin.z, targetStageOrigin.z, dt * 5);
-
-    // const pageWidth = window.innerWidth;
-
-    // pane.update({
-    //   ...pane.basePosition,
-    //   x: pane.basePosition.x + pageWidth / 2 - pane.$root.clientWidth / 2
-    // }, { x: 0, y: 0, z: 0 });
 
     intro.transform({
       position: {
@@ -282,24 +199,31 @@ export function setupPage(analyzer?: GestureAnalyzer) {
         y: stage.origin.y * 0.4
       }
     });
+  }
 
+  function updateBodyBackgroundColor() {
     const bgTop = multiply(BODY_BG_COLOR_TOP, 1 + -stage.origin.y / 2000);
     const bgBottom = multiply(BODY_BG_COLOR_BOTTOM, 1 + -stage.origin.y / 2000);
 
     document.body.style.background = `linear-gradient(to bottom, ${toRgb(bgTop)}, ${toRgb(bgBottom)})`;
+  }
 
-    stage.update();
+  animate(dt => {
+    animateWidgets();
+    updateBodyBackgroundColor();
+
+    stage.update(dt);
   });
 
   document.addEventListener('wheel', e => {
     if (e.deltaY > 15) {
-      goToLevel(levelIndex + 1);
-
-      targetStageOrigin.y -= 500;
+      stage.moveTargetOrigin({
+        y: -500
+      });
     } else if (e.deltaY < -15) {
-      goToLevel(levelIndex - 1);
-
-      targetStageOrigin.y += 500;
+      stage.moveTargetOrigin({
+        y: 500
+      });
     }
   });
 }
