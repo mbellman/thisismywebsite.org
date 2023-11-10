@@ -92,8 +92,10 @@ export default class PaneCarousel extends Widget {
   }
 
   private bindPaneEvents(pane: Pane, index: number): void {
-    pane.$frame.addEventListener('click', () => {
-      this.focusByIndex(index);
+    pane.$frame.addEventListener('click', e => {
+      if (Math.abs(e.clientX - this.dragStartX) < 5) {
+        this.focusByIndex(index);
+      }
     });
 
     pane.$frame.addEventListener('mousedown', (e) => {
@@ -169,7 +171,7 @@ export default class PaneCarousel extends Widget {
 
       pane.transform({ position, rotation });
 
-      // @temporary
+      // @todo first-class support for blur on widgets with farther z values
       const blur = 5 * -position.z / (-position.z + 1500);
 
       pane.$frame.style.filter = `blur(${blur}px`;
@@ -194,7 +196,7 @@ export default class PaneCarousel extends Widget {
   private revolveWithMomentum(momentum: number): void {
     window.cancelAnimationFrame(this.nextAnimationFrame);
 
-    if (Math.abs(momentum) < 0.01) {
+    if (Math.abs(momentum) < 0.05) {
       const index = Math.round((mod(-this.rotationAngle, 360) / 360) * this.panes.length);
 
       this.focusByIndex(index);

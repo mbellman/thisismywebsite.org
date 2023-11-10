@@ -1,7 +1,24 @@
-import Widget, { Transform, defaultVec3 } from './Widget';
+import Widget, { Transform, Vec2, defaultVec3 } from './Widget';
 import './Pane.scss';
 
+export interface Size {
+  width: number
+  height: number
+}
+
+const DEFAULT_SIZE: Size = {
+  width: 300,
+  height: 300
+};
+
 export default class Pane extends Widget {
+  public constructor({ width, height }: Size = DEFAULT_SIZE) {
+    super();
+
+    this.$root.style.width = `${width}px`;
+    this.$root.style.height = `${height}px`;
+  }
+
   public get $frame(): HTMLDivElement {
     return this.root.querySelector<HTMLDivElement>('.w-pane--frame');
   }
@@ -27,9 +44,10 @@ export default class Pane extends Widget {
       z: origin.z + basePosition.z + offsetPosition.z
     };
 
-    const rX = rotation.x * (180 / Math.PI);
-    const rY = rotation.y * (180 / Math.PI);
-    const rZ = rotation.z * (180 / Math.PI);
+    const toDegrees = 180 / Math.PI;
+    const rX = rotation.x * toDegrees;
+    const rY = rotation.y * toDegrees;
+    const rZ = rotation.z * toDegrees;
 
     this.root.style.transform = `translate3d(${translation.x}px, ${translation.y}px, ${translation.z}px) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg)`;
     this.root.style.zIndex = `${500 + Math.round(basePosition.z + offsetPosition.z)}`;

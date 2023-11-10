@@ -6,7 +6,7 @@ import './ProjectBlock.scss';
 export default class ProjectBlock extends Widget {
   private project: Partial<Project>;
 
-  public update(project: Partial<Project> = {}): void {
+  public setContent(project: Partial<Project> = {}): void {
     this.project = project;
 
     this.$image.src = project.imageUrl;
@@ -20,6 +20,11 @@ export default class ProjectBlock extends Widget {
       this.$demoButton.remove();
     }
   }
+
+  /**
+   * @override
+   */
+  public update(): void {}
 
   protected init(): void {
     this.$image.addEventListener('load', () => {

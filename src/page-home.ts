@@ -20,7 +20,7 @@ function createProjectsCarousel(stage: Stage): PaneCarousel {
     const pane = new Pane();
     const projectBlock = new ProjectBlock();
 
-    projectBlock.update(project);
+    projectBlock.setContent(project);
     pane.append(projectBlock.$root);
     carousel.addPane(pane);
   }
@@ -72,7 +72,7 @@ export function setupPage(analyzer?: GestureAnalyzer) {
     // window.open('https://thisismywebsite.org/thoughts/', '_blank');
 
     stage.setTargetOrigin({
-      y: -1000
+      y: -1200
     });
   });
 
@@ -104,11 +104,11 @@ export function setupPage(analyzer?: GestureAnalyzer) {
 
   writings.transform({
     position: {
-      y: 1000
+      y: 1200
     }
   });
 
-  writings.addPane(new Pane());
+  writings.addPane(new Pane({ width: 600, height: 500 }));
   writings.addPane(new Pane());
   writings.addPane(new Pane());
 
@@ -226,13 +226,10 @@ export function setupPage(analyzer?: GestureAnalyzer) {
   });
 
   document.addEventListener('wheel', e => {
-    if (e.deltaY > 15) {
+    if (Math.abs(e.deltaX) > 15 || Math.abs(e.deltaY) > 15) {
       stage.moveTargetOrigin({
-        y: -500
-      });
-    } else if (e.deltaY < -15) {
-      stage.moveTargetOrigin({
-        y: 500
+        x: -e.deltaX * 2,
+        y: -e.deltaY * 2
       });
     }
   });
