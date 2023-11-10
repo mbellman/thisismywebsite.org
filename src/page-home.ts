@@ -72,7 +72,7 @@ export function setupPage(analyzer?: GestureAnalyzer) {
     // window.open('https://thisismywebsite.org/thoughts/', '_blank');
 
     stage.setTargetOrigin({
-      y: -1200
+      y: -2000
     });
   });
 
@@ -104,15 +104,21 @@ export function setupPage(analyzer?: GestureAnalyzer) {
 
   writings.transform({
     position: {
-      y: 1200
+      y: 2000
     }
   });
 
   writings.addPane(new Pane({ width: 600, height: 500 }));
-  writings.addPane(new Pane());
-  writings.addPane(new Pane());
+  writings.addPane(new Pane({ width: 600, height: 500 }));
+  writings.addPane(new Pane({ width: 600, height: 500 }));
 
   stage.add(writings);
+
+  const writingsTitle = stage.add(new Text3D('Coming soon...'), { y: 1700 });
+
+  writingsTitle.setStyle({
+    fontSize: '26px'
+  })
 
   projectsCarousel.onIndexChange(index => {
     changeProjectTitle(projectTitle, index);
@@ -177,6 +183,16 @@ export function setupPage(analyzer?: GestureAnalyzer) {
     });
 
     projectsHeading.transform({
+      position: {
+        y: Math.sin(t) * 10,
+        z: -50 + 50 * Math.sin(t)
+      },
+      rotation: {
+        y: Math.sin(t * 0.6) * 0.1
+      }
+    });
+
+    writingsTitle.transform({
       position: {
         y: Math.sin(t) * 10,
         z: -50 + 50 * Math.sin(t)

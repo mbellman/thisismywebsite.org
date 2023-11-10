@@ -1,4 +1,4 @@
-import Widget, { Transform, Vec2 } from './Widget';
+import Widget, { Vec2 } from './Widget';
 import { mod, multiply, rgb, toRgb } from '../utilities';
 import './Particles.scss';
 

@@ -172,7 +172,7 @@ export default class PaneCarousel extends Widget {
       pane.transform({ position, rotation });
 
       // @todo first-class support for blur on widgets with farther z values
-      const blur = 5 * -position.z / (-position.z + 1500);
+      const blur = Math.round(5 * -position.z / (-position.z + 1500));
 
       pane.$frame.style.filter = `blur(${blur}px`;
     }
@@ -196,7 +196,7 @@ export default class PaneCarousel extends Widget {
   private revolveWithMomentum(momentum: number): void {
     window.cancelAnimationFrame(this.nextAnimationFrame);
 
-    if (Math.abs(momentum) < 0.05) {
+    if (Math.abs(momentum) < 0.025) {
       const index = Math.round((mod(-this.rotationAngle, 360) / 360) * this.panes.length);
 
       this.focusByIndex(index);
