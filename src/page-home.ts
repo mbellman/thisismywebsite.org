@@ -100,19 +100,19 @@ export function setupPage(analyzer?: GestureAnalyzer) {
 
   const projectsCarousel = stage.add(createProjectsCarousel(stage));
 
-  // const writings = new PaneSlider();
+  const writings = new PaneSlider();
 
-  // writings.transform({
-  //   position: {
-  //     y: 1000
-  //   }
-  // });
+  writings.transform({
+    position: {
+      y: 1000
+    }
+  });
 
-  // writings.addPane(new Pane());
-  // writings.addPane(new Pane());
-  // writings.addPane(new Pane());
+  writings.addPane(new Pane());
+  writings.addPane(new Pane());
+  writings.addPane(new Pane());
 
-  // stage.add(writings);
+  stage.add(writings);
 
   projectsCarousel.onIndexChange(index => {
     changeProjectTitle(projectTitle, index);

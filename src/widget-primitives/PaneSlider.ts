@@ -1,8 +1,18 @@
 import Pane from './Pane';
-import Widget, { Vec3 } from './Widget';
+import Widget, { Vec2, Vec3, createVec2, createVec3 } from './Widget';
 
 export default class PaneSlider extends Widget {
   private panes: Pane[] = [];
+  private dragging = false;
+  private dragStart = createVec2();
+  private dragStartOffset = createVec2();
+  private offset = createVec2();
+
+  public constructor() {
+    super()
+
+    this.bindStaticEvents();
+  }
 
   public addPane(pane: Pane): void {
     this.bindPaneEvents(pane, this.panes.length);
@@ -61,12 +71,58 @@ export default class PaneSlider extends Widget {
     });
 
     pane.$frame.addEventListener('mousedown', (e) => {
-      // this.dragging = true;
-      // this.dragStartX = e.clientX;
-      // this.dragStartRotation = this.rotationAngle;
+      this.dragging = true;
+      this.dragStart.x = e.clientX;
+      this.dragStart.y = e.clientY;
+      this.dragStartOffset = { ...this.offset };
 
       e.preventDefault();
       e.stopPropagation();
+    });
+  }
+
+  private bindStaticEvents(): void {
+    let previousMouse = createVec2();
+    let lastDelta = createVec2();
+
+    document.addEventListener('mousemove', e => {
+      if (this.dragging) {
+        const totalDelta: Vec2 = {
+          x: e.clientX - this.dragStart.x,
+          y: e.clientY - this.dragStart.y
+        };
+
+        const delta: Vec2 = {
+          x: e.clientX - previousMouse.x,
+          y: e.clientY - previousMouse.y
+        };
+
+        if (Math.abs(delta.x) > 0 && previousMouse.x > 0) {
+          lastDelta.x = e.clientX - previousMouse.x;
+        }
+
+        if (Math.abs(delta.y) > 0 && previousMouse.y > 0) {
+          lastDelta.y = e.clientY - previousMouse.y;
+        }
+
+        previousMouse.x = e.clientX;
+        previousMouse.y = e.clientY;
+
+        console.log(totalDelta);
+
+        // this.rotationAngle = mod(this.dragStartRotation + totalDeltaX * 0.05, 360);
+      }
+    });
+
+    document.addEventListener('mouseup', e => {
+      this.dragging = false;
+
+      if (lastDelta.x !== 0) {
+        // this.revolveWithMomentum(lastDeltaX * 0.1);
+      }
+
+      previousMouse = createVec2();
+      lastDelta = createVec2();
     });
   }
 

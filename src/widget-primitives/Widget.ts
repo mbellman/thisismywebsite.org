@@ -14,6 +14,10 @@ export interface Vec3 extends Vec2 {
   z: number;
 }
 
+export function createVec2(): Vec2 {
+  return { x: 0, y: 0 };
+}
+
 export function createVec3(): Vec3 {
   return { x: 0, y: 0, z: 0 };
 }

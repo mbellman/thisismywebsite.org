@@ -122,8 +122,6 @@ export default class PaneCarousel extends Widget {
         previousMouseX = e.clientX;
 
         this.rotationAngle = mod(this.dragStartRotation + totalDeltaX * 0.05, 360);
-
-        this.revolve(this.rotationAngle);
       }
     });
 
