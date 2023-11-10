@@ -1,4 +1,4 @@
-import Widget, { Transform } from './Widget';
+import Widget, { Transform, Vec3 } from './Widget';
 import Pane from './Pane';
 import { clerp, mod } from '../utilities';
 import './PaneCarousel.scss';
@@ -24,9 +24,7 @@ export default class PaneCarousel extends Widget {
   }
 
   public addPane(pane: Pane): void {
-    const index = this.panes.length;
-
-    this.bindPaneEvents(pane, index);
+    this.bindPaneEvents(pane, this.panes.length);
 
     this.panes.push(pane);
     this.revolve(0);
@@ -56,6 +54,13 @@ export default class PaneCarousel extends Widget {
     if (didChangeIndex) {
       this.indexChangeHandler?.(this.currentIndex);
     }
+  }
+
+  /**
+   * @override
+   */
+  public onAdded(): void {
+    this.panes.forEach(pane => this.stage.add(pane));
   }
 
   public onIndexChange(indexChangeHandler: IndexChangeHandler): void {
@@ -135,7 +140,14 @@ export default class PaneCarousel extends Widget {
   }
 
   private revolve(degrees: number): void {
-    const halfBodyWidth = document.body.clientWidth / 2;
+    const halfWindowWidth = window.innerWidth / 2;
+    const halfWindowHeight = window.innerHeight / 2;
+
+    const root: Vec3 = {
+      x: this.basePosition.x + this.offsetPosition.x + halfWindowWidth,
+      y: this.basePosition.y + this.offsetPosition.y + halfWindowHeight,
+      z: this.basePosition.z + this.offsetPosition.z - this.radius
+    };
 
     for (let i = 0; i < this.panes.length; i++) {
       const oscillation = Math.sin(Date.now() / 1000 + i * 2);
@@ -152,9 +164,9 @@ export default class PaneCarousel extends Widget {
       };
 
       const position = {
-        x: this.offsetPosition.x + Math.sin(baseYAxisRotation) * this.radius + halfBodyWidth - halfPaneWidth,
-        y: this.offsetPosition.y + window.innerHeight / 2 - halfPaneHeight + oscillation * 5,
-        z: this.offsetPosition.z + Math.cos(baseYAxisRotation) * this.radius - this.radius
+        x: root.x + Math.sin(baseYAxisRotation) * this.radius - halfPaneWidth,
+        y: root.y - halfPaneHeight + oscillation * 5,
+        z: root.z + Math.cos(baseYAxisRotation) * this.radius
       };
 
       pane.transform({ position, rotation });

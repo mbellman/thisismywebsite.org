@@ -4,12 +4,12 @@ import Pane from './widget-primitives/Pane';
 import Particles from './widget-primitives/Particles';
 import Text3D from './widget-primitives/Text3D';
 import ProjectBlock from './widgets/ProjectBlock';
-import { debounce, lerp, multiply, rgb, toRgb } from './utilities';
+import PaneSlider from './widget-primitives/PaneSlider';
+import { multiply, rgb, toRgb } from './utilities';
 import { animate, tween } from './animation';
 import { projects } from './layout';
 import { GestureAnalyzer } from './gestures';
 import { printDebug } from './debug';
-import { Vec2, Vec3 } from './widget-primitives/Widget';
 import './page-home.scss';
 
 function createProjectsCarousel(stage: Stage): PaneCarousel {
@@ -19,8 +19,6 @@ function createProjectsCarousel(stage: Stage): PaneCarousel {
     const project = projects[i];
     const pane = new Pane();
     const projectBlock = new ProjectBlock();
-
-    stage.add(pane);
 
     projectBlock.update(project);
     pane.append(projectBlock.$root);
@@ -58,6 +56,7 @@ export function setupPage(analyzer?: GestureAnalyzer) {
   const intro = stage.add(new Text3D('I\'m Malcolm.'), { y: -100 });
   const subIntro = stage.add(new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.'), { y: -50 });
 
+  // @todo cleanup
   subIntro.$root.querySelector('a:first-child')?.addEventListener('click', e => {
     e.preventDefault();
 
@@ -66,18 +65,15 @@ export function setupPage(analyzer?: GestureAnalyzer) {
     });
   });
 
+  // @todo cleanup
   subIntro.$root.querySelector('a:nth-child(2)')?.addEventListener('click', e => {
     e.preventDefault();
 
-    window.open('https://thisismywebsite.org/thoughts/', '_blank')
+    // window.open('https://thisismywebsite.org/thoughts/', '_blank');
 
-    // targetStageOrigin.x = 0;
-    // targetStageOrigin.y = -1000;
-    // targetStageOrigin.z = 0;
-
-    // setTimeout(() => {
-    //   levelIndex = 2;
-    // }, 100);
+    stage.setTargetOrigin({
+      y: -1000
+    });
   });
 
   // const pane = stage.add(new Pane());
@@ -103,6 +99,20 @@ export function setupPage(analyzer?: GestureAnalyzer) {
   );
 
   const projectsCarousel = stage.add(createProjectsCarousel(stage));
+
+  // const writings = new PaneSlider();
+
+  // writings.transform({
+  //   position: {
+  //     y: 1000
+  //   }
+  // });
+
+  // writings.addPane(new Pane());
+  // writings.addPane(new Pane());
+  // writings.addPane(new Pane());
+
+  // stage.add(writings);
 
   projectsCarousel.onIndexChange(index => {
     changeProjectTitle(projectTitle, index);

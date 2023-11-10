@@ -39,6 +39,8 @@ export default class Stage {
 
     this.widgets.push(widget);
 
+    widget.onAdded();
+
     return widget;
   }
 

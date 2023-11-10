@@ -29,16 +29,12 @@ export default class Text3D extends Widget {
     const { basePosition, offsetPosition, rotation } = this;
     const origin = defaultVec3(this.stage.origin);
 
-    const pageWidth = window.innerWidth;
-    const halfWidth = this.$root.clientWidth / 2;
-    const halfHeight = this.$root.clientHeight / 2;
-
     // @todo handle x/z rotation
     const yRotationDegrees = (rotation.y * 180 / Math.PI) % 360;
 
     const translation: Vec3 = {
-      x: origin.x + basePosition.x + offsetPosition.x + (pageWidth / 2) - halfWidth,
-      y: origin.y + basePosition.y + offsetPosition.y + window.innerHeight / 2 - halfHeight,
+      x: origin.x + basePosition.x + offsetPosition.x + window.innerWidth / 2 - this.$root.clientWidth / 2,
+      y: origin.y + basePosition.y + offsetPosition.y + window.innerHeight / 2 - this.$root.clientHeight / 2,
       z: origin.z + basePosition.z + offsetPosition.z
     };
 

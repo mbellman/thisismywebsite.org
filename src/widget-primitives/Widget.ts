@@ -24,7 +24,6 @@ export function defaultVec3(vec3: Partial<Vec3>): Vec3 {
 
 export default abstract class Widget {
   public stage: Stage = null;
-
   public basePosition: Vec3 = createVec3();
   public offsetPosition: Vec3 = createVec3();
   public rotation: Vec3 = createVec3();
@@ -39,6 +38,21 @@ export default abstract class Widget {
 
   public get $root(): HTMLDivElement {
     return this.root;
+  }
+
+  public onAdded(): void {}
+
+  public slideIntoView() {
+    const halfWindowWidth = window.innerWidth / 2;
+    const halfWindowHeight = window.innerHeight / 2;
+    const halfRootWidth = (this.$root?.scrollWidth || 0) / 2;
+    const halfRootHeight = (this.$root?.scrollHeight || 0) / 2;
+
+    this.stage?.setTargetOrigin({
+      x: -(this.basePosition.x + this.offsetPosition.x) + halfWindowWidth - halfRootWidth,
+      y: -(this.basePosition.y + this.offsetPosition.y) + halfWindowHeight - halfRootHeight,
+      z: -(this.basePosition.z + this.offsetPosition.z)
+    });
   }
   
   public transform(transform: Transform): void {
