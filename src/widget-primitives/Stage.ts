@@ -73,7 +73,7 @@ export default class Stage {
     for (const widget of widgets) {
       this.add(widget, runningPosition);
 
-      runningPosition.y += widget.getHeight();
+      runningPosition.y += widget.getHeight() + widget.offsetPosition.y;
     }
   }
 

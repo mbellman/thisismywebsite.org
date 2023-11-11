@@ -2,8 +2,15 @@ import { lerp } from '../utilities';
 import Pane, { Size } from './Pane';
 import Widget, { Vec2, Vec3, createVec2, createVec3 } from './Widget';
 
+interface PaneSliderConfig {
+  centeredX?: boolean;
+  centeredY?: boolean;
+}
+
 export default class PaneSlider extends Widget {
   private panes: Pane[] = [];
+  private centeredX = true;
+  private centeredY = true;
   private dragging = false;
   private dragStart = createVec2();
   private dragStartOffset = createVec2();
@@ -18,16 +25,28 @@ export default class PaneSlider extends Widget {
     height: 0
   };
 
-  public constructor() {
-    super()
+  public constructor({ centeredX = true, centeredY = true }: PaneSliderConfig = {}) {
+    super();
+
+    this.centeredX = centeredX;
+    this.centeredY = centeredY;
 
     this.bindStaticEvents();
   }
 
-  public addPane(pane: Pane): void {
+  public addPane(pane: Pane): this {
     this.bindPaneEvents(pane, this.panes.length);
 
     this.panes.push(pane);
+
+    return this;
+  }
+
+  /**
+   * @override
+   */
+  public getHeight(): number {
+    return Math.max(...this.panes.map(pane => pane.getHeight())) + window.innerHeight / 4 * (this.centeredY ? 1 : 0);
   }
 
   /**
@@ -45,8 +64,8 @@ export default class PaneSlider extends Widget {
     const halfWindowHeight = window.innerHeight / 2;
 
     const root: Vec3 = {
-      x: this.basePosition.x + this.offsetPosition.x + halfWindowWidth,
-      y: this.basePosition.y + this.offsetPosition.y + halfWindowHeight,
+      x: this.basePosition.x + this.offsetPosition.x + halfWindowWidth * (this.centeredX ? 1 : 0),
+      y: this.basePosition.y + this.offsetPosition.y + halfWindowHeight * (this.centeredY ? 1 : 0),
       z: this.basePosition.z + this.offsetPosition.z
     };
 
@@ -54,24 +73,27 @@ export default class PaneSlider extends Widget {
     const halfLastPaneWidth = this.panes.at(-1).$root.clientWidth / 2;
     let runningOffsetX = 0;
 
+    // @todo make configurable
+    const SLIDE_MARGIN = 100;
+
     for (let i = 0; i < this.panes.length; i++) {
       const pane = this.panes[i];
       const halfPaneHeight = pane.$root.clientHeight / 2;
       const offsetX = this.sliderOffset.x + runningOffsetX;
 
       const position = {
-        x: root.x + offsetX - halfFirstPaneWidth,
-        y: root.y - halfPaneHeight,
+        x: root.x + offsetX - halfFirstPaneWidth * (this.centeredX ? 1 : 0),
+        y: root.y - halfPaneHeight * (this.centeredY ? 1 : 0),
         z: root.z
       };
       
       pane.transform({ position });
 
-      runningOffsetX += pane.$root.clientWidth + 100;
+      runningOffsetX += pane.$root.clientWidth + SLIDE_MARGIN;
     }
 
     // @todo compute slider area height
-    this.sliderArea.width = runningOffsetX - halfFirstPaneWidth - halfLastPaneWidth - 100;
+    this.sliderArea.width = runningOffsetX - halfLastPaneWidth * 2 - SLIDE_MARGIN;
   }
 
   /**

@@ -4,6 +4,8 @@ import Stage from './widget-primitives/Stage';
 import Text3D from './widget-primitives/Text3D';
 import Pane from './widget-primitives/Pane';
 import Row from './widget-primitives/Row';
+import PaneCarousel from './widget-primitives/PaneCarousel';
+import PaneSlider from './widget-primitives/PaneSlider';
 
 const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
 const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
@@ -48,7 +50,7 @@ export function setupPanesPage() {
     ),
     new Text3D(`
       <p>
-        They support several color themes:
+        They also feature several color themes:
       </p>
     `).style({
       fontSize: '20px'
@@ -56,7 +58,67 @@ export function setupPanesPage() {
     new Row(
       new Pane({ width: 200, height: 200 }).theme('light').style({ padding: '10px' }),
       new Pane({ width: 200, height: 200 }).theme('dark').style({ padding: '10px' })
-    )
+    ),
+    new Text3D(`
+      <p>
+        More interestingly, <strong>Panes</strong> can be placed in <strong>3D space</strong>:
+      </p>
+    `).style({
+      fontSize: '20px',
+      paddingTop: '100px'
+    }),
+    new Row(
+      new Pane().style({ padding: '10px' }),
+      new Pane().transform({
+        position: {
+          x: -200, z: -250
+        }
+      }),
+      new Pane().transform({
+        position: {
+          x: -400, z: -500
+        }
+      })
+    ),
+    new Text3D(`
+      <p>
+        They can be <strong>rotated</strong>:
+      </p>
+    `).style({ fontSize: '20px', paddingTop: '100px' }),
+    new Row(
+      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }),
+      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ rotation: { y: Math.PI * 0.1 }}),
+      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ rotation: { y: Math.PI * 0.2 }}),
+      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ rotation: { y: Math.PI * 0.3 }})
+    ),
+    new Text3D(`
+      <p>
+        They can be arranged into a <strong>carousel</strong>:
+      </p>
+    `).style({ fontSize: '20px', paddingTop: '100px' }),
+    new PaneCarousel({ centeredY: false })
+      .transform({ position: { x: -250, y: 50 } })
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .setRadius(700),
+    new Text3D(`
+      <p>
+        ...Or a <strong>slider</strong>:
+      </p>
+    `).style({ fontSize: '20px', paddingTop: '100px' }),
+    new PaneSlider({ centeredX: false, centeredY: false })
+      .transform({ position: { x: 0, y: 50 } })
+      .addPane(new Pane({ width: 300, height: 600 }))
+      .addPane(new Pane({ width: 300, height: 500 }))
+      .addPane(new Pane({ width: 300, height: 400 }))
+      .addPane(new Pane())
+      .addPane(new Pane({ width: 50, height: 50 }))
   );
 
   const title = stage.find('title');

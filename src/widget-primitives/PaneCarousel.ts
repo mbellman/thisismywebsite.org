@@ -5,8 +5,15 @@ import './PaneCarousel.scss';
 
 type IndexChangeHandler = (index: number) => void;
 
+interface PaneCarouselConfig {
+  centeredX?: boolean;
+  centeredY?: boolean;
+}
+
 export default class PaneCarousel extends Widget {
   private panes: Pane[] = [];
+  private centeredX = true;
+  private centeredY = true;
   private radius = 600;
   private rotationAngle = 0;
   private indexChangeHandler: IndexChangeHandler = null;
@@ -17,21 +24,33 @@ export default class PaneCarousel extends Widget {
   private dragStartX = 0;
   private dragStartRotation = 0;
 
-  public constructor() {
+  public constructor({ centeredX = true, centeredY = true }: PaneCarouselConfig = {}) {
     super()
+
+    this.centeredX = centeredX;
+    this.centeredY = centeredY;
 
     this.bindStaticEvents();
   }
 
-  public addPane(pane: Pane): void {
+  public addPane(pane: Pane): this {
     this.bindPaneEvents(pane, this.panes.length);
 
     this.panes.push(pane);
     this.revolve(0);
+
+    return this;
   }
 
   public getCurrentIndex(): number {
     return this.currentIndex;
+  }
+
+  /**
+   * @override
+   */
+  public getHeight(): number {
+    return Math.max(...this.panes.map(pane => pane.getHeight())) + window.innerHeight / 4 * (this.centeredY ? 1 : 0);
   }
 
   public focusByIndex(index: number): void {
@@ -67,8 +86,10 @@ export default class PaneCarousel extends Widget {
     this.indexChangeHandler = indexChangeHandler;
   }
 
-  public setRadius(radius: number): void {
+  public setRadius(radius: number): this {
     this.radius = radius;
+
+    return this;
   }
 
   /**
@@ -144,8 +165,8 @@ export default class PaneCarousel extends Widget {
     const halfWindowHeight = window.innerHeight / 2;
 
     const root: Vec3 = {
-      x: this.basePosition.x + this.offsetPosition.x + halfWindowWidth,
-      y: this.basePosition.y + this.offsetPosition.y + halfWindowHeight,
+      x: this.basePosition.x + this.offsetPosition.x + halfWindowWidth * (this.centeredX ? 1 : 0),
+      y: this.basePosition.y + this.offsetPosition.y + halfWindowHeight * (this.centeredY ? 1 : 0),
       z: this.basePosition.z + this.offsetPosition.z - this.radius
     };
 
@@ -165,7 +186,7 @@ export default class PaneCarousel extends Widget {
 
       const position = {
         x: root.x + Math.sin(baseYAxisRotation) * this.radius - halfPaneWidth,
-        y: root.y - halfPaneHeight + oscillation * 5,
+        y: root.y - halfPaneHeight * (this.centeredY ? 1 : 0) + oscillation * 5,
         z: root.z + Math.cos(baseYAxisRotation) * this.radius
       };
 

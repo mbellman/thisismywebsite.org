@@ -93,9 +93,11 @@ export default abstract class Widget {
     return this;
   }
   
-  public transform(transform: Transform): void {
+  public transform(transform: Transform): this {
     this.offsetPosition = defaultVec3(transform.position);
     this.rotation = defaultVec3(transform.rotation);
+
+    return this;
   }
 
   public abstract update(): void;
