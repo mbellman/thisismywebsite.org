@@ -20,7 +20,7 @@ export function setupPanesPage() {
   // @todo fix inverted stage origin
   stage.addGroup(
     { x: 250, y: 20},
-    new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),
+    // new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),
     new Text3D(`
       <p>
         Modern computers are fantastically powerful, and much of the web development space leaves the medium woefully under-utilized.
@@ -125,12 +125,29 @@ export function setupPanesPage() {
       </p>
     `).style({ fontSize: '20px', paddingTop: '100px' }),
     new PaneField()
+      .addPane(new Pane().transform({ position: { x: 200, y: 100, z: -300 } }))
+      .addPane(
+        new Pane()
+          .transform({ position: { x: 350, y: 300, z: -500 }, rotation: { y: -Math.PI * 0.2 } })
+      )
+      .addPane(
+        new Pane({ width: 100, height: 100 })
+          .transform({ position: { x: 100, y: 0 } })
+      )
+      .addPane(
+        new Pane({ width: 200, height: 200 })
+          .transform({ position: { x: 50, y: 400 }, rotation: { y: Math.PI * 0.2 } })
+      )
+      .addPane(
+        new Pane({ width: 250, height: 250 })
+          .transform({ position: { x: 750, y: 250, z: -200 } })
+      )
   );
 
   const title = stage.find('title');
 
   function animateWidgets() {
-    title.transform({
+    title?.transform({
       position: {
         y: Math.sin(Date.now() / 1200) * 10,
       },

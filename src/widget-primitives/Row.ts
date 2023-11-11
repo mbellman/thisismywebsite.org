@@ -20,6 +20,7 @@ export default class Row extends Widget {
     let runningOffsetX = 0;
 
     this.widgets.forEach(widget => {
+      widget.basePosition = { ...this.basePosition };
       widget.basePosition.x += runningOffsetX;
 
       this.stage.add(widget, widget.basePosition);

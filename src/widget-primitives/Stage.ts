@@ -49,14 +49,6 @@ export default class Stage {
     widget.stage = this;
     widget.basePosition = defaultVec3(position);
 
-    if (widget instanceof Row) {
-      // If the widget is a Row, ensure that its children
-      // inherit its own base position
-      widget.widgets.forEach(rowWidget => {
-        rowWidget.basePosition = defaultVec3(position);
-      });
-    }
-
     this.widgets.push(widget);
 
     widget.onAdded();
