@@ -72,14 +72,13 @@ export function setupPanesPage() {
     new Row(
       new Pane().style({ padding: '10px' }),
       new Pane().transform({
-        position: {
-          x: -200, z: -250
-        }
+        position: { x: -200, z: -250 }
       }),
       new Pane().transform({
-        position: {
-          x: -400, z: -500
-        }
+        position: { x: -400, z: -500 }
+      }),
+      new Pane().transform({
+        position: { x: -600, z: -750 }
       })
     ),
     new Text3D(`
@@ -95,32 +94,30 @@ export function setupPanesPage() {
     ),
     new Text3D(`
       <p>
-        They can be arranged into a <strong>carousel</strong>:
+        They can be arranged into a draggable <strong>slider</strong>:
       </p>
-    `).style({ fontSize: '20px', paddingTop: '100px' }),
-    new PaneCarousel({ centeredY: false })
-      .transform({ position: { x: -250, y: 50 } })
-      .addPane(new Pane())
-      .addPane(new Pane())
-      .addPane(new Pane())
-      .addPane(new Pane())
-      .addPane(new Pane())
-      .addPane(new Pane())
-      .addPane(new Pane())
-      .addPane(new Pane())
-      .setRadius(700),
-    new Text3D(`
-      <p>
-        ...Or a <strong>slider</strong>:
-      </p>
-    `).style({ fontSize: '20px', paddingTop: '100px' }),
+    `).style({ fontSize: '20px', paddingTop: '50px' }),
     new PaneSlider({ centeredX: false, centeredY: false })
-      .transform({ position: { x: 0, y: 50 } })
       .addPane(new Pane())
       .addPane(new Pane({ width: 300, height: 400 }))
       .addPane(new Pane({ width: 300, height: 500 }))
-      .addPane(new Pane({ width: 300, height: 600 }))
-      .addPane(new Pane({ width: 50, height: 50 }))
+      .addPane(new Pane({ width: 300, height: 600 })),
+    new Text3D(`
+      <p>
+        ...Or a <strong>carousel</strong>:
+      </p>
+    `).style({ fontSize: '20px' }),
+    new PaneCarousel({ centeredY: false })
+      .transform({ position: { x: -250 } })
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .addPane(new Pane())
+      .setRadius(700)
   );
 
   const title = stage.find('title');
