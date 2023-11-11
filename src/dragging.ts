@@ -8,7 +8,7 @@ interface StaticDragEventsConfig {
 }
 
 export class DragManager {
-  public dragging = false;
+  private dragging = false;
 
   public start: Vec2 = {
     x: 0,
@@ -50,7 +50,7 @@ export class DragManager {
         previousMouse.x = e.clientX;
         previousMouse.y = e.clientY;
 
-        onDrag?.(e, delta);
+        onDrag?.(e, lastDelta);
       }
     });
 

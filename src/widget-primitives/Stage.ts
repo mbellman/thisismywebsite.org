@@ -1,7 +1,8 @@
 import Widget, { Vec2, Vec3, createVec3, defaultVec3 } from './Widget';
-import './Stage.scss';
 import { lerp } from '../utilities';
 import Row from './Row';
+import { DragManager } from '../dragging';
+import './Stage.scss';
 
 interface StageOptions {
   draggable?: boolean
@@ -12,6 +13,7 @@ export default class Stage {
   private widgetMap: Record<string, Widget> = {};
   private targetOrigin: Vec3 = createVec3();
   private root = document.createElement('div');
+  private drag = new DragManager();
 
   public origin: Vec3 = createVec3();
 
@@ -23,7 +25,7 @@ export default class Stage {
     document.body.appendChild(this.root);
 
     if (draggable) {
-      this.bindDragEvents();
+      this.enableDraggableBehavior();
     }
   }
 
@@ -105,55 +107,30 @@ export default class Stage {
     this.origin.z = lerp(this.origin.z, this.targetOrigin.z, dt * 5);
   }
 
-  private bindDragEvents() {
-    let dragging = false;
-    let lastClientX = 0;
-    let lastClientY = 0;
-  
-    const lastDelta: Vec2 = {
-      x: 0,
-      y: 0
-    };
-
+  private enableDraggableBehavior() {
     document.body.style.cursor = 'grab';
 
-    this.$root.addEventListener('mousedown', e => {
-      dragging = true;
-  
-      lastClientX = e.clientX;
-      lastClientY = e.clientY;
-
+    this.drag.bindDragStart(this.$root, e => {
       this.targetOrigin = { ...this.origin };
-  
+
       document.body.style.cursor = 'grabbing';
     });
-  
-    document.addEventListener('mousemove', e => {
-      if (dragging) {
-        lastDelta.x = e.clientX - lastClientX;
-        lastDelta.y = e.clientY - lastClientY;
-  
-        this.targetOrigin.x += lastDelta.x;
-        this.targetOrigin.y += lastDelta.y;
+
+    this.drag.bindStaticDragEvents({
+      onDrag: (e, delta) => {
+        this.targetOrigin.x += delta.x;
+        this.targetOrigin.y += delta.y;
   
         this.origin.x = this.targetOrigin.x;
         this.origin.y = this.targetOrigin.y;
         this.origin.z = this.targetOrigin.z;
-  
-        lastClientX = e.clientX;
-        lastClientY = e.clientY;
+      },
+      onDragEnd: (e, delta) => {
+        this.targetOrigin.x += delta.x * 20;
+        this.targetOrigin.y += delta.y * 20;
+
+        document.body.style.cursor = 'grab';
       }
-    });
-  
-    document.addEventListener('mouseup', () => {
-      if (dragging) {
-        this.targetOrigin.x += lastDelta.x * 20;
-        this.targetOrigin.y += lastDelta.y * 20;
-      }
-  
-      dragging = false;
-  
-      document.body.style.cursor = 'grab';
     });
   }
 }
