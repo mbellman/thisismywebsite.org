@@ -37,7 +37,6 @@ export default class PaneCarousel extends Widget {
     this.bindPaneEvents(pane, this.panes.length);
 
     this.panes.push(pane);
-    this.revolve(0);
 
     return this;
   }

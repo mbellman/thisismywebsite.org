@@ -1,11 +1,12 @@
+import Stage from './widget-primitives/Stage';
+import Row from './widget-primitives/Row';
+import Pane from './widget-primitives/Pane';
+import Text3D from './widget-primitives/Text3D';
+import PaneSlider from './widget-primitives/PaneSlider';
+import PaneCarousel from './widget-primitives/PaneCarousel';
+import PaneField from './widget-primitives/PaneField';
 import { animate } from './animation';
 import { multiply, rgb, toRgb } from './utilities';
-import Stage from './widget-primitives/Stage';
-import Text3D from './widget-primitives/Text3D';
-import Pane from './widget-primitives/Pane';
-import Row from './widget-primitives/Row';
-import PaneCarousel from './widget-primitives/PaneCarousel';
-import PaneSlider from './widget-primitives/PaneSlider';
 
 const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
 const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
@@ -90,11 +91,11 @@ export function setupPanesPage() {
       new Pane({ width: 200, height: 200 }).style({ padding: '10px' }),
       new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ rotation: { y: Math.PI * 0.1 }}),
       new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ rotation: { y: Math.PI * 0.2 }}),
-      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ rotation: { y: Math.PI * 0.3 }})
+      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ position: { x: -50 }, rotation: { y: Math.PI * 0.3 }})
     ),
     new Text3D(`
       <p>
-        They can be arranged into a draggable <strong>slider</strong>:
+        They can be arranged into a draggable <strong>Slider</strong>:
       </p>
     `).style({ fontSize: '20px', paddingTop: '50px' }),
     new PaneSlider({ centeredX: false, centeredY: false })
@@ -104,7 +105,7 @@ export function setupPanesPage() {
       .addPane(new Pane({ width: 300, height: 600 })),
     new Text3D(`
       <p>
-        ...Or a <strong>carousel</strong>:
+        ...Or a <strong>Carousel</strong>:
       </p>
     `).style({ fontSize: '20px' }),
     new PaneCarousel({ centeredY: false })
@@ -117,7 +118,13 @@ export function setupPanesPage() {
       .addPane(new Pane())
       .addPane(new Pane())
       .addPane(new Pane())
-      .setRadius(700)
+      .setRadius(700),
+    new Text3D(`
+      <p>
+        ...And even a draggable, zoomable <strong>Field</strong>:
+      </p>
+    `).style({ fontSize: '20px', paddingTop: '100px' }),
+    new PaneField()
   );
 
   const title = stage.find('title');
