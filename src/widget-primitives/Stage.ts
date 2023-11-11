@@ -29,6 +29,14 @@ export default class Stage {
     return this.root;
   }
 
+  public get height(): number {
+    return this.$root.clientHeight;
+  }
+
+  public get width(): number {
+    return this.$root.clientWidth;
+  }
+
   public add<W extends Widget>(widget: W, position: Partial<Vec3> = {}): W {
     if (widget.$root) {
       this.root.appendChild(widget.$root);

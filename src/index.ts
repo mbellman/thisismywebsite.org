@@ -1,9 +1,9 @@
 import { initializeDebugConsole } from './debug';
 // import { createGestureAnalyzer, createHandDetector } from './gestures';
-import { setupPage } from './page-home';
 // import { getCameraFeed } from './webcam';
-
-import './page-home.scss';
+import { setupHomePage } from './page-home';
+import { setupPanesPage } from './page-panes'
+import './global-styles.scss';
 
 // async function initializeGestureAnalyzer() {
 //   const video = await getCameraFeed();
@@ -35,7 +35,8 @@ import './page-home.scss';
 async function main() {
   // const analyzer = await initializeGestureAnalyzer();
 
-  setupPage();
+  // setupHomePage();
+  setupPanesPage();
 }
 
 main();

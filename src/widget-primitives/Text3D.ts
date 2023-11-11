@@ -6,9 +6,12 @@ type CSSStyleDeclarationKeys = Exclude<keyof CSSStyleDeclaration, number | 'leng
 type StyleProperties = Record<CSSStyleDeclarationKeys, string>;
 
 export default class Text3D extends Widget {
-  public constructor(text: string) {
+  private centered = true;
+
+  public constructor(text: string, centered = true) {
     super();
 
+    this.centered = centered;
     this.root.innerHTML = text;
   }
 
@@ -28,13 +31,14 @@ export default class Text3D extends Widget {
   public update(): void {
     const { basePosition, offsetPosition, rotation } = this;
     const origin = defaultVec3(this.stage.origin);
+    const centeringFactor = this.centered ? 1 : 0;
 
     // @todo handle x/z rotation
     const yRotationDegrees = (rotation.y * 180 / Math.PI) % 360;
 
     const translation: Vec3 = {
-      x: origin.x + basePosition.x + offsetPosition.x + window.innerWidth / 2 - this.$root.clientWidth / 2,
-      y: origin.y + basePosition.y + offsetPosition.y + window.innerHeight / 2 - this.$root.clientHeight / 2,
+      x: origin.x + basePosition.x + offsetPosition.x + (window.innerWidth / 2 - this.$root.clientWidth / 2) * centeringFactor,
+      y: origin.y + basePosition.y + offsetPosition.y + (window.innerHeight / 2 - this.$root.clientHeight / 2) * centeringFactor,
       z: origin.z + basePosition.z + offsetPosition.z
     };
 

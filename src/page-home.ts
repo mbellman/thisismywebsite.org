@@ -10,7 +10,6 @@ import { animate, tween } from './animation';
 import { projects } from './layout';
 import { GestureAnalyzer } from './gestures';
 import { printDebug } from './debug';
-import './page-home.scss';
 
 function createProjectsCarousel(stage: Stage): PaneCarousel {
   const carousel = new PaneCarousel();
@@ -48,7 +47,7 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
   }));
 }
 
-export function setupPage(analyzer?: GestureAnalyzer) {
+export function setupHomePage(analyzer?: GestureAnalyzer) {
   const stage = new Stage({
     draggable: true
   });
@@ -227,16 +226,16 @@ export function setupPage(analyzer?: GestureAnalyzer) {
     });
   }
 
-  function updateBodyBackgroundColor() {
+  function updateStageBackgroundColor() {
     const bgTop = multiply(BODY_BG_COLOR_TOP, 1 + -stage.origin.y / 2000);
     const bgBottom = multiply(BODY_BG_COLOR_BOTTOM, 1 + -stage.origin.y / 2000);
 
-    document.body.style.background = `linear-gradient(to bottom, ${toRgb(bgTop)}, ${toRgb(bgBottom)})`;
+    stage.$root.style.background = `linear-gradient(to bottom, ${toRgb(bgTop)}, ${toRgb(bgBottom)})`;
   }
 
   animate(dt => {
     animateWidgets();
-    updateBodyBackgroundColor();
+    updateStageBackgroundColor();
 
     stage.update(dt);
   });
