@@ -171,7 +171,9 @@ export default class PaneCarousel extends Widget {
         z: root.z + Math.cos(baseYAxisRotation) * this.radius
       };
 
-      pane.transform({ position, rotation });
+      pane.basePosition = position;
+
+      pane.transform({ rotation });
 
       // @todo first-class support for blur on widgets with farther z values
       const blur = Math.round(5 * -position.z / (-position.z + 1500));

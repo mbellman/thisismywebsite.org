@@ -15,6 +15,8 @@ export function setupPanesPage() {
     draggable: true
   });
 
+  // @todo fix inverted z
+  // @todo fix inverted stage origin
   stage.addGroup(
     { x: 250, y: 20},
     new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),

@@ -81,13 +81,11 @@ export default class PaneSlider extends Widget {
       const halfPaneHeight = pane.$root.clientHeight / 2;
       const offsetX = this.sliderOffset.x + runningOffsetX;
 
-      const position = {
+      pane.basePosition = {
         x: root.x + offsetX - halfFirstPaneWidth * (this.centeredX ? 1 : 0),
         y: root.y - halfPaneHeight * (this.centeredY ? 1 : 0),
-        z: root.z + pane.offsetPosition.z
+        z: root.z
       };
-      
-      pane.transform({ position });
 
       runningOffsetX += pane.$root.clientWidth + SLIDE_MARGIN;
     }
