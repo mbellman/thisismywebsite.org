@@ -1,6 +1,7 @@
-import Widget, { Transform, Vec3 } from './Widget';
+import Widget, { Transform, Vec2, Vec3 } from './Widget';
 import Pane from './Pane';
 import { clerp, mod } from '../utilities';
+import { DragManager } from '../dragging';
 import './PaneCarousel.scss';
 
 type IndexChangeHandler = (index: number) => void;
@@ -20,8 +21,7 @@ export default class PaneCarousel extends Widget {
   private currentIndex = 0;
   private lastRevolveToTargetTime = 0;
   private nextAnimationFrame: number = null;
-  private dragging = false;
-  private dragStartX = 0;
+  private drag = new DragManager();
   private dragStartRotation = 0;
 
   public constructor({ centeredX = true, centeredY = true }: PaneCarouselConfig = {}) {
@@ -114,49 +114,30 @@ export default class PaneCarousel extends Widget {
 
   private bindPaneEvents(pane: Pane, index: number): void {
     pane.$frame.addEventListener('click', e => {
-      if (Math.abs(e.clientX - this.dragStartX) < 5) {
+      if (Math.abs(e.clientX - this.drag.start.x) < 5) {
         this.focusByIndex(index);
       }
     });
 
-    pane.$frame.addEventListener('mousedown', (e) => {
-      this.dragging = true;
-      this.dragStartX = e.clientX;
+    this.drag.bindDragStart(pane.$frame, e => {
       this.dragStartRotation = this.rotationAngle;
 
-      e.preventDefault();
-      e.stopPropagation();
+      window.cancelAnimationFrame(this.nextAnimationFrame);
     });
   }
 
   private bindStaticEvents(): void {
-    let previousMouseX = 0;
-    let lastDeltaX = 0;
-
-    document.addEventListener('mousemove', e => {
-      if (this.dragging) {
-        const totalDeltaX = e.clientX - this.dragStartX;
-        const deltaX = e.clientX - previousMouseX;
-
-        if (Math.abs(deltaX) > 0 && previousMouseX > 0) {
-          lastDeltaX = e.clientX - previousMouseX;
-        }
-
-        previousMouseX = e.clientX;
+    this.drag.bindStaticDragEvents({
+      onDrag: (e) => {
+        const totalDeltaX = e.clientX - this.drag.start.x;
 
         this.rotationAngle = mod(this.dragStartRotation + totalDeltaX * 0.05, 360);
+      },
+      onDragEnd: (e, delta) => {
+        if (delta.x !== 0) {
+          this.revolveWithMomentum(delta.x * 0.1);
+        }
       }
-    });
-
-    document.addEventListener('mouseup', e => {
-      this.dragging = false;
-
-      if (lastDeltaX !== 0) {
-        this.revolveWithMomentum(lastDeltaX * 0.1);
-      }
-
-      previousMouseX = 0;
-      lastDeltaX = 0;
     });
   }
 

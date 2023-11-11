@@ -12,7 +12,7 @@ export default class PaneSlider extends Widget {
   private panes: Pane[] = [];
   private centeredX = true;
   private centeredY = true;
-  private drag: DragManager = new DragManager();
+  private drag = new DragManager();
   private dragStartOffset = createVec2();
   private sliderOffset = createVec2();
   private targetSliderOffset = createVec2();
