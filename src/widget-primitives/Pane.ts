@@ -11,6 +11,8 @@ const DEFAULT_SIZE: Size = {
   height: 300
 };
 
+type Theme = 'light' | 'dark';
+
 export default class Pane extends Widget {
   public constructor({ width, height }: Size = DEFAULT_SIZE) {
     super();
@@ -29,6 +31,12 @@ export default class Pane extends Widget {
 
   public onClick(fn: () => void): void {
     this.$frame.addEventListener('click', fn);
+  }
+
+  public theme(theme: Theme): this {
+    this.$root.classList.add(theme);
+
+    return this;
   }
 
   /**

@@ -49,6 +49,14 @@ export default abstract class Widget {
     return this.root;
   }
 
+  public getHeight(): number {
+    return this.root?.clientHeight || 0;
+  }
+
+  public getWidth(): number {
+    return this.root?.clientWidth || 0;
+  }
+
   public name(name: string): this {
     this.widgetName = name;
 

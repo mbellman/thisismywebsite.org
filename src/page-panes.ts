@@ -3,6 +3,7 @@ import { multiply, rgb, toRgb } from './utilities';
 import Stage from './widget-primitives/Stage';
 import Text3D from './widget-primitives/Text3D';
 import Pane from './widget-primitives/Pane';
+import Row from './widget-primitives/Row';
 
 const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
 const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
@@ -12,38 +13,56 @@ export function setupPanesPage() {
     draggable: true
   });
 
-  stage.addLayout(
-    { x: 20, y: 20},
+  stage.addGroup(
+    { x: 250, y: 20},
     new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),
     new Text3D(`
       <p>
-        Modern computers are terrifically powerful, and much of the web development space leaves the medium woefully under-utilized.
+        Modern computers are fantastically powerful, and much of the web development space leaves the medium woefully under-utilized.
         <strong>Panes</strong> is a library which breathes creative life into the form.
       </p>
       <p>
-        We'll start with a single <strong>Pane</strong>, our fundamental unit.
+        We'll start with a single <strong>Pane</strong>, our fundamental primitive.
       </p>
     `).style({
       fontSize: '20px',
       width: '700px'
     }),
-    new Pane(),
-    new Text3D('...').style({
+    new Pane().style({ padding: '20px 0' }),
+    new Text3D(`
+      <p>
+        A <strong>Pane</strong> is just a block which houses content. <strong>Panes</strong> sit
+        within a <strong>Stage</strong>. More on that later.
+      </p>
+      <p>
+        They can have different sizes:
+      </p>
+    `).style({
       fontSize: '20px'
-    })
+    }),
+    new Row(
+      new Pane({ width: 100, height: 100 }).style({ padding: '10px' }),
+      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }),
+      new Pane({ width: 300, height: 300 }).style({ padding: '10px' }),
+      new Pane({ width: 400, height: 400 }).style({ padding: '10px' }),
+    ),
+    new Text3D(`
+      <p>
+        They support several color themes:
+      </p>
+    `).style({
+      fontSize: '20px'
+    }),
+    new Row(
+      new Pane({ width: 200, height: 200 }).theme('light').style({ padding: '10px' }),
+      new Pane({ width: 200, height: 200 }).theme('dark').style({ padding: '10px' })
+    )
   );
 
-  // title.setStyle({
-  //   fontSize: '50px'
-  // });
-
-  // const pane = stage.add(new Pane(), {
-  //   x: 20,
-  //   y: top + 250
-  // });
+  const title = stage.find('title');
 
   function animateWidgets() {
-    stage.find('title')?.transform({
+    title.transform({
       position: {
         y: Math.sin(Date.now() / 1200) * 10,
       },
@@ -68,11 +87,9 @@ export function setupPanesPage() {
   });
 
   document.addEventListener('wheel', e => {
-    if (Math.abs(e.deltaX) > 15 || Math.abs(e.deltaY) > 15) {
-      stage.moveTargetOrigin({
-        x: -e.deltaX * 2,
-        y: -e.deltaY * 2
-      });
-    }
+    stage.moveTargetOrigin({
+      x: -e.deltaX * 2,
+      y: -e.deltaY * 2
+    });
   });
 }

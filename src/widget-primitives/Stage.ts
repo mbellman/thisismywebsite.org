@@ -1,6 +1,7 @@
 import Widget, { Vec2, Vec3, createVec3, defaultVec3 } from './Widget';
 import './Stage.scss';
 import { lerp } from '../utilities';
+import Row from './Row';
 
 interface StageOptions {
   draggable?: boolean
@@ -46,6 +47,14 @@ export default class Stage {
     widget.stage = this;
     widget.basePosition = defaultVec3(position);
 
+    if (widget instanceof Row) {
+      // If the widget is a Row, ensure that its children
+      // inherit its own base position
+      widget.widgets.forEach(rowWidget => {
+        rowWidget.basePosition = defaultVec3(position);
+      });
+    }
+
     this.widgets.push(widget);
 
     widget.onAdded();
@@ -58,18 +67,18 @@ export default class Stage {
     return widget;
   }
 
-  public addLayout<W extends Widget[]>(position: Partial<Vec3> = {}, ...widgets: W) {
+  public addGroup<W extends Widget[]>(position: Partial<Vec3> = {}, ...widgets: W) {
     let runningPosition = { ...position };
 
     for (const widget of widgets) {
       this.add(widget, runningPosition);
 
-      runningPosition.y += widget.$root?.clientHeight;
+      runningPosition.y += widget.getHeight();
     }
   }
 
-  public find(name: string): Widget {
-    return this.widgetMap[name] || null;
+  public find<T extends Widget = Widget>(name: string): T {
+    return this.widgetMap[name] as T || null;
   }
 
   public moveTargetOrigin(move: Partial<Vec3> = {}) {
