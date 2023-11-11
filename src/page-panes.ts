@@ -114,10 +114,10 @@ export function setupPanesPage() {
     `).style({ fontSize: '20px', paddingTop: '100px' }),
     new PaneSlider({ centeredX: false, centeredY: false })
       .transform({ position: { x: 0, y: 50 } })
-      .addPane(new Pane({ width: 300, height: 600 }))
-      .addPane(new Pane({ width: 300, height: 500 }))
-      .addPane(new Pane({ width: 300, height: 400 }))
       .addPane(new Pane())
+      .addPane(new Pane({ width: 300, height: 400 }))
+      .addPane(new Pane({ width: 300, height: 500 }))
+      .addPane(new Pane({ width: 300, height: 600 }))
       .addPane(new Pane({ width: 50, height: 50 }))
   );
 

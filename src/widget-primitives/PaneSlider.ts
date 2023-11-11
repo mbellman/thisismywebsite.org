@@ -1,6 +1,7 @@
 import { lerp } from '../utilities';
 import Pane, { Size } from './Pane';
 import Widget, { Vec2, Vec3, createVec2, createVec3 } from './Widget';
+import { DragManager } from '../dragging';
 
 interface PaneSliderConfig {
   centeredX?: boolean;
@@ -11,8 +12,7 @@ export default class PaneSlider extends Widget {
   private panes: Pane[] = [];
   private centeredX = true;
   private centeredY = true;
-  private dragging = false;
-  private dragStart = createVec2();
+  private drag: DragManager = new DragManager();
   private dragStartOffset = createVec2();
   private sliderOffset = createVec2();
   private targetSliderOffset = createVec2();
@@ -84,7 +84,7 @@ export default class PaneSlider extends Widget {
       const position = {
         x: root.x + offsetX - halfFirstPaneWidth * (this.centeredX ? 1 : 0),
         y: root.y - halfPaneHeight * (this.centeredY ? 1 : 0),
-        z: root.z
+        z: root.z + pane.offsetPosition.z
       };
       
       pane.transform({ position });
@@ -106,68 +106,37 @@ export default class PaneSlider extends Widget {
   private bindPaneEvents(pane: Pane, index: number): void {
     pane.$frame.addEventListener('click', e => {
       if (
-        Math.abs(e.clientX - this.dragStart.x) < 5 &&
-        Math.abs(e.clientY - this.dragStart.y) < 5
+        Math.abs(e.clientX - this.drag.start.x) < 5 &&
+        Math.abs(e.clientY - this.drag.start.y) < 5
       ) {
         this.focusByIndex(index);
       }
     });
 
-    pane.$frame.addEventListener('mousedown', (e) => {
-      this.dragging = true;
-      this.dragStart.x = e.clientX;
-      this.dragStart.y = e.clientY;
+    this.drag.bindDragStart(pane.$frame, () => {
       this.dragStartOffset = { ...this.sliderOffset };
 
       window.cancelAnimationFrame(this.nextAnimationFrame);
-
-      e.preventDefault();
-      e.stopPropagation();
     });
   }
 
   private bindStaticEvents(): void {
-    let previousMouse = createVec2();
-    let lastDelta = createVec2();
-
-    document.addEventListener('mousemove', e => {
-      if (this.dragging) {
-        const delta: Vec2 = {
-          x: e.clientX - previousMouse.x,
-          y: e.clientY - previousMouse.y
-        };
-
-        if (Math.abs(delta.x) > 0 && previousMouse.x > 0) {
-          lastDelta.x = e.clientX - previousMouse.x;
-        }
-
-        if (Math.abs(delta.y) > 0 && previousMouse.y > 0) {
-          lastDelta.y = e.clientY - previousMouse.y;
-        }
-
-        previousMouse.x = e.clientX;
-        previousMouse.y = e.clientY;
-
+    this.drag.bindStaticDragEvents({
+      onDrag: e => {
         const totalDelta: Vec2 = {
-          x: e.clientX - this.dragStart.x,
-          y: e.clientY - this.dragStart.y
+          x: e.clientX - this.drag.start.x,
+          y: e.clientY - this.drag.start.y
         };
 
         // @todo allow for y-axis sliders
         this.sliderOffset.x = this.dragStartOffset.x + totalDelta.x;
+      },
+      onDragEnd: (e, delta) => {
+        this.targetSliderOffset.x = this.sliderOffset.x + delta.x * 20;
+
+        this.keepSliderInBounds(1 / 60);
+        this.slideToTargetOffset();
       }
-    });
-
-    document.addEventListener('mouseup', e => {
-      this.dragging = false;
-
-      this.targetSliderOffset.x = this.sliderOffset.x + lastDelta.x * 20;
-
-      this.keepSliderInBounds(1 / 60);
-      this.slideToTargetOffset();
-
-      previousMouse = createVec2();
-      lastDelta = createVec2();
     });
   }
 
