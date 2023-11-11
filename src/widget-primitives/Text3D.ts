@@ -5,10 +5,14 @@ type CSSStyleDeclarationKeys = Exclude<keyof CSSStyleDeclaration, number | 'leng
 
 type StyleProperties = Record<CSSStyleDeclarationKeys, string>;
 
+interface Text3DConfig {
+  centered?: boolean
+}
+
 export default class Text3D extends Widget {
   private centered = true;
 
-  public constructor(text: string, centered = true) {
+  public constructor(text: string, { centered = false }: Text3DConfig = {}) {
     super();
 
     this.centered = centered;
@@ -17,12 +21,6 @@ export default class Text3D extends Widget {
 
   public setText(text: string): void {
     this.root.innerHTML = text;
-  }
-
-  public setStyle(styles: Partial<StyleProperties>): void {
-    Object.keys(styles).forEach((key: CSSStyleDeclarationKeys) => {
-      (this.root.style[key] as string) = styles[key];
-    });
   }
 
   /**

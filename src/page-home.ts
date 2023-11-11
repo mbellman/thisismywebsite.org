@@ -33,7 +33,7 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
   await tween({
     range: [1, 0],
     duration: 0.5
-  }, opacity => projectTitle.setStyle({
+  }, opacity => projectTitle.style({
     opacity: `${opacity}`
   }));
 
@@ -42,7 +42,7 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
   tween({
     range: [0, 1],
     duration: 0.5,
-  }, opacity => projectTitle.setStyle({
+  }, opacity => projectTitle.style({
     opacity: `${opacity}`
   }));
 }
@@ -52,8 +52,15 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
     draggable: true
   });
 
-  const intro = stage.add(new Text3D('I\'m Malcolm.'), { y: -100 });
-  const subIntro = stage.add(new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.'), { y: -50 });
+  const intro = stage.add(
+    new Text3D('I\'m Malcolm.', { centered: true }),
+    { y: -100 }
+  );
+
+  const subIntro = stage.add(
+    new Text3D('I <a href="#" target="_blank">create</a> things and also <a href="#">write</a> things.', { centered: true }),
+    { y: -50 }
+  );
 
   // @todo cleanup
   subIntro.$root.querySelector('a:first-child')?.addEventListener('click', e => {
@@ -84,12 +91,12 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
   // })
 
   const projectsHeading = stage.add(
-    new Text3D('Cool Projects'),
+    new Text3D('Cool Projects', { centered: true }),
     { y: 210 }
   );
 
   const projectTitle = stage.add(
-    new Text3D(projects[0].name),
+    new Text3D(projects[0].name, { centered: true }),
     { y: 290 }
   );
 
@@ -113,29 +120,29 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
 
   stage.add(writings);
 
-  const writingsTitle = stage.add(new Text3D('Coming soon...'), { y: 1700 });
+  const writingsTitle = stage.add(new Text3D('Coming soon...', { centered: true }), { y: 1700 });
 
-  writingsTitle.setStyle({
+  writingsTitle.style({
     fontSize: '26px'
-  })
+  });
 
   projectsCarousel.onIndexChange(index => {
     changeProjectTitle(projectTitle, index);
   });
 
-  intro.setStyle({
+  intro.style({
     fontSize: '30px'
   });
 
-  subIntro.setStyle({
+  subIntro.style({
     fontSize: '24px'
   })
 
-  projectsHeading.setStyle({
+  projectsHeading.style({
     fontSize: '48px'
   });
 
-  projectTitle.setStyle({
+  projectTitle.style({
     fontSize: '24px'
   });
 

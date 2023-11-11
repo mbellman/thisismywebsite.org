@@ -26,11 +26,16 @@ export function defaultVec3(vec3: Partial<Vec3>): Vec3 {
   return { x: 0, y: 0, z: 0, ...vec3 };
 }
 
+type CSSStyleDeclarationKeys = Exclude<keyof CSSStyleDeclaration, number | 'length' | 'parentRule'>;
+
+type StyleProperties = Record<CSSStyleDeclarationKeys, string>;
+
 export default abstract class Widget {
   public stage: Stage = null;
   public basePosition: Vec3 = createVec3();
   public offsetPosition: Vec3 = createVec3();
   public rotation: Vec3 = createVec3();
+  public widgetName: string;
 
   protected root: HTMLDivElement = null;
 
@@ -42,6 +47,17 @@ export default abstract class Widget {
 
   public get $root(): HTMLDivElement {
     return this.root;
+  }
+
+  public name(name: string): this {
+    this.widgetName = name;
+
+    if (this.stage) {
+      // If the widget has already been added to a Stage, store it
+      this.stage.store(this, name);
+    }
+
+    return this;
   }
 
   public onAdded(): void {}
@@ -57,6 +73,16 @@ export default abstract class Widget {
       y: -(this.basePosition.y + this.offsetPosition.y) + halfWindowHeight - halfRootHeight,
       z: -(this.basePosition.z + this.offsetPosition.z)
     });
+  }
+
+  public style(styles: Partial<StyleProperties>): this {
+    if (this.root) {
+      Object.keys(styles).forEach((key: CSSStyleDeclarationKeys) => {
+        (this.root.style[key] as string) = styles[key];
+      });
+    }
+
+    return this;
   }
   
   public transform(transform: Transform): void {

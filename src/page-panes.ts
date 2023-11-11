@@ -12,42 +12,38 @@ export function setupPanesPage() {
     draggable: true
   });
 
-  const top = 20;
+  stage.addLayout(
+    { x: 20, y: 20},
+    new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),
+    new Text3D(`
+      <p>
+        Modern computers are terrifically powerful, and much of the web development space leaves the medium woefully under-utilized.
+        <strong>Panes</strong> is a library which breathes creative life into the form.
+      </p>
+      <p>
+        We'll start with a single <strong>Pane</strong>, our fundamental unit.
+      </p>
+    `).style({
+      fontSize: '20px',
+      width: '700px'
+    }),
+    new Pane(),
+    new Text3D('...').style({
+      fontSize: '20px'
+    })
+  );
 
-  const title = stage.add(new Text3D('Panes', false), {
-    x: 20,
-    y: top
-  });
+  // title.setStyle({
+  //   fontSize: '50px'
+  // });
 
-  title.setStyle({
-    fontSize: '50px'
-  });
-
-  const description = stage.add(new Text3D(`
-    <p>
-      Modern computers are terrifically powerful, and much of the web development space leaves the medium woefully under-utilized.
-      <strong>Panes</strong> is a library which breathes creative life into the form.
-    </p>
-    <p>
-      We'll start with a single <strong>Pane</strong>, our fundamental unit.
-    </p>
-  `, false), {
-    x: 20,
-    y: top + 80
-  });
-
-  description.setStyle({
-    fontSize: '20px',
-    width: '700px'
-  });
-
-  const pane = stage.add(new Pane(), {
-    x: 20,
-    y: top + 250
-  });
+  // const pane = stage.add(new Pane(), {
+  //   x: 20,
+  //   y: top + 250
+  // });
 
   function animateWidgets() {
-    title.transform({
+    stage.find('title')?.transform({
       position: {
         y: Math.sin(Date.now() / 1200) * 10,
       },

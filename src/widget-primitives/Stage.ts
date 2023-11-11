@@ -8,6 +8,7 @@ interface StageOptions {
 
 export default class Stage {
   private widgets: Widget[] = [];
+  private widgetMap: Record<string, Widget> = {};
   private targetOrigin: Vec3 = createVec3();
   private root = document.createElement('div');
 
@@ -49,17 +50,40 @@ export default class Stage {
 
     widget.onAdded();
 
+    if (widget.widgetName) {
+      // If the widget has a custom name, store it
+      this.store(widget, widget.widgetName);
+    }
+
     return widget;
   }
 
-  public setTargetOrigin(target: Partial<Vec3> = {}) {
-    this.targetOrigin = defaultVec3(target);
+  public addLayout<W extends Widget[]>(position: Partial<Vec3> = {}, ...widgets: W) {
+    let runningPosition = { ...position };
+
+    for (const widget of widgets) {
+      this.add(widget, runningPosition);
+
+      runningPosition.y += widget.$root?.clientHeight;
+    }
+  }
+
+  public find(name: string): Widget {
+    return this.widgetMap[name] || null;
   }
 
   public moveTargetOrigin(move: Partial<Vec3> = {}) {
     this.targetOrigin.x += move.x || 0;
     this.targetOrigin.y += move.y || 0;
     this.targetOrigin.z += move.z || 0;
+  }
+
+  public setTargetOrigin(target: Partial<Vec3> = {}) {
+    this.targetOrigin = defaultVec3(target);
+  }
+
+  public store(widget: Widget, name: string) {
+    this.widgetMap[name] = widget;
   }
 
   public update(dt: number) {
