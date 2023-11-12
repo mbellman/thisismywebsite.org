@@ -15,7 +15,7 @@ export default class Stage {
   private root = document.createElement('div');
   private drag = new DragManager();
 
-  public origin: Vec3 = createVec3();
+  public origin = createVec3();
 
   public constructor({
     draggable = false

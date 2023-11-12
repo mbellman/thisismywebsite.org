@@ -171,6 +171,7 @@ export function setupPanesPage() {
     stage.update(dt);
   });
 
+  // @todo temporary wheel suppression on mouseup/capturing distinct wheel gestures
   document.addEventListener('wheel', e => {
     stage.moveTargetOrigin({
       x: -e.deltaX * 2,

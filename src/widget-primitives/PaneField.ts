@@ -59,11 +59,11 @@ export default class PaneField extends Widget {
       }
     }
 
-    // @todo @fix subtract by highest X/Y pane width/height
     this.fieldArea.width = maxX;
     this.fieldArea.height = maxY;
 
     for (const pane of this.panes) {
+      // @todo allow additional buffer for higher z values
       const wrappedOffsetX = mod(this.currentOffset.x + pane.offsetPosition.x, this.fieldArea.width);
       const wrappedOffsetY = mod(this.currentOffset.y + pane.offsetPosition.y, this.fieldArea.height);
 
@@ -72,11 +72,16 @@ export default class PaneField extends Widget {
       // @todo wrap z
       pane.basePosition.z = this.basePosition.z;
 
-      // @todo check distance to right/bottom edge
-      const distanceToEdge = Math.min(wrappedOffsetX, wrappedOffsetY);
-      const opacity = Math.min(1, distanceToEdge / 40);
+      const closestDistanceToEdge = Math.min(
+        wrappedOffsetX,
+        wrappedOffsetY,
+        this.fieldArea.width - wrappedOffsetX,
+        this.fieldArea.height - wrappedOffsetY
+      );
 
-      pane.$root.style.opacity = `${opacity}`;
+      const opacity = Math.min(1, closestDistanceToEdge / 40);
+
+      pane.$frame.style.filter = `opacity(${opacity})`;
     }
   }
 

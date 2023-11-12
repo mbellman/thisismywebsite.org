@@ -139,9 +139,7 @@ export default class PaneSlider extends Widget {
   }
 
   private focusByIndex(index: number): void {
-    const pane = this.panes[index];
-
-    pane.slideIntoView();
+    // @todo
   }
 
   private keepSliderInBounds(dt: number): void {

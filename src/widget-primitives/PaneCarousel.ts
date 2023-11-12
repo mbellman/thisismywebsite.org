@@ -134,6 +134,7 @@ export default class PaneCarousel extends Widget {
       },
       onDragEnd: (e, delta) => {
         if (delta.x !== 0) {
+          // @todo use dt
           this.revolveWithMomentum(delta.x * 0.1);
         }
       }
@@ -196,6 +197,7 @@ export default class PaneCarousel extends Widget {
     }
   }
 
+  // @todo use dt
   private revolveWithMomentum(momentum: number): void {
     window.cancelAnimationFrame(this.nextAnimationFrame);
 
