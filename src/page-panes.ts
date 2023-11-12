@@ -20,7 +20,7 @@ export function setupPanesPage() {
   // @todo fix inverted stage origin
   stage.addGroup(
     { x: 250, y: 20},
-    // new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),
+    new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),
     new Text3D(`
       <p>
         Modern computers are fantastically powerful, and much of the web development space leaves the medium woefully under-utilized.

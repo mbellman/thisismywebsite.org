@@ -1,7 +1,7 @@
 import Pane, { Size } from './Pane';
 import Widget, { Vec2, createVec2, createVec3 } from './Widget';
 import { DragManager } from '../dragging';
-import { lerp } from '../utilities';
+import { lerp, mod } from '../utilities';
 
 export default class PaneField extends Widget {
   private panes: Pane[] = [];
@@ -47,10 +47,6 @@ export default class PaneField extends Widget {
     let maxY = 0;
 
     for (const pane of this.panes) {
-      pane.basePosition.x = this.basePosition.x + this.currentOffset.x;
-      pane.basePosition.y = this.basePosition.y + this.currentOffset.y;
-      pane.basePosition.z = this.basePosition.z + this.currentOffset.z;
-
       const right = pane.offsetPosition.x + pane.getWidth();
       const bottom = pane.offsetPosition.y + pane.getHeight();
 
@@ -66,6 +62,22 @@ export default class PaneField extends Widget {
     // @todo @fix subtract by highest X/Y pane width/height
     this.fieldArea.width = maxX;
     this.fieldArea.height = maxY;
+
+    for (const pane of this.panes) {
+      const wrappedOffsetX = mod(this.currentOffset.x + pane.offsetPosition.x, this.fieldArea.width);
+      const wrappedOffsetY = mod(this.currentOffset.y + pane.offsetPosition.y, this.fieldArea.height);
+
+      pane.basePosition.x = this.basePosition.x + wrappedOffsetX - pane.offsetPosition.x;
+      pane.basePosition.y = this.basePosition.y + wrappedOffsetY - pane.offsetPosition.y;
+      // @todo wrap z
+      pane.basePosition.z = this.basePosition.z;
+
+      // @todo check distance to right/bottom edge
+      const distanceToEdge = Math.min(wrappedOffsetX, wrappedOffsetY);
+      const opacity = Math.min(1, distanceToEdge / 40);
+
+      pane.$root.style.opacity = `${opacity}`;
+    }
   }
 
   /**
@@ -105,59 +117,24 @@ export default class PaneField extends Widget {
         this.targetOffset.y += delta.y * 20;
         // @todo handle z
 
-        this.keepFieldInBounds(1 / 60);
+        // this.keepFieldInBounds(1 / 60);
         this.slideToTargetOffset();
       }
     });
-  }
-
-  private keepFieldInBounds(dt: number): void {
-    const _dt = Math.min(1, dt * 20);
-
-    if (this.targetOffset.x > 0) {
-      this.targetOffset.x = lerp(this.targetOffset.x, 0, _dt);
-    }
-
-    if (this.targetOffset.y > 0) {
-      this.targetOffset.y = lerp(this.targetOffset.y, 0, _dt);
-    }
-
-    if (this.targetOffset.x < -this.fieldArea.width) {
-      this.targetOffset.x = lerp(this.targetOffset.x, -this.fieldArea.width, _dt);
-    }
-
-    if (this.targetOffset.y < -this.fieldArea.height) {
-      this.targetOffset.y = lerp(this.targetOffset.y, -this.fieldArea.height, _dt);
-    }
   }
 
   private slideToTargetOffset(): void {
     window.cancelAnimationFrame(this.nextAnimationFrame);
 
     const dt = Math.min(0.025, (Date.now() - this.lastSlideToTargetOffsetTime) / 1000);
-
-    const isInBounds = (
-      this.targetOffset.x < 0 && this.targetOffset.x > -this.fieldArea.width &&
-      this.targetOffset.y < 0 && this.targetOffset.y > -this.fieldArea.height
-      // @todo handle z
-    );
+    const _dt = Math.min(1, dt * 5)
 
     this.lastSlideToTargetOffsetTime = Date.now();
 
-    if (isInBounds && Math.abs(this.targetOffset.x - this.currentOffset.x) < 1) {
-      this.currentOffset.x = this.targetOffset.x;
-      this.currentOffset.y = this.targetOffset.y;
-      // @todo handle z
-    } else {
-      const _dt = Math.min(1, dt * 5)
+    this.currentOffset.x = lerp(this.currentOffset.x, this.targetOffset.x, _dt);
+    this.currentOffset.y = lerp(this.currentOffset.y, this.targetOffset.y, _dt);
+    // @todo handle z
 
-      this.currentOffset.x = lerp(this.currentOffset.x, this.targetOffset.x, _dt);
-      this.currentOffset.y = lerp(this.currentOffset.y, this.targetOffset.y, _dt);
-      // @todo handle z
-
-      this.keepFieldInBounds(dt);
-
-      this.nextAnimationFrame = requestAnimationFrame(() => this.slideToTargetOffset());
-    }
+    this.nextAnimationFrame = requestAnimationFrame(() => this.slideToTargetOffset());
   }
 }
