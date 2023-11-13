@@ -1,10 +1,10 @@
 import Widget, { Vec2, Vec3, createVec3, defaultVec3 } from './Widget';
 import { lerp } from '../utilities';
-import Row from './Row';
 import { DragManager } from '../dragging';
 import './Stage.scss';
 
 interface StageOptions {
+  scrollable?: boolean
   draggable?: boolean
 }
 
@@ -15,14 +15,21 @@ export default class Stage {
   private root = document.createElement('div');
   private drag = new DragManager();
 
+  private isNextScrollActionSuppressed = false;
+
   public origin = createVec3();
 
   public constructor({
+    scrollable = true,
     draggable = false
   }: StageOptions = {}) {
     this.root.classList.add('w-stage');
 
     document.body.appendChild(this.root);
+
+    if (scrollable) {
+      this.enableScrollableBehavior();
+    }
 
     if (draggable) {
       this.enableDraggableBehavior();
@@ -99,6 +106,37 @@ export default class Stage {
     this.origin.z = lerp(this.origin.z, this.targetOrigin.z, dt * 5);
   }
 
+  private enableScrollableBehavior() {
+    let lastWheelTime = 0;
+    let suppressed = false;
+
+    document.addEventListener('wheel', e => {
+      const isNewScrollAction = (Date.now() - lastWheelTime) > 200;
+
+      lastWheelTime = Date.now();
+
+      if (this.isNextScrollActionSuppressed) {
+        this.isNextScrollActionSuppressed = false;
+        suppressed = true;
+
+        return;
+      }
+
+      if (isNewScrollAction) {
+        suppressed = false;
+      }
+      
+      if (suppressed) {
+        return;
+      }
+
+      this.moveTargetOrigin({
+        x: -e.deltaX * 2,
+        y: -e.deltaY * 2
+      });
+    });
+  }
+
   private enableDraggableBehavior() {
     document.body.style.cursor = 'grab';
 
@@ -122,7 +160,23 @@ export default class Stage {
         this.targetOrigin.y += delta.y * 20;
 
         document.body.style.cursor = 'grab';
+
+        this.temporarilySuppressNextScrollAction();
       }
     });
+  }
+
+  /**
+   * Sets a flag to trigger suppression of the next 'scroll action',
+   * defined as a continuous sequence of wheel events. The reasoning
+   * behind this concerns ending a drag action on touch pads, which
+   * also fire wheel (scroll) events. The end of a drag action on a
+   * touch pad can 'leak' a sequence of wheel events, which we want
+   * to ignore - until a nominal timeout, or a new scroll action occurs.
+   */
+  private temporarilySuppressNextScrollAction() {
+    this.isNextScrollActionSuppressed = true;
+
+    setTimeout(() => this.isNextScrollActionSuppressed = false, 200);
   }
 }

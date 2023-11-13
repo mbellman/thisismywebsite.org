@@ -245,13 +245,4 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
 
     stage.update(dt);
   });
-
-  document.addEventListener('wheel', e => {
-    if (Math.abs(e.deltaX) > 15 || Math.abs(e.deltaY) > 15) {
-      stage.moveTargetOrigin({
-        x: -e.deltaX * 2,
-        y: -e.deltaY * 2
-      });
-    }
-  });
 }
