@@ -96,7 +96,7 @@ export function setupPanesPage() {
         They can be arranged into a draggable <strong>Slider</strong>:
       </p>
     `).style({ fontSize: '20px', paddingTop: '50px' }),
-    new PaneSlider({ centeredX: false, centeredY: false })
+    new PaneSlider({ centeredX: false, centeredY: false, gutter: 30 })
       .addPane(new Pane())
       .addPane(new Pane({ width: 300, height: 400 }))
       .addPane(new Pane({ width: 300, height: 500 }))
@@ -131,6 +131,14 @@ export function setupPanesPage() {
       .addPane(
         new Pane({ width: 100, height: 100 })
           .transform({ position: { x: 100, y: 0 } })
+      )
+      .addPane(
+        new Pane({ width: 150, height: 150 })
+          .transform({ position: { x: 150, y: 100, z: -100 } })
+      )
+      .addPane(
+        new Pane({ width: 120, height: 120 })
+          .transform({ position: { x: 600, y: 170 } })
       )
       .addPane(
         new Pane({ width: 200, height: 200 })

@@ -6,12 +6,14 @@ import { DragManager } from '../dragging';
 interface PaneSliderConfig {
   centeredX?: boolean;
   centeredY?: boolean;
+  gutter?: number;
 }
 
 export default class PaneSlider extends Widget {
   private panes: Pane[] = [];
   private centeredX = true;
   private centeredY = true;
+  private gutter = 100;
   private drag = new DragManager();
   private dragStartOffset = createVec2();
   private sliderOffset = createVec2();
@@ -25,11 +27,16 @@ export default class PaneSlider extends Widget {
     height: 0
   };
 
-  public constructor({ centeredX = true, centeredY = true }: PaneSliderConfig = {}) {
+  public constructor({
+    centeredX = true,
+    centeredY = true,
+    gutter = 100
+  }: PaneSliderConfig = {}) {
     super();
 
     this.centeredX = centeredX;
     this.centeredY = centeredY;
+    this.gutter = gutter;
 
     this.bindStaticEvents();
   }
@@ -73,9 +80,6 @@ export default class PaneSlider extends Widget {
     const halfLastPaneWidth = this.panes.at(-1).$root.clientWidth / 2;
     let runningOffsetX = 0;
 
-    // @todo make configurable
-    const SLIDE_MARGIN = 100;
-
     for (let i = 0; i < this.panes.length; i++) {
       const pane = this.panes[i];
       const halfPaneHeight = pane.$root.clientHeight / 2;
@@ -87,11 +91,11 @@ export default class PaneSlider extends Widget {
         z: root.z
       };
 
-      runningOffsetX += pane.$root.clientWidth + SLIDE_MARGIN;
+      runningOffsetX += pane.$root.clientWidth + this.gutter;
     }
 
     // @todo compute slider area height
-    this.sliderArea.width = runningOffsetX - halfLastPaneWidth * 2 - SLIDE_MARGIN;
+    this.sliderArea.width = runningOffsetX - halfLastPaneWidth * 2 - this.gutter;
   }
 
   /**
@@ -103,6 +107,7 @@ export default class PaneSlider extends Widget {
 
   private bindPaneEvents(pane: Pane, index: number): void {
     pane.$frame.addEventListener('click', e => {
+      // @todo clarify the meaning of this condition
       if (
         Math.abs(e.clientX - this.drag.start.x) < 5 &&
         Math.abs(e.clientY - this.drag.start.y) < 5
