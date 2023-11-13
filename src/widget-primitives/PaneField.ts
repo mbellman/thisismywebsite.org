@@ -1,7 +1,7 @@
 import Pane, { Size } from './Pane';
 import Widget, { Vec2, createVec2, createVec3 } from './Widget';
 import { DragManager } from '../dragging';
-import { lerp, mod } from '../utilities';
+import { lerp, wrap } from '../utilities';
 
 export default class PaneField extends Widget {
   private panes: Pane[] = [];
@@ -63,20 +63,24 @@ export default class PaneField extends Widget {
     this.fieldArea.height = maxY;
 
     for (const pane of this.panes) {
-      // @todo allow additional buffer for higher z values
-      const wrappedOffsetX = mod(this.currentOffset.x + pane.offsetPosition.x, this.fieldArea.width);
-      const wrappedOffsetY = mod(this.currentOffset.y + pane.offsetPosition.y, this.fieldArea.height);
+      const buffer = -pane.offsetPosition.z / 5;
+      const topEdge = 0 - buffer;
+      const leftEdge = 0 - buffer;
+      const rightEdge = this.fieldArea.width + buffer;
+      const bottomEdge = this.fieldArea.height + buffer;
+      const wrappedOffsetX = wrap(this.currentOffset.x + pane.offsetPosition.x, leftEdge, rightEdge);
+      const wrappedOffsetY = wrap(this.currentOffset.y + pane.offsetPosition.y, topEdge, bottomEdge);
 
-      pane.basePosition.x = this.basePosition.x + wrappedOffsetX - pane.offsetPosition.x;
-      pane.basePosition.y = this.basePosition.y + wrappedOffsetY - pane.offsetPosition.y;
+      pane.basePosition.x = this.basePosition.x - pane.offsetPosition.x + wrappedOffsetX - buffer;
+      pane.basePosition.y = this.basePosition.y - pane.offsetPosition.y + wrappedOffsetY - buffer;
       // @todo wrap z
       pane.basePosition.z = this.basePosition.z;
 
       const closestDistanceToEdge = Math.min(
-        wrappedOffsetX,
-        wrappedOffsetY,
-        this.fieldArea.width - wrappedOffsetX,
-        this.fieldArea.height - wrappedOffsetY
+        wrappedOffsetX - leftEdge,
+        wrappedOffsetY - topEdge,
+        rightEdge - wrappedOffsetX,
+        bottomEdge - wrappedOffsetY
       );
 
       const opacity = Math.min(1, closestDistanceToEdge / 40);

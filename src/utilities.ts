@@ -24,6 +24,10 @@ export function mod(a: number, m: number): number {
   return ((a % m) + m) % m;
 }
 
+export function wrap(a: number, min: number, max: number): number {
+  return mod((a - min), (max - min)) + min;
+}
+
 export function rgb(r: number, g: number, b: number): Color {
   return {
     r: r / 255,
