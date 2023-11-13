@@ -23,16 +23,14 @@ export function setupPanesPage() {
     new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),
     new Text3D(`
       <p>
-        Modern computers are fantastically powerful, and much of the web development space leaves the medium woefully under-utilized.
-        <strong>Panes</strong> is a library which breathes creative life into the form.
+        Modern computers are fantastically powerful, and much of the<br>
+        web development space leaves the medium woefully under-utilized.<br>
+        <strong>Panes</strong> is a design system which breathes creative life into the form.
       </p>
       <p>
         We'll start with a single <strong>Pane</strong>, our fundamental primitive.
       </p>
-    `).style({
-      fontSize: '20px',
-      width: '700px'
-    }),
+    `).style({ fontSize: '20px' }),
     new Pane().style({ padding: '20px 0' }),
     new Text3D(`
       <p>
