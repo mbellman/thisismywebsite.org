@@ -148,7 +148,7 @@ export default class PaneCarousel extends Widget {
     const root: Vec3 = {
       x: this.basePosition.x + this.offsetPosition.x + halfWindowWidth * (this.centeredX ? 1 : 0),
       y: this.basePosition.y + this.offsetPosition.y + halfWindowHeight * (this.centeredY ? 1 : 0),
-      z: this.basePosition.z + this.offsetPosition.z - this.radius
+      z: this.basePosition.z - this.offsetPosition.z - this.radius
     };
 
     for (let i = 0; i < this.panes.length; i++) {

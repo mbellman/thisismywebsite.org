@@ -49,7 +49,7 @@ export default class Pane extends Widget {
     const translation = {
       x: origin.x + basePosition.x + offsetPosition.x,
       y: origin.y + basePosition.y + offsetPosition.y,
-      z: origin.z + basePosition.z + offsetPosition.z
+      z: origin.z + basePosition.z - offsetPosition.z
     };
 
     const toDegrees = 180 / Math.PI;
@@ -58,7 +58,7 @@ export default class Pane extends Widget {
     const rZ = rotation.z * toDegrees;
 
     this.root.style.transform = `translate3d(${translation.x}px, ${translation.y}px, ${translation.z}px) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg)`;
-    this.root.style.zIndex = `${500 + Math.round(basePosition.z + offsetPosition.z)}`;
+    this.root.style.zIndex = `${Math.round(basePosition.z - offsetPosition.z)}`;
   }
 
   /**

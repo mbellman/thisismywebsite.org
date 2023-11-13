@@ -73,7 +73,7 @@ export default class PaneSlider extends Widget {
     const root: Vec3 = {
       x: this.basePosition.x + this.offsetPosition.x + halfWindowWidth * (this.centeredX ? 1 : 0),
       y: this.basePosition.y + this.offsetPosition.y + halfWindowHeight * (this.centeredY ? 1 : 0),
-      z: this.basePosition.z + this.offsetPosition.z
+      z: this.basePosition.z - this.offsetPosition.z
     };
 
     const halfFirstPaneWidth = this.panes[0].$root.clientWidth / 2;

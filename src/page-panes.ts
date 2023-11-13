@@ -16,7 +16,6 @@ export function setupPanesPage() {
     draggable: true
   });
 
-  // @todo fix inverted z
   // @todo fix inverted stage origin
   stage.addGroup(
     { x: 250, y: 20},
@@ -71,13 +70,13 @@ export function setupPanesPage() {
     new Row(
       new Pane().style({ padding: '10px' }),
       new Pane().transform({
-        position: { x: -200, z: -250 }
+        position: { x: -200, z: 250 }
       }),
       new Pane().transform({
-        position: { x: -400, z: -500 }
+        position: { x: -400, z: 500 }
       }),
       new Pane().transform({
-        position: { x: -600, z: -750 }
+        position: { x: -600, z: 750 }
       })
     ),
     new Text3D(`
@@ -123,10 +122,10 @@ export function setupPanesPage() {
       </p>
     `).style({ fontSize: '20px', paddingTop: '100px' }),
     new PaneField()
-      .addPane(new Pane().transform({ position: { x: 200, y: 100, z: -300 } }))
+      .addPane(new Pane().transform({ position: { x: 200, y: 100, z: 300 } }))
       .addPane(
         new Pane()
-          .transform({ position: { x: 350, y: 300, z: -500 }, rotation: { y: -Math.PI * 0.2 } })
+          .transform({ position: { x: 350, y: 300, z: 500 }, rotation: { y: -Math.PI * 0.2 } })
       )
       .addPane(
         new Pane({ width: 100, height: 100 })
@@ -134,7 +133,7 @@ export function setupPanesPage() {
       )
       .addPane(
         new Pane({ width: 150, height: 150 })
-          .transform({ position: { x: 150, y: 100, z: -100 } })
+          .transform({ position: { x: 150, y: 100, z: 100 } })
       )
       .addPane(
         new Pane({ width: 120, height: 120 })
@@ -146,7 +145,7 @@ export function setupPanesPage() {
       )
       .addPane(
         new Pane({ width: 250, height: 250 })
-          .transform({ position: { x: 750, y: 250, z: -200 } })
+          .transform({ position: { x: 750, y: 250, z: 200 } })
       )
   );
 

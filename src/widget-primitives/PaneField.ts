@@ -63,7 +63,7 @@ export default class PaneField extends Widget {
     this.fieldArea.height = maxY;
 
     for (const pane of this.panes) {
-      const buffer = -pane.offsetPosition.z / 5;
+      const buffer = pane.offsetPosition.z / 5;
       const topEdge = 0 - buffer;
       const leftEdge = 0 - buffer;
       const rightEdge = this.fieldArea.width + buffer;

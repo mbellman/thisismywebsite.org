@@ -37,7 +37,7 @@ export default class Text3D extends Widget {
     const translation: Vec3 = {
       x: origin.x + basePosition.x + offsetPosition.x + (window.innerWidth / 2 - this.$root.clientWidth / 2) * centeringFactor,
       y: origin.y + basePosition.y + offsetPosition.y + (window.innerHeight / 2 - this.$root.clientHeight / 2) * centeringFactor,
-      z: origin.z + basePosition.z + offsetPosition.z
+      z: origin.z + basePosition.z - offsetPosition.z
     };
 
     // @todo handle x/z rotation
