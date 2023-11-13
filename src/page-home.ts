@@ -101,7 +101,8 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
   );
 
   const particles = stage.add(
-    new Particles(20)
+    new Particles(20),
+    { z: 100 }
   );
 
   const projectsCarousel = stage.add(createProjectsCarousel(stage));
@@ -172,7 +173,7 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
     intro.transform({
       position: {
         y: Math.sin(t),
-        z: -50 + 50 * Math.cos(t)
+        z: 50 + 50 * Math.cos(t)
       },
       rotation: {
         y: Math.sin(t) * 0.1,
@@ -191,7 +192,7 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
     projectsHeading.transform({
       position: {
         y: Math.sin(t) * 10,
-        z: -50 + 50 * Math.sin(t)
+        z: 50 + 50 * Math.sin(t)
       },
       rotation: {
         y: Math.sin(t * 0.6) * 0.1
@@ -201,7 +202,7 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
     writingsTitle.transform({
       position: {
         y: Math.sin(t) * 10,
-        z: -50 + 50 * Math.sin(t)
+        z: 50 + 50 * Math.sin(t)
       },
       rotation: {
         y: Math.sin(t * 0.6) * 0.1
@@ -219,9 +220,7 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
 
     projectsCarousel.transform({
       position: {
-        x: 0,
         y: PROJECT_CAROUSEL_OFFSET,
-        z: 0
       }
     });
 

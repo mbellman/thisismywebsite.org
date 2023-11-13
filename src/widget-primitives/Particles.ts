@@ -78,7 +78,7 @@ export default class Particles extends Widget {
       particle.style.height = `${diameter}px`;
       particle.style.opacity = `${diameter / 5}`;
       particle.style.backgroundColor = `${color}`;
-      particle.style.zIndex = `${Math.round(diameter)}`;
+      particle.style.zIndex = `${-this.basePosition.z - this.offsetPosition.z}`;
     }
 
     window.requestAnimationFrame(() => this.updateParticles());

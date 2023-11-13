@@ -11,6 +11,7 @@ export default class PaneField extends Widget {
   private targetOffset = createVec3();
   private lastSlideToTargetOffsetTime: number = null;
 
+  // @todo depth
   private fieldArea: Size = {
     width: 0,
     height: 0
@@ -61,6 +62,7 @@ export default class PaneField extends Widget {
 
     this.fieldArea.width = maxX;
     this.fieldArea.height = maxY;
+    // @todo compute depth
 
     for (const pane of this.panes) {
       const buffer = pane.offsetPosition.z / 5;

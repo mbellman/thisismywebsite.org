@@ -120,7 +120,7 @@ export function setupPanesPage() {
       <p>
         ...And even a draggable, zoomable <strong>Field</strong>:
       </p>
-    `).style({ fontSize: '20px', paddingTop: '100px' }),
+    `).style({ fontSize: '20px', paddingTop: '200px' }),
     new PaneField()
       .addPane(new Pane().transform({ position: { x: 200, y: 100, z: 300 } }))
       .addPane(
