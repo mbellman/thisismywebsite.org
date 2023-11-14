@@ -110,7 +110,7 @@ export default class Stage {
     let lastWheelTime = 0;
     let suppressed = false;
 
-    document.addEventListener('wheel', e => {
+    window.addEventListener('wheel', e => {
       const isNewScrollAction = (Date.now() - lastWheelTime) > 200;
 
       lastWheelTime = Date.now();

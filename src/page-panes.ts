@@ -147,6 +147,22 @@ export function setupPanesPage() {
         new Pane({ width: 250, height: 250 })
           .transform({ position: { x: 750, y: 250, z: 200 } })
       )
+      .addPane(
+        new Pane({ width: 150, height: 150 })
+          .transform({ position: { x: 200, y: 400, z: 600 }, rotation: { y: Math.PI * 0.2 } })
+      )
+      .addPane(
+        new Pane({ width: 200, height: 200 })
+          .transform({ position: { x: 150, y: 250, z: 500 } })
+      )
+      .addPane(
+        new Pane({ width: 300, height: 300 })
+          .transform({ position: { x: 800, y: 300, z: 700 }, rotation: { y: -Math.PI * 0.2 } })
+      )
+      .addPane(
+        new Pane({ width: 200, height: 200 })
+          .transform({ position: { x: 250, y: 0, z: 800 } })
+      )
   );
 
   const title = stage.find('title');

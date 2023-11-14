@@ -3,6 +3,12 @@ import Widget, { Vec2, createVec2, createVec3 } from './Widget';
 import { DragManager } from '../dragging';
 import { lerp, wrap } from '../utilities';
 
+interface Volume {
+  width: number;
+  height: number;
+  depth: number;
+}
+
 export default class PaneField extends Widget {
   private panes: Pane[] = [];
   private drag = new DragManager();
@@ -11,10 +17,10 @@ export default class PaneField extends Widget {
   private targetOffset = createVec3();
   private lastSlideToTargetOffsetTime: number = null;
 
-  // @todo depth
-  private fieldArea: Size = {
+  private fieldVolume: Volume = {
     width: 0,
-    height: 0
+    height: 0,
+    depth: 0
   };
 
   private nextAnimationFrame: number = null;
@@ -46,6 +52,7 @@ export default class PaneField extends Widget {
   public update(): void {
     let maxX = 0;
     let maxY = 0;
+    let maxZ = 0;
 
     for (const pane of this.panes) {
       const right = pane.offsetPosition.x + pane.getWidth();
@@ -58,25 +65,29 @@ export default class PaneField extends Widget {
       if (bottom > maxY) {
         maxY = bottom;
       }
+
+      if (pane.offsetPosition.z > maxZ) {
+        maxZ = pane.offsetPosition.z;
+      }
     }
 
-    this.fieldArea.width = maxX;
-    this.fieldArea.height = maxY;
-    // @todo compute depth
+    this.fieldVolume.width = maxX;
+    this.fieldVolume.height = maxY;
+    this.fieldVolume.depth = maxZ * 1.5;
 
     for (const pane of this.panes) {
       const buffer = pane.offsetPosition.z / 5;
       const topEdge = 0 - buffer;
       const leftEdge = 0 - buffer;
-      const rightEdge = this.fieldArea.width + buffer;
-      const bottomEdge = this.fieldArea.height + buffer;
+      const rightEdge = this.fieldVolume.width + buffer;
+      const bottomEdge = this.fieldVolume.height + buffer;
       const wrappedOffsetX = wrap(this.currentOffset.x + pane.offsetPosition.x, leftEdge, rightEdge);
       const wrappedOffsetY = wrap(this.currentOffset.y + pane.offsetPosition.y, topEdge, bottomEdge);
+      const wrappedOffsetZ = wrap(this.currentOffset.z + pane.offsetPosition.z, -250, this.fieldVolume.depth);
 
       pane.basePosition.x = this.basePosition.x - pane.offsetPosition.x + wrappedOffsetX - buffer;
       pane.basePosition.y = this.basePosition.y - pane.offsetPosition.y + wrappedOffsetY - buffer;
-      // @todo wrap z
-      pane.basePosition.z = this.basePosition.z;
+      pane.basePosition.z = -(this.basePosition.z + wrappedOffsetZ);
 
       const closestDistanceToEdge = Math.min(
         wrappedOffsetX - leftEdge,
@@ -99,7 +110,6 @@ export default class PaneField extends Widget {
   }
 
   private bindPaneEvents(pane: Pane, index: number): void {
-    // @todo
     this.drag.bindDragStart(pane.$frame, e => {
       this.dragStartOffset = { ...this.currentOffset };
 
@@ -108,6 +118,21 @@ export default class PaneField extends Widget {
   }
 
   private bindStaticEvents(): void {
+    document.addEventListener('wheel', e => {
+      const mouse: Vec2 = {
+        x: e.clientX,
+        y: e.clientY
+      };
+
+      if (this.isMouseInBounds(mouse)) {
+        this.targetOffset.z += e.deltaY * 2;
+
+        this.slideToTargetOffset();
+
+        e.stopPropagation();
+      }
+    });
+
     this.drag.bindStaticDragEvents({
       onDrag: (e, delta) => {
         const totalDelta: Vec2 = {
@@ -117,21 +142,29 @@ export default class PaneField extends Widget {
 
         this.currentOffset.x = this.dragStartOffset.x + totalDelta.x;
         this.currentOffset.y = this.dragStartOffset.y + totalDelta.y;
-        // @todo handle z
 
         this.targetOffset.x = this.currentOffset.x;
         this.targetOffset.y = this.currentOffset.y;
-        // @todo handle z
       },
       onDragEnd: (e, delta) => {
         this.targetOffset.x += delta.x * 20;
         this.targetOffset.y += delta.y * 20;
-        // @todo handle z
 
-        // this.keepFieldInBounds(1 / 60);
         this.slideToTargetOffset();
       }
     });
+  }
+
+  private isMouseInBounds({ x, y }: Vec2): boolean {
+    const top = this.basePosition.y + this.offsetPosition.y + this.stage.origin.y;
+    const left = this.basePosition.x + this.offsetPosition.x + this.stage.origin.x;
+
+    return (
+      x > left &&
+      x < left + this.fieldVolume.width &&
+      y > top &&
+      y < top + this.fieldVolume.height
+    );
   }
 
   private slideToTargetOffset(): void {
@@ -144,7 +177,7 @@ export default class PaneField extends Widget {
 
     this.currentOffset.x = lerp(this.currentOffset.x, this.targetOffset.x, _dt);
     this.currentOffset.y = lerp(this.currentOffset.y, this.targetOffset.y, _dt);
-    // @todo handle z
+    this.currentOffset.z = lerp(this.currentOffset.z, this.targetOffset.z, _dt);
 
     this.nextAnimationFrame = requestAnimationFrame(() => this.slideToTargetOffset());
   }
