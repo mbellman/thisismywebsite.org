@@ -1,7 +1,7 @@
 import Pane, { Size } from './Pane';
 import Widget, { Vec2, createVec2, createVec3 } from './Widget';
 import { DragManager } from '../dragging';
-import { lerp, wrap } from '../utilities';
+import { distance, lerp, wrap } from '../utilities';
 
 interface Volume {
   width: number;
@@ -90,13 +90,15 @@ export default class PaneField extends Widget {
       pane.basePosition.z = -(this.basePosition.z + wrappedOffsetZ);
 
       const closestDistanceToEdge = Math.min(
-        wrappedOffsetX - leftEdge,
-        wrappedOffsetY - topEdge,
-        rightEdge - wrappedOffsetX,
-        bottomEdge - wrappedOffsetY
+        distance(wrappedOffsetX, leftEdge),
+        distance(wrappedOffsetY, topEdge),
+        distance(wrappedOffsetX, rightEdge),
+        distance(wrappedOffsetY, bottomEdge),
+        distance(wrappedOffsetZ, -250),
+        distance(wrappedOffsetZ, this.fieldVolume.depth)
       );
 
-      const opacity = Math.min(1, closestDistanceToEdge / 40);
+      const opacity = Math.min(1, closestDistanceToEdge / 50);
 
       pane.$frame.style.filter = `opacity(${opacity})`;
     }

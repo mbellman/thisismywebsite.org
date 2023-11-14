@@ -28,6 +28,10 @@ export function wrap(a: number, min: number, max: number): number {
   return mod((a - min), (max - min)) + min;
 }
 
+export function distance(a: number, b: number): number {
+  return Math.abs(a - b);
+}
+
 export function rgb(r: number, g: number, b: number): Color {
   return {
     r: r / 255,
