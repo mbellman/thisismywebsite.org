@@ -5,6 +5,7 @@ import Text3D from './widget-primitives/Text3D';
 import PaneSlider from './widget-primitives/PaneSlider';
 import PaneCarousel from './widget-primitives/PaneCarousel';
 import PaneField from './widget-primitives/PaneField';
+import Scrollbar from './widget-primitives/ScrollBar';
 import { animate } from './animation';
 import { multiply, rgb, toRgb } from './utilities';
 
@@ -15,6 +16,10 @@ export function setupPanesPage() {
   const stage = new Stage({
     draggable: true
   });
+
+  stage.add(new Scrollbar({
+    range: { y: 4000 }
+  }));
 
   // @todo fix inverted stage origin
   stage.addGroup(
@@ -161,7 +166,7 @@ export function setupPanesPage() {
       )
       .addPane(
         new Pane({ width: 200, height: 200 })
-          .transform({ position: { x: 250, y: 0, z: 800 } })
+          .transform({ position: { x: 250, y: 200, z: 800 } })
       )
   );
 

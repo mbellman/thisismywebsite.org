@@ -9,6 +9,7 @@ module.exports = {
   devtool: false,
   mode,
   entry: './src/index.ts',
+  cache: false,
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'main-[contenthash].js'
