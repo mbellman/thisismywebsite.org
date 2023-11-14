@@ -5,7 +5,7 @@ import Text3D from './widget-primitives/Text3D';
 import PaneSlider from './widget-primitives/PaneSlider';
 import PaneCarousel from './widget-primitives/PaneCarousel';
 import PaneField from './widget-primitives/PaneField';
-import Scrollbar from './widget-primitives/ScrollBar';
+import Scrollbar from './widget-primitives/Scrollbar';
 import { animate } from './animation';
 import { multiply, rgb, toRgb } from './utilities';
 
