@@ -25,7 +25,7 @@ export default class Scrollbar extends Widget {
     this.bar.basePosition.y = -this.stage.origin.y;
     this.bar.basePosition.z = -this.stage.origin.z + 10;
 
-    this.bar.offsetPosition.y = window.innerHeight * (-this.stage.origin.y / this.range.y);
+    this.bar.offsetPosition.y = (window.innerHeight - 300) * (-this.stage.origin.y / this.range.y);
   }
 
   public onAdded(): void {
@@ -40,9 +40,8 @@ export default class Scrollbar extends Widget {
 
     this.drag.bindStaticDragEvents({
       onDrag: (e, delta) => {
-        this.bar.offsetPosition.y += delta.y;
-
         this.stage.moveTargetOrigin({
+          // @todo track total delta and set the target origin accordingly
           y: -delta.y * 5
         });
       },
