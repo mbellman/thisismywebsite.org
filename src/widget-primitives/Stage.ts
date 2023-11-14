@@ -110,6 +110,7 @@ export default class Stage {
     let lastWheelTime = 0;
     let suppressed = false;
 
+    // @bug scroll actions are sometimes suppressed on touchpads when they should not be!
     window.addEventListener('wheel', e => {
       const isNewScrollAction = (Date.now() - lastWheelTime) > 200;
 
