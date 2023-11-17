@@ -8,6 +8,7 @@ import PaneField from './widget-primitives/PaneField';
 import Scrollbar from './widget-primitives/Scrollbar';
 import { animate } from './animation';
 import { multiply, rgb, toRgb } from './utilities';
+import './page-panes.scss';
 
 const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
 const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
@@ -20,34 +21,24 @@ function addMenu(stage: Stage) {
   }
 
   const sections: Section[] = [
-    { title: 'Panes', visibilityOffset: 10, seen: false },
-    { title: 'Sizes', visibilityOffset: 350, seen: false },
-    { title: 'Color themes', visibilityOffset: 800, seen: false },
+    { title: 'Panes', visibilityOffset: 0, seen: false },
+    { title: 'Sizes', visibilityOffset: 450, seen: false },
+    { title: 'Color themes', visibilityOffset: 900, seen: false },
     { title: 'Depth', visibilityOffset: 1250, seen: false },
     { title: 'Rotation', visibilityOffset: 1700, seen: false },
-    { title: 'Slider', visibilityOffset: 1900, seen: false },
-    { title: 'Carousel', visibilityOffset: 2600, seen: false },
-    { title: 'Field', visibilityOffset: 3200, seen: false }
+    { title: 'Slider', visibilityOffset: 2000, seen: false },
+    { title: 'Carousel', visibilityOffset: 2750, seen: false },
+    { title: 'Field', visibilityOffset: 3300, seen: false }
   ];
 
   let offset = 20;
 
   for (const section of sections) {
     const item = stage.add(
-      new Text3D(section.title)
-        .name(section.title)
-        .style({
-          backgroundColor: 'rgba(255, 255, 255, 0.2)',
-          color: '#fff',
-          fontSize: '18px',
-          letterSpacing: '2px',
-          opacity: '0',
-          padding: '10px',
-          pointerEvents: 'all',
-          transition: 'all 0.5s',
-          width: '190px'
-        })
+      new Text3D(section.title).name(section.title)
     );
+
+    item.$root.classList.add('menu-link');
 
     item.transform({
       position: {
@@ -60,7 +51,7 @@ function addMenu(stage: Stage) {
     item.$root.addEventListener('click', () => {
       if (section.seen) {
         stage.setTargetOrigin({
-          y: -(section.visibilityOffset + 50)
+          y: -section.visibilityOffset
         });
       }
     });
@@ -80,6 +71,8 @@ function addMenu(stage: Stage) {
       };
 
       if (-stage.origin.y > section.visibilityOffset) {
+        item.$root.classList.add('visible');
+
         section.seen = true;
       }
 
