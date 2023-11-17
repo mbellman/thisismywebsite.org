@@ -16,17 +16,18 @@ function addMenu(stage: Stage) {
   interface Section {
     title: string
     visibilityOffset: number
+    seen: boolean
   }
 
   const sections: Section[] = [
-    { title: 'Panes', visibilityOffset: 10 },
-    { title: 'Sizes', visibilityOffset: 200 },
-    { title: 'Color themes', visibilityOffset: 500 },
-    { title: 'Depth', visibilityOffset: 800 },
-    { title: 'Rotation', visibilityOffset: 1200 },
-    { title: 'Slider', visibilityOffset: 1500 },
-    { title: 'Carousel', visibilityOffset: 2000 },
-    { title: 'Field', visibilityOffset: 2400 }
+    { title: 'Panes', visibilityOffset: 10, seen: false },
+    { title: 'Sizes', visibilityOffset: 350, seen: false },
+    { title: 'Color themes', visibilityOffset: 800, seen: false },
+    { title: 'Depth', visibilityOffset: 1250, seen: false },
+    { title: 'Rotation', visibilityOffset: 1700, seen: false },
+    { title: 'Slider', visibilityOffset: 1900, seen: false },
+    { title: 'Carousel', visibilityOffset: 2600, seen: false },
+    { title: 'Field', visibilityOffset: 3200, seen: false }
   ];
 
   let offset = 20;
@@ -36,8 +37,11 @@ function addMenu(stage: Stage) {
       new Text3D(section.title)
         .name(section.title)
         .style({
-          fontSize: '26px',
+          color: '#0ff',
+          fontSize: '22px',
           opacity: '0',
+          pointerEvents: 'all',
+          textShadow: '-1px 1px 2px #000',
           transition: 'opacity 0.4s'
         })
     );
@@ -50,11 +54,20 @@ function addMenu(stage: Stage) {
       }
     });
 
+    item.$root.addEventListener('click', () => {
+      if (section.seen) {
+        stage.setTargetOrigin({
+          y: -(section.visibilityOffset + 50)
+        });
+      }
+    });
+
     offset += 50;
   }
 
   animate(dt => {
-    for (const section of sections) {
+    for (let i = 0; i < sections.length; i++) {
+      const section = sections[i];
       const item = stage.find(section.title);
 
       item.basePosition = {
@@ -64,7 +77,18 @@ function addMenu(stage: Stage) {
       };
 
       if (-stage.origin.y > section.visibilityOffset) {
-        item.$root.style.opacity = '1';
+        section.seen = true;
+      }
+
+      if (section.seen) {
+        item.$root.style.opacity = '0.5';
+
+        if (
+          -stage.origin.y > section.visibilityOffset && 
+          -stage.origin.y < (sections[i + 1]?.visibilityOffset || section.visibilityOffset + 500)
+        ) {
+          item.$root.style.opacity = '1';
+        }
       }
     }
   });
