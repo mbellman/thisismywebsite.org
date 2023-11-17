@@ -24,6 +24,10 @@ export function mod(a: number, m: number): number {
   return ((a % m) + m) % m;
 }
 
+export function clamp(n: number, min: number, max: number): number {
+  return Math.min(Math.max(n, min), max);
+}
+
 export function wrap(a: number, min: number, max: number): number {
   return mod((a - min), (max - min)) + min;
 }

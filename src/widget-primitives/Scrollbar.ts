@@ -1,4 +1,5 @@
 import { DragManager } from '../dragging';
+import { clamp } from '../utilities';
 import Pane from './Pane';
 import Widget, { Vec2, createVec2, defaultVec3 } from './Widget';
 
@@ -53,7 +54,8 @@ export default class Scrollbar extends Widget {
           y: e.clientY - this.drag.start.y
         };
 
-        const yRangeRatio = (startBarY + totalDelta.y) / (window.innerHeight - 300 - 2 * EDGE_MARGIN);
+        const targetBarY = clamp(startBarY + totalDelta.y, EDGE_MARGIN, window.innerHeight - 300 - 2 * EDGE_MARGIN);
+        const yRangeRatio = (targetBarY - EDGE_MARGIN) / (window.innerHeight - 300 - 2 * EDGE_MARGIN);
 
         this.stage.setTargetOrigin({
           x: this.stage.origin.x,

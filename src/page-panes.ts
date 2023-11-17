@@ -57,9 +57,7 @@ export function setupPanesPage() {
       <p>
         They also feature several color themes:
       </p>
-    `).style({
-      fontSize: '20px'
-    }),
+    `).style({ fontSize: '20px' }),
     new Row(
       new Pane({ width: 200, height: 200 }).theme('light').style({ paddingRight: '20px' }),
       new Pane({ width: 200, height: 200 }).theme('dark').style({ paddingRight: '20px' })
