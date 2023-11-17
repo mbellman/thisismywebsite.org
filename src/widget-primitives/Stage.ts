@@ -4,8 +4,10 @@ import { DragManager } from '../dragging';
 import './Stage.scss';
 
 interface StageOptions {
-  scrollable?: boolean
-  draggable?: boolean
+  scrollableX?: boolean
+  scrollableY?: boolean
+  draggableX?: boolean
+  draggableY?: boolean
 }
 
 export default class Stage {
@@ -20,19 +22,21 @@ export default class Stage {
   public origin = createVec3();
 
   public constructor({
-    scrollable = true,
-    draggable = false
+    scrollableX = true,
+    scrollableY = true,
+    draggableX = false,
+    draggableY = false
   }: StageOptions = {}) {
     this.root.classList.add('w-stage');
 
     document.body.appendChild(this.root);
 
-    if (scrollable) {
-      this.enableScrollableBehavior();
+    if (scrollableX || scrollableY) {
+      this.enableScrollableBehavior(scrollableX, scrollableY);
     }
 
-    if (draggable) {
-      this.enableDraggableBehavior();
+    if (draggableX || draggableY) {
+      this.enableDraggableBehavior(draggableX, draggableY);
     }
   }
 
@@ -106,7 +110,7 @@ export default class Stage {
     this.origin.z = lerp(this.origin.z, this.targetOrigin.z, dt * 5);
   }
 
-  private enableScrollableBehavior() {
+  private enableScrollableBehavior(scrollableX: boolean, scrollableY: boolean) {
     let lastWheelTime = 0;
     let suppressed = false;
 
@@ -132,13 +136,13 @@ export default class Stage {
       }
 
       this.moveTargetOrigin({
-        x: -e.deltaX * 2,
-        y: -e.deltaY * 2
+        x: -e.deltaX * 2 * (scrollableX ? 1 : 0),
+        y: -e.deltaY * 2 * (scrollableY ? 1 : 0)
       });
     });
   }
 
-  private enableDraggableBehavior() {
+  private enableDraggableBehavior(draggableX: boolean, draggableY: boolean) {
     document.body.style.cursor = 'grab';
 
     this.drag.bindDragStart(this.$root, e => {
@@ -149,16 +153,26 @@ export default class Stage {
 
     this.drag.bindStaticDragEvents({
       onDrag: (e, delta) => {
-        this.targetOrigin.x += delta.x;
-        this.targetOrigin.y += delta.y;
+        if (draggableX) {
+          this.targetOrigin.x += delta.x;
+        }
+
+        if (draggableY) {
+          this.targetOrigin.y += delta.y;
+        }
   
         this.origin.x = this.targetOrigin.x;
         this.origin.y = this.targetOrigin.y;
         this.origin.z = this.targetOrigin.z;
       },
       onDragEnd: (e, delta) => {
-        this.targetOrigin.x += delta.x * 20;
-        this.targetOrigin.y += delta.y * 20;
+        if (draggableX) {
+          this.targetOrigin.x += delta.x * 20;
+        }
+
+        if (draggableY) {
+          this.targetOrigin.y += delta.y * 20;
+        }
 
         document.body.style.cursor = 'grab';
 

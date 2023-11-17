@@ -49,7 +49,8 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
 
 export function setupHomePage(analyzer?: GestureAnalyzer) {
   const stage = new Stage({
-    draggable: true
+    draggableX: true,
+    draggableY: true
   });
 
   const intro = stage.add(

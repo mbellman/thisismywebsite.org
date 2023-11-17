@@ -105,7 +105,10 @@ function addMenu(stage: Stage) {
 
 export function setupPanesPage() {
   const stage = new Stage({
-    draggable: true
+    draggableX: false,
+    draggableY: true,
+    scrollableX: false,
+    scrollableY: true,
   });
 
   stage.add(new Scrollbar({
