@@ -48,10 +48,10 @@ export function setupPanesPage() {
       fontSize: '20px'
     }),
     new Row(
-      new Pane({ width: 100, height: 100 }).style({ padding: '10px' }),
-      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }),
-      new Pane({ width: 300, height: 300 }).style({ padding: '10px' }),
-      new Pane({ width: 400, height: 400 }).style({ padding: '10px' }),
+      new Pane({ width: 100, height: 100 }).style({ paddingRight: '20px' }),
+      new Pane({ width: 200, height: 200 }).style({ paddingRight: '20px' }),
+      new Pane({ width: 300, height: 300 }).style({ paddingRight: '20px' }),
+      new Pane({ width: 400, height: 400 }).style({ paddingRight: '20px' }),
     ),
     new Text3D(`
       <p>
@@ -61,8 +61,8 @@ export function setupPanesPage() {
       fontSize: '20px'
     }),
     new Row(
-      new Pane({ width: 200, height: 200 }).theme('light').style({ padding: '10px' }),
-      new Pane({ width: 200, height: 200 }).theme('dark').style({ padding: '10px' })
+      new Pane({ width: 200, height: 200 }).theme('light').style({ paddingRight: '20px' }),
+      new Pane({ width: 200, height: 200 }).theme('dark').style({ paddingRight: '20px' })
     ),
     new Text3D(`
       <p>
@@ -73,7 +73,7 @@ export function setupPanesPage() {
       paddingTop: '100px'
     }),
     new Row(
-      new Pane().style({ padding: '10px' }),
+      new Pane().style({ paddingRight: '20px' }),
       new Pane().transform({
         position: { x: -200, z: 250 }
       }),
@@ -90,10 +90,10 @@ export function setupPanesPage() {
       </p>
     `).style({ fontSize: '20px', paddingTop: '100px' }),
     new Row(
-      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }),
-      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ rotation: { y: Math.PI * 0.1 }}),
-      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ rotation: { y: Math.PI * 0.2 }}),
-      new Pane({ width: 200, height: 200 }).style({ padding: '10px' }).transform({ position: { x: -50 }, rotation: { y: Math.PI * 0.3 }})
+      new Pane({ width: 200, height: 200 }).style({ paddingRight: '20px' }),
+      new Pane({ width: 200, height: 200 }).style({ paddingRight: '20px' }).transform({ rotation: { y: Math.PI * 0.1 }}),
+      new Pane({ width: 200, height: 200 }).style({ paddingRight: '20px' }).transform({ rotation: { y: Math.PI * 0.2 }}),
+      new Pane({ width: 200, height: 200 }).style({ paddingRight: '20px' }).transform({ position: { x: -50 }, rotation: { y: Math.PI * 0.3 }})
     ),
     new Text3D(`
       <p>
