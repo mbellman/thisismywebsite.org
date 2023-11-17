@@ -37,18 +37,21 @@ function addMenu(stage: Stage) {
       new Text3D(section.title)
         .name(section.title)
         .style({
-          color: '#0ff',
-          fontSize: '22px',
+          backgroundColor: 'rgba(255, 255, 255, 0.2)',
+          color: '#fff',
+          fontSize: '18px',
+          letterSpacing: '2px',
           opacity: '0',
+          padding: '10px',
           pointerEvents: 'all',
-          textShadow: '-1px 1px 2px #000',
-          transition: 'opacity 0.4s'
+          transition: 'all 0.5s',
+          width: '190px'
         })
     );
 
     item.transform({
       position: {
-        x: 30,
+        x: 25,
         y: offset,
         z: -10
       }
@@ -62,7 +65,7 @@ function addMenu(stage: Stage) {
       }
     });
 
-    offset += 50;
+    offset += 42;
   }
 
   animate(dt => {
@@ -81,13 +84,19 @@ function addMenu(stage: Stage) {
       }
 
       if (section.seen) {
-        item.$root.style.opacity = '0.5';
+        const element = item.$root;
+
+        element.style.opacity = '0.5';
+        element.style.paddingLeft = '10px';
+        element.style.width = '190px';
 
         if (
           -stage.origin.y > section.visibilityOffset && 
           -stage.origin.y < (sections[i + 1]?.visibilityOffset || section.visibilityOffset + 500)
         ) {
-          item.$root.style.opacity = '1';
+          element.style.opacity = '1';
+          element.style.paddingLeft = '20px';
+          element.style.width = '180px';
         }
       }
     }

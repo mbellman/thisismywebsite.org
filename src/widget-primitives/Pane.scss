@@ -3,7 +3,6 @@
 .w {
   &-pane {
     @include size($width: 300px, $height: 300px);
-    perspective: 800px;
     pointer-events: none;
     position: absolute;
 
