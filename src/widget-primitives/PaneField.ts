@@ -73,7 +73,11 @@ export default class PaneField extends Widget {
 
     this.fieldVolume.width = maxX;
     this.fieldVolume.height = maxY;
+    // @todo make configurable
     this.fieldVolume.depth = maxZ * 1.5;
+
+    // @todo make configurable
+    const FORWARD_PROJECTION_RANGE = 250;
 
     for (const pane of this.panes) {
       const buffer = pane.offsetPosition.z / 5;
@@ -83,7 +87,7 @@ export default class PaneField extends Widget {
       const bottomEdge = this.fieldVolume.height + buffer;
       const wrappedOffsetX = wrap(this.currentOffset.x + pane.offsetPosition.x, leftEdge, rightEdge);
       const wrappedOffsetY = wrap(this.currentOffset.y + pane.offsetPosition.y, topEdge, bottomEdge);
-      const wrappedOffsetZ = wrap(this.currentOffset.z + pane.offsetPosition.z, -250, this.fieldVolume.depth);
+      const wrappedOffsetZ = wrap(this.currentOffset.z + pane.offsetPosition.z, -FORWARD_PROJECTION_RANGE, this.fieldVolume.depth);
 
       pane.basePosition.x = this.basePosition.x - pane.offsetPosition.x + wrappedOffsetX - buffer;
       pane.basePosition.y = this.basePosition.y - pane.offsetPosition.y + wrappedOffsetY - buffer;
@@ -94,7 +98,7 @@ export default class PaneField extends Widget {
         distance(wrappedOffsetY, topEdge),
         distance(wrappedOffsetX, rightEdge),
         distance(wrappedOffsetY, bottomEdge),
-        distance(wrappedOffsetZ, -250),
+        distance(wrappedOffsetZ, -FORWARD_PROJECTION_RANGE),
         distance(wrappedOffsetZ, this.fieldVolume.depth)
       );
 
