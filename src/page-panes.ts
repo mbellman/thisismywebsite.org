@@ -12,6 +12,64 @@ import { multiply, rgb, toRgb } from './utilities';
 const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
 const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
 
+function addMenu(stage: Stage) {
+  interface Section {
+    title: string
+    visibilityOffset: number
+  }
+
+  const sections: Section[] = [
+    { title: 'Panes', visibilityOffset: 10 },
+    { title: 'Sizes', visibilityOffset: 200 },
+    { title: 'Color themes', visibilityOffset: 500 },
+    { title: 'Depth', visibilityOffset: 800 },
+    { title: 'Rotation', visibilityOffset: 1200 },
+    { title: 'Slider', visibilityOffset: 1500 },
+    { title: 'Carousel', visibilityOffset: 2000 },
+    { title: 'Field', visibilityOffset: 2400 }
+  ];
+
+  let offset = 20;
+
+  for (const section of sections) {
+    const item = stage.add(
+      new Text3D(section.title)
+        .name(section.title)
+        .style({
+          fontSize: '26px',
+          opacity: '0',
+          transition: 'opacity 0.4s'
+        })
+    );
+
+    item.transform({
+      position: {
+        x: 30,
+        y: offset,
+        z: -10
+      }
+    });
+
+    offset += 50;
+  }
+
+  animate(dt => {
+    for (const section of sections) {
+      const item = stage.find(section.title);
+
+      item.basePosition = {
+        x: -stage.origin.x,
+        y: -stage.origin.y,
+        z: -stage.origin.z
+      };
+
+      if (-stage.origin.y > section.visibilityOffset) {
+        item.$root.style.opacity = '1';
+      }
+    }
+  });
+}
+
 export function setupPanesPage() {
   const stage = new Stage({
     draggable: true
@@ -20,6 +78,8 @@ export function setupPanesPage() {
   stage.add(new Scrollbar({
     range: { y: 4000 }
   }));
+
+  addMenu(stage);
 
   // @todo fix inverted stage origin
   stage.addGroup(
