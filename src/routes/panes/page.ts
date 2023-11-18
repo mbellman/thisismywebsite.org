@@ -1,11 +1,4 @@
-import Stage from '../../panes/Stage';
-import Row from '../../panes/Row';
-import Pane from '../../panes/Pane';
-import Text3D from '../../panes/Text3D';
-import PaneSlider from '../../panes/PaneSlider';
-import PaneCarousel from '../../panes/PaneCarousel';
-import PaneField from '../../panes/PaneField';
-import Scrollbar from '../../panes/Scrollbar';
+import { Stage, Row, Pane, Text3D, PaneSlider, PaneCarousel, PaneField, Scrollbar } from '../../panes';
 import { animate } from '../../animation';
 import { multiply, rgb, toRgb } from '../../utilities';
 import './page.scss';
