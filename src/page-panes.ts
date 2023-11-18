@@ -51,7 +51,7 @@ function addMenu(stage: Stage) {
     item.$root.addEventListener('click', () => {
       if (section.seen) {
         stage.setTargetOrigin({
-          y: -(section.visibilityOffset + 1)
+          y: section.visibilityOffset + 1
         });
       }
     });
@@ -65,12 +65,12 @@ function addMenu(stage: Stage) {
       const item = stage.find(section.title);
 
       item.basePosition = {
-        x: -stage.origin.x,
-        y: -stage.origin.y,
-        z: -stage.origin.z
+        x: stage.origin.x,
+        y: stage.origin.y,
+        z: stage.origin.z
       };
 
-      if (-stage.origin.y > section.visibilityOffset) {
+      if (stage.origin.y > section.visibilityOffset) {
         item.$root.classList.add('visible');
 
         section.seen = true;
@@ -84,8 +84,8 @@ function addMenu(stage: Stage) {
         element.style.width = '190px';
 
         if (
-          -stage.origin.y > section.visibilityOffset && 
-          -stage.origin.y < (sections[i + 1]?.visibilityOffset || section.visibilityOffset + 500)
+          stage.origin.y > section.visibilityOffset && 
+          stage.origin.y < (sections[i + 1]?.visibilityOffset || section.visibilityOffset + 500)
         ) {
           element.style.opacity = '1';
           element.style.paddingLeft = '20px';
@@ -98,9 +98,9 @@ function addMenu(stage: Stage) {
 
 export function setupPanesPage() {
   const stage = new Stage({
-    draggableX: false,
+    draggableX: true,
     draggableY: true,
-    scrollableX: false,
+    scrollableX: true,
     scrollableY: true,
   });
 
@@ -110,7 +110,6 @@ export function setupPanesPage() {
 
   addMenu(stage);
 
-  // @todo fix inverted stage origin
   stage.addGroup(
     { x: 250, y: 20},
     new Text3D('PANES').name('title').style({ fontSize: '50px', fontWeight: '900', letterSpacing: '10px' }),
@@ -271,8 +270,8 @@ export function setupPanesPage() {
   }
 
   function updateStageBackgroundColor() {
-    const bgTop = multiply(BODY_BG_COLOR_TOP, 1 + -stage.origin.y / 2000);
-    const bgBottom = multiply(BODY_BG_COLOR_BOTTOM, 1 + -stage.origin.y / 2000);
+    const bgTop = multiply(BODY_BG_COLOR_TOP, 1 + stage.origin.y / 2000);
+    const bgBottom = multiply(BODY_BG_COLOR_BOTTOM, 1 + stage.origin.y / 2000);
 
     stage.$root.style.background = `linear-gradient(to bottom, ${toRgb(bgTop)}, ${toRgb(bgBottom)})`;
   }

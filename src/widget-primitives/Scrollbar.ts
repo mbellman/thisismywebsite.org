@@ -25,14 +25,14 @@ export default class Scrollbar extends Widget {
 
   public update(): void {
     // Keep the scroll bar fixed to the window area
-    this.bar.basePosition.x = -this.stage.origin.x + window.innerWidth;
-    this.bar.basePosition.y = -this.stage.origin.y;
+    this.bar.basePosition.x = this.stage.origin.x + window.innerWidth;
+    this.bar.basePosition.y = this.stage.origin.y;
 
     // Position the bar above other elements
     // @todo force the z-index instead?
     this.bar.basePosition.z = -this.stage.origin.z + 10;
 
-    this.bar.offsetPosition.y = (window.innerHeight - 300 - EDGE_MARGIN) * (-this.stage.origin.y / this.range.y) + EDGE_MARGIN;
+    this.bar.offsetPosition.y = (window.innerHeight - 300 - EDGE_MARGIN) * (this.stage.origin.y / this.range.y) + EDGE_MARGIN;
   }
 
   public onAdded(): void {
@@ -59,7 +59,7 @@ export default class Scrollbar extends Widget {
 
         this.stage.setTargetOrigin({
           x: this.stage.origin.x,
-          y: -this.range.y * yRangeRatio,
+          y: this.range.y * yRangeRatio,
           z: this.stage.origin.z
         });
       },

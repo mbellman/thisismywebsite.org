@@ -44,12 +44,12 @@ export default class Pane extends Widget {
    */
   public update(): void {
     const { basePosition, offsetPosition, rotation } = this;
-    const origin = defaultVec3(this.stage.origin);
+    const { origin } = this.stage
 
     const translation = {
-      x: origin.x + basePosition.x + offsetPosition.x,
-      y: origin.y + basePosition.y + offsetPosition.y,
-      z: origin.z + basePosition.z - offsetPosition.z
+      x: -origin.x + basePosition.x + offsetPosition.x,
+      y: -origin.y + basePosition.y + offsetPosition.y,
+      z: -origin.z + basePosition.z - offsetPosition.z
     };
 
     const toDegrees = 180 / Math.PI;

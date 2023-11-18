@@ -16,7 +16,6 @@ export default class Stage {
   private targetOrigin: Vec3 = createVec3();
   private root = document.createElement('div');
   private drag = new DragManager();
-
   private isNextScrollActionSuppressed = false;
 
   public origin = createVec3();
@@ -136,8 +135,8 @@ export default class Stage {
       }
 
       this.moveTargetOrigin({
-        x: -e.deltaX * 2 * (scrollableX ? 1 : 0),
-        y: -e.deltaY * 2 * (scrollableY ? 1 : 0)
+        x: e.deltaX * 2 * (scrollableX ? 1 : 0),
+        y: e.deltaY * 2 * (scrollableY ? 1 : 0)
       });
     });
   }
@@ -154,11 +153,11 @@ export default class Stage {
     this.drag.bindStaticDragEvents({
       onDrag: (e, delta) => {
         if (draggableX) {
-          this.targetOrigin.x += delta.x;
+          this.targetOrigin.x -= delta.x;
         }
 
         if (draggableY) {
-          this.targetOrigin.y += delta.y;
+          this.targetOrigin.y -= delta.y;
         }
   
         this.origin.x = this.targetOrigin.x;
@@ -167,11 +166,11 @@ export default class Stage {
       },
       onDragEnd: (e, delta) => {
         if (draggableX) {
-          this.targetOrigin.x += delta.x * 20;
+          this.targetOrigin.x -= delta.x * 20;
         }
 
         if (draggableY) {
-          this.targetOrigin.y += delta.y * 20;
+          this.targetOrigin.y -= delta.y * 20;
         }
 
         document.body.style.cursor = 'grab';

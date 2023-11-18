@@ -162,8 +162,8 @@ export default class PaneField extends Widget {
   }
 
   private isMouseInBounds({ x, y }: Vec2): boolean {
-    const top = this.basePosition.y + this.offsetPosition.y + this.stage.origin.y;
-    const left = this.basePosition.x + this.offsetPosition.x + this.stage.origin.x;
+    const top = this.basePosition.y + this.offsetPosition.y - this.stage.origin.y;
+    const left = this.basePosition.x + this.offsetPosition.x - this.stage.origin.x;
 
     return (
       x > left &&
