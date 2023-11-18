@@ -1,4 +1,4 @@
-import { Stage, PaneCarousel, Pane, Particles, Text3D, PaneSlider } from '../../panes';
+import { Stage, PaneCarousel, Pane, Particles, Text3D, PaneSlider } from '@panes';
 import ProjectBlock from './widgets/ProjectBlock';
 import { multiply, rgb, toRgb } from '../../utilities';
 import { animate, tween } from '../../animation';

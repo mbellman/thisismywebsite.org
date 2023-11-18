@@ -42,6 +42,9 @@ module.exports = {
     })
   ],
   resolve: {
+    alias: {
+      '@panes': path.resolve(__dirname, './src/panes/index.ts')
+    },
     extensions: ['.js', '.ts']
   }
 };
