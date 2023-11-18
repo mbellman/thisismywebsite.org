@@ -1,7 +1,13 @@
-import Widget, { Vec2, Vec3, createVec3, defaultVec3 } from './Widget';
-import { lerp } from '../utilities';
+import Widget, { Vec3, createVec3, defaultVec3 } from './Widget';
+import { clamp, lerp } from '../utilities';
 import { DragManager } from '../dragging';
 import './Stage.scss';
+
+// @todo move into types.ts
+interface Range {
+  start: number
+  end: number
+}
 
 interface StageOptions {
   scrollableX?: boolean
@@ -9,6 +15,11 @@ interface StageOptions {
   draggableX?: boolean
   draggableY?: boolean
 }
+
+const DEFAULT_RANGE: Range = {
+  start: Number.NEGATIVE_INFINITY,
+  end: Number.POSITIVE_INFINITY
+};
 
 export default class Stage {
   private widgets: Widget[] = [];
@@ -19,6 +30,8 @@ export default class Stage {
   private isNextScrollActionSuppressed = false;
 
   public origin = createVec3();
+  public xRange = DEFAULT_RANGE;
+  public yRange = DEFAULT_RANGE;
 
   public constructor({
     scrollableX = true,
@@ -26,9 +39,9 @@ export default class Stage {
     draggableX = false,
     draggableY = false
   }: StageOptions = {}) {
-    this.root.classList.add('w-stage');
-
     document.body.appendChild(this.root);
+
+    this.root.classList.add('w-stage');
 
     if (scrollableX || scrollableY) {
       this.enableScrollableBehavior(scrollableX, scrollableY);
@@ -103,6 +116,8 @@ export default class Stage {
     for (const widget of this.widgets) {
       widget.update();
     }
+
+    this.targetOrigin.y = lerp(this.targetOrigin.y, clamp(this.targetOrigin.y, this.yRange.start, this.yRange.end), dt * 20);
 
     this.origin.x = lerp(this.origin.x, this.targetOrigin.x, dt * 5);
     this.origin.y = lerp(this.origin.y, this.targetOrigin.y, dt * 5);

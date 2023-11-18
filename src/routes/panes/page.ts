@@ -88,11 +88,11 @@ export default function setup() {
     draggableX: false,
     draggableY: true,
     scrollableX: false,
-    scrollableY: true,
+    scrollableY: true
   });
 
   stage.add(new Scrollbar({
-    range: { y: 4000 }
+    range: { y: 3600 }
   }));
 
   addMenu(stage);

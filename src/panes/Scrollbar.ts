@@ -9,6 +9,8 @@ interface ScrollbarConfig {
   range?: Partial<Vec2>;
 }
 
+// @todo support horizontal scrollbars
+// @todo depth scrolling?
 export default class Scrollbar extends Widget {
   private bar: Pane = null;
   private drag = new DragManager();
@@ -23,23 +25,18 @@ export default class Scrollbar extends Widget {
     };
   }
 
-  public update(): void {
-    // Keep the scroll bar fixed to the window area
-    this.bar.basePosition.x = this.stage.origin.x + window.innerWidth;
-    this.bar.basePosition.y = this.stage.origin.y;
-
-    // Position the bar above other elements
-    // @todo force the z-index instead?
-    this.bar.basePosition.z = -this.stage.origin.z + 10;
-
-    this.bar.offsetPosition.y = (window.innerHeight - 300 - EDGE_MARGIN) * (this.stage.origin.y / this.range.y) + EDGE_MARGIN;
-  }
-
+  /**
+   * @override
+   */
   public onAdded(): void {
     this.bar = new Pane({ width: 20, height: 300 })
       .transform({ position: { x: -40, y: 20 } });
 
     this.stage.add(this.bar);
+
+    // @todo apply x range
+    this.stage.yRange = { start: 0, end: this.range.y };
+    // @todo apply z range
 
     let startBarY: number;
 
@@ -67,6 +64,21 @@ export default class Scrollbar extends Widget {
         // ...
       }
     });
+  }
+
+  /**
+   * @override
+   */
+  public update(): void {
+    // Keep the scroll bar fixed to the window area
+    this.bar.basePosition.x = this.stage.origin.x + window.innerWidth;
+    this.bar.basePosition.y = this.stage.origin.y;
+
+    // Position the bar above other elements
+    // @todo force the z-index instead?
+    this.bar.basePosition.z = -this.stage.origin.z + 10;
+
+    this.bar.offsetPosition.y = (window.innerHeight - 300 - EDGE_MARGIN) * (this.stage.origin.y / this.range.y) + EDGE_MARGIN;
   }
 
   protected createRoot(): HTMLDivElement {

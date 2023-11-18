@@ -1,3 +1,5 @@
+// @todo move this file into panes
+
 interface Color {
   r: number;
   g: number;
