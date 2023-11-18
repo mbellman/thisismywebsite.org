@@ -1,4 +1,4 @@
-import { Vec2, createVec2 } from './widget-primitives/Widget';
+import { Vec2, createVec2 } from './panes/Widget';
 
 type DragHandler = (e: MouseEvent, delta: Vec2) => void;
 

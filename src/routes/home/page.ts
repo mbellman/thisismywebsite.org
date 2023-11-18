@@ -1,10 +1,10 @@
-import Stage from '../../widget-primitives/Stage';
-import PaneCarousel from '../../widget-primitives/PaneCarousel';
-import Pane from '../../widget-primitives/Pane';
-import Particles from '../../widget-primitives/Particles';
-import Text3D from '../../widget-primitives/Text3D';
-import PaneSlider from '../../widget-primitives/PaneSlider';
-import ProjectBlock from '../../custom-widgets/ProjectBlock';
+import Stage from '../../panes/Stage';
+import PaneCarousel from '../../panes/PaneCarousel';
+import Pane from '../../panes/Pane';
+import Particles from '../../panes/Particles';
+import Text3D from '../../panes/Text3D';
+import PaneSlider from '../../panes/PaneSlider';
+import ProjectBlock from './widgets/ProjectBlock';
 import { multiply, rgb, toRgb } from '../../utilities';
 import { animate, tween } from '../../animation';
 import { projects } from '../../layout';

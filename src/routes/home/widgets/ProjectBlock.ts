@@ -1,5 +1,5 @@
-import Widget from '../widget-primitives/Widget';
-import type { Project } from '../layout';
+import Widget from '../../../panes/Widget';
+import type { Project } from '../../../layout';
 
 import './ProjectBlock.scss';
 
