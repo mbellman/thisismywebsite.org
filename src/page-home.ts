@@ -68,7 +68,7 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
     e.preventDefault();
 
     stage.setTargetOrigin({
-      y: -500
+      y: 500
     });
   });
 
@@ -79,7 +79,7 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
     // window.open('https://thisismywebsite.org/thoughts/', '_blank');
 
     stage.setTargetOrigin({
-      y: -2000
+      y: 2000
     });
   });
 
@@ -227,15 +227,15 @@ export function setupHomePage(analyzer?: GestureAnalyzer) {
 
     particles.transform({
       position: {
-        x: stage.origin.x * 0.6,
-        y: stage.origin.y * 0.4
+        x: -stage.origin.x * 0.6,
+        y: -stage.origin.y * 0.4
       }
     });
   }
 
   function updateStageBackgroundColor() {
-    const bgTop = multiply(BODY_BG_COLOR_TOP, 1 + -stage.origin.y / 2000);
-    const bgBottom = multiply(BODY_BG_COLOR_BOTTOM, 1 + -stage.origin.y / 2000);
+    const bgTop = multiply(BODY_BG_COLOR_TOP, 1 + stage.origin.y / 2000);
+    const bgBottom = multiply(BODY_BG_COLOR_BOTTOM, 1 + stage.origin.y / 2000);
 
     stage.$root.style.background = `linear-gradient(to bottom, ${toRgb(bgTop)}, ${toRgb(bgBottom)})`;
   }

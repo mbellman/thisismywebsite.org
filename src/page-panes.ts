@@ -77,19 +77,13 @@ function addMenu(stage: Stage) {
       }
 
       if (section.seen) {
-        const element = item.$root;
-
-        element.style.opacity = '0.5';
-        element.style.paddingLeft = '10px';
-        element.style.width = '190px';
-
         if (
           stage.origin.y > section.visibilityOffset && 
           stage.origin.y < (sections[i + 1]?.visibilityOffset || section.visibilityOffset + 500)
         ) {
-          element.style.opacity = '1';
-          element.style.paddingLeft = '20px';
-          element.style.width = '180px';
+          item.$root.classList.add('focused');
+        } else {
+          item.$root.classList.remove('focused');
         }
       }
     }
@@ -98,9 +92,9 @@ function addMenu(stage: Stage) {
 
 export function setupPanesPage() {
   const stage = new Stage({
-    draggableX: true,
+    draggableX: false,
     draggableY: true,
-    scrollableX: true,
+    scrollableX: false,
     scrollableY: true,
   });
 

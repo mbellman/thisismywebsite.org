@@ -8,6 +8,7 @@
   padding: 10px;
   pointer-events: all;
   transition: all 0.5s;
+  text-shadow: 0 0 0 #fff;
   width: 190px;
 
   &.visible {
@@ -16,5 +17,12 @@
 
   &.visible:hover {
     opacity: 1 !important;
+  }
+
+  &.focused {
+    opacity: 1;
+    padding-left: 20px;
+    text-shadow: 0 0 4px #fff;
+    width: 180px;
   }
 }
