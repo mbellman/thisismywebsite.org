@@ -1,15 +1,15 @@
-import Stage from './widget-primitives/Stage';
-import PaneCarousel from './widget-primitives/PaneCarousel';
-import Pane from './widget-primitives/Pane';
-import Particles from './widget-primitives/Particles';
-import Text3D from './widget-primitives/Text3D';
-import PaneSlider from './widget-primitives/PaneSlider';
-import ProjectBlock from './custom-widgets/ProjectBlock';
-import { multiply, rgb, toRgb } from './utilities';
-import { animate, tween } from './animation';
-import { projects } from './layout';
-import { GestureAnalyzer } from './gestures';
-import { printDebug } from './debug';
+import Stage from '../../widget-primitives/Stage';
+import PaneCarousel from '../../widget-primitives/PaneCarousel';
+import Pane from '../../widget-primitives/Pane';
+import Particles from '../../widget-primitives/Particles';
+import Text3D from '../../widget-primitives/Text3D';
+import PaneSlider from '../../widget-primitives/PaneSlider';
+import ProjectBlock from '../../custom-widgets/ProjectBlock';
+import { multiply, rgb, toRgb } from '../../utilities';
+import { animate, tween } from '../../animation';
+import { projects } from '../../layout';
+import { GestureAnalyzer } from '../../gestures';
+import { printDebug } from '../../debug';
 
 function createProjectsCarousel(stage: Stage): PaneCarousel {
   const carousel = new PaneCarousel();
@@ -47,7 +47,7 @@ async function changeProjectTitle(projectTitle: Text3D, projectIndex: number): P
   }));
 }
 
-export function setupHomePage(analyzer?: GestureAnalyzer) {
+export default function setup(analyzer?: GestureAnalyzer) {
   const stage = new Stage({
     draggableX: true,
     draggableY: true

@@ -1,14 +1,14 @@
-import Stage from './widget-primitives/Stage';
-import Row from './widget-primitives/Row';
-import Pane from './widget-primitives/Pane';
-import Text3D from './widget-primitives/Text3D';
-import PaneSlider from './widget-primitives/PaneSlider';
-import PaneCarousel from './widget-primitives/PaneCarousel';
-import PaneField from './widget-primitives/PaneField';
-import Scrollbar from './widget-primitives/Scrollbar';
-import { animate } from './animation';
-import { multiply, rgb, toRgb } from './utilities';
-import './page-panes.scss';
+import Stage from '../../widget-primitives/Stage';
+import Row from '../../widget-primitives/Row';
+import Pane from '../../widget-primitives/Pane';
+import Text3D from '../../widget-primitives/Text3D';
+import PaneSlider from '../../widget-primitives/PaneSlider';
+import PaneCarousel from '../../widget-primitives/PaneCarousel';
+import PaneField from '../../widget-primitives/PaneField';
+import Scrollbar from '../../widget-primitives/Scrollbar';
+import { animate } from '../../animation';
+import { multiply, rgb, toRgb } from '../../utilities';
+import './page.scss';
 
 const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
 const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
@@ -90,7 +90,7 @@ function addMenu(stage: Stage) {
   });
 }
 
-export function setupPanesPage() {
+export default function setup() {
   const stage = new Stage({
     draggableX: false,
     draggableY: true,
