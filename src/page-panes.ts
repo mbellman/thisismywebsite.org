@@ -51,7 +51,7 @@ function addMenu(stage: Stage) {
     item.$root.addEventListener('click', () => {
       if (section.seen) {
         stage.setTargetOrigin({
-          y: -section.visibilityOffset
+          y: -(section.visibilityOffset + 1)
         });
       }
     });
