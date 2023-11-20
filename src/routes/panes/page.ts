@@ -1,87 +1,10 @@
 import { Stage, Row, Pane, Text3D, PaneSlider, PaneCarousel, PaneField, Scrollbar } from '@panes';
 import { animate } from '../../animation';
 import { multiply, rgb, toRgb } from '../../utilities';
-import './page.scss';
+import NavMenu from './widgets/NavMenu';
 
 const BODY_BG_COLOR_TOP = rgb(55, 9, 129);
 const BODY_BG_COLOR_BOTTOM = rgb(108, 75, 184);
-
-function addMenu(stage: Stage) {
-  interface Section {
-    title: string
-    visibilityOffset: number
-    seen: boolean
-  }
-
-  const sections: Section[] = [
-    { title: 'Panes', visibilityOffset: 0, seen: false },
-    { title: 'Sizes', visibilityOffset: 450, seen: false },
-    { title: 'Color themes', visibilityOffset: 900, seen: false },
-    { title: 'Depth', visibilityOffset: 1250, seen: false },
-    { title: 'Rotation', visibilityOffset: 1700, seen: false },
-    { title: 'Slider', visibilityOffset: 2000, seen: false },
-    { title: 'Carousel', visibilityOffset: 2750, seen: false },
-    { title: 'Field', visibilityOffset: 3300, seen: false }
-  ];
-
-  let offset = 20;
-
-  for (const section of sections) {
-    const item = stage.add(
-      new Text3D(section.title).name(section.title)
-    );
-
-    item.$root.classList.add('menu-link');
-
-    item.transform({
-      position: {
-        x: 25,
-        y: offset,
-        z: -10
-      }
-    });
-
-    item.$root.addEventListener('click', () => {
-      if (section.seen) {
-        stage.setTargetOrigin({
-          y: section.visibilityOffset + 1
-        });
-      }
-    });
-
-    offset += 42;
-  }
-
-  animate(dt => {
-    for (let i = 0; i < sections.length; i++) {
-      const section = sections[i];
-      const item = stage.find(section.title);
-
-      item.basePosition = {
-        x: stage.origin.x,
-        y: stage.origin.y,
-        z: stage.origin.z
-      };
-
-      if (stage.origin.y > section.visibilityOffset) {
-        item.$root.classList.add('visible');
-
-        section.seen = true;
-      }
-
-      if (section.seen) {
-        if (
-          stage.origin.y > section.visibilityOffset && 
-          stage.origin.y < (sections[i + 1]?.visibilityOffset || section.visibilityOffset + 500)
-        ) {
-          item.$root.classList.add('focused');
-        } else {
-          item.$root.classList.remove('focused');
-        }
-      }
-    }
-  });
-}
 
 export default function setup() {
   const stage = new Stage({
@@ -95,7 +18,7 @@ export default function setup() {
     range: { y: 3600 }
   }));
 
-  addMenu(stage);
+  stage.add(new NavMenu());
 
   stage.addGroup(
     { x: 250, y: 20},
