@@ -18,7 +18,16 @@ export default function setup() {
     range: { y: 3600 }
   }));
 
-  stage.add(new NavMenu());
+  stage.add(new NavMenu([
+    { title: 'Panes', visibilityOffset: 0 },
+    { title: 'Sizes', visibilityOffset: 450 },
+    { title: 'Color themes', visibilityOffset: 900 },
+    { title: 'Depth', visibilityOffset: 1250 },
+    { title: 'Rotation', visibilityOffset: 1700 },
+    { title: 'Slider', visibilityOffset: 2000 },
+    { title: 'Carousel', visibilityOffset: 2750 },
+    { title: 'Field', visibilityOffset: 3300 }
+  ]));
 
   stage.addGroup(
     { x: 250, y: 20},

@@ -4,33 +4,34 @@ import './NavMenu.scss';
 interface MenuItem {
   title: string
   visibilityOffset: number
-  seen: boolean
+  seen?: boolean
 }
 
-const menuItems: MenuItem[] = [
-  { title: 'Panes', visibilityOffset: 0, seen: false },
-  { title: 'Sizes', visibilityOffset: 450, seen: false },
-  { title: 'Color themes', visibilityOffset: 900, seen: false },
-  { title: 'Depth', visibilityOffset: 1250, seen: false },
-  { title: 'Rotation', visibilityOffset: 1700, seen: false },
-  { title: 'Slider', visibilityOffset: 2000, seen: false },
-  { title: 'Carousel', visibilityOffset: 2750, seen: false },
-  { title: 'Field', visibilityOffset: 3300, seen: false }
-]
-
 export default class NavMenu extends Widget {
+  private items: MenuItem[];
+
+  public constructor(items: MenuItem[]) {
+    super();
+
+    this.items = items;
+  }
+
   /**
    * @override
    */
   public onAdded(): void {
     let offset = 20;
 
-    for (const menuItem of menuItems) {
+    for (const item of this.items) {
       const link = this.stage.add(
-        new Text3D(menuItem.title).name(menuItem.title)
+        new Text3D(item.title).name(item.title)
       );
   
       link.$root.classList.add('nav-menu__link');
+
+      if (item.seen) {
+        link.$root.classList.add('visible');
+      }
   
       link.transform({
         position: {
@@ -41,9 +42,9 @@ export default class NavMenu extends Widget {
       });
   
       link.$root.addEventListener('click', () => {
-        if (menuItem.seen) {
+        if (item.seen) {
           this.stage.setTargetOrigin({
-            y: menuItem.visibilityOffset + 1
+            y: item.visibilityOffset + 1
           });
         }
       });
@@ -56,8 +57,8 @@ export default class NavMenu extends Widget {
    * @override
    */
   public update(): void {
-    for (let i = 0; i < menuItems.length; i++) {
-      const section = menuItems[i];
+    for (let i = 0; i < this.items.length; i++) {
+      const section = this.items[i];
       const link = this.stage.find(section.title);
 
       link.basePosition = {
@@ -75,7 +76,7 @@ export default class NavMenu extends Widget {
       if (section.seen) {
         if (
           this.stage.origin.y > section.visibilityOffset && 
-          this.stage.origin.y < (menuItems[i + 1]?.visibilityOffset || section.visibilityOffset + 500)
+          this.stage.origin.y < (this.items[i + 1]?.visibilityOffset || section.visibilityOffset + 500)
         ) {
           link.$root.classList.add('focused');
         } else {
