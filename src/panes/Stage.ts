@@ -117,7 +117,11 @@ export default class Stage {
       widget.update();
     }
 
-    this.targetOrigin.y = lerp(this.targetOrigin.y, clamp(this.targetOrigin.y, this.yRange.start, this.yRange.end), dt * 20);
+    if (!this.drag.dragging) {
+      // @todo clamp to x range
+      this.targetOrigin.y = lerp(this.targetOrigin.y, clamp(this.targetOrigin.y, this.yRange.start, this.yRange.end), dt * 20);
+      // @todo clamp to z range
+    }
 
     this.origin.x = lerp(this.origin.x, this.targetOrigin.x, dt * 5);
     this.origin.y = lerp(this.origin.y, this.targetOrigin.y, dt * 5);
@@ -172,7 +176,16 @@ export default class Stage {
         }
 
         if (draggableY) {
-          this.targetOrigin.y -= delta.y;
+          const overflow = Math.max(
+            this.targetOrigin.y - this.yRange.start,
+            this.yRange.end - this.targetOrigin.y
+          ) - this.yRange.end;
+
+          const dragFactor = isNaN(overflow)
+            ? 1
+            : (overflow > 0 ? 1 - Math.min(1, overflow / 300) : 1);
+
+          this.targetOrigin.y -= delta.y * dragFactor;
         }
   
         this.origin.x = this.targetOrigin.x;

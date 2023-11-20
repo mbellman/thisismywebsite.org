@@ -8,7 +8,7 @@ interface StaticDragEventsConfig {
 }
 
 export class DragManager {
-  private dragging = false;
+  public dragging = false;
 
   public start: Vec2 = {
     x: 0,
