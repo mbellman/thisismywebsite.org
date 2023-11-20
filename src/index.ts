@@ -1,6 +1,7 @@
 import { initializeDebugConsole } from './debug';
 // import { createGestureAnalyzer, createHandDetector } from './gestures';
 // import { getCameraFeed } from './webcam';
+import { Router } from '@panes';
 import setupHomePage from './routes/home/page';
 import setupPanesPage from './routes/panes/page'
 import './global-styles.scss';
@@ -34,6 +35,10 @@ import './global-styles.scss';
 
 async function main() {
   // const analyzer = await initializeGestureAnalyzer();
+  const router = new Router({
+    '/': setupHomePage,
+    '/panes': setupPanesPage
+  });
 
   // setupHomePage();
   setupPanesPage();
