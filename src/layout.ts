@@ -11,7 +11,7 @@ export const projects: Project[] = [
     name: 'Panes (2023)',
     imageUrl: 'https://i.imgur.com/4bCDSWO.png',
     description: 'An experimental web UI library written in TypeScript.',
-    githubUrl: 'https://github.com/mbellman/panes',
+    githubUrl: 'https://github.com/mbellman/thisismywebsite.org/tree/master/src/panes',
     demoUrl: '/panes'
   },
   {
