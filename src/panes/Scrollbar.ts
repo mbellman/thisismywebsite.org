@@ -28,6 +28,13 @@ export default class Scrollbar extends Widget {
   /**
    * @override
    */
+  public destroy(): void {
+    this.drag.removeDocumentEventListeners();    
+  }
+
+  /**
+   * @override
+   */
   public onAdded(): void {
     this.bar = new Pane({ width: 20, height: 300 })
       .transform({ position: { x: -40, y: 20 } });

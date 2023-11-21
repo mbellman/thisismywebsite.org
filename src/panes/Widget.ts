@@ -49,6 +49,8 @@ export default abstract class Widget {
     return this.root;
   }
 
+  public destroy(): void {}
+
   public getHeight(): number {
     return this.root?.clientHeight || 0;
   }

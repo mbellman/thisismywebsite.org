@@ -1,5 +1,7 @@
 import { Vec2, createVec2 } from './panes/Widget';
 
+type MouseListener = (e: MouseEvent) => void;
+type MouseListenerMap = Record<'mousemove' | 'mouseup', MouseListener>;
 type DragHandler = (e: MouseEvent, delta: Vec2) => void;
 
 interface StaticDragEventsConfig {
@@ -8,6 +10,11 @@ interface StaticDragEventsConfig {
 }
 
 export class DragManager {
+  private documentListeners: MouseListenerMap = {
+    mousemove: null,
+    mouseup: null
+  };
+
   public dragging = false;
 
   public start: Vec2 = {
@@ -32,7 +39,7 @@ export class DragManager {
     let previousMouse = createVec2();
     let lastDelta = createVec2();
 
-    document.addEventListener('mousemove', e => {
+    const onMouseMove: MouseListener = e => {
       if (this.dragging) {
         const delta: Vec2 = {
           x: e.clientX - previousMouse.x,
@@ -52,15 +59,26 @@ export class DragManager {
 
         onDrag?.(e, lastDelta);
       }
-    });
+    };
 
-    document.addEventListener('mouseup', e => {
+    const onMouseUp: MouseListener = e => {
       this.dragging = false;
 
       onDragEnd?.(e, lastDelta);
 
       previousMouse = createVec2();
       lastDelta = createVec2();
-    });
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+
+    this.documentListeners.mousemove = onMouseMove;
+    this.documentListeners.mouseup = onMouseUp;
+  }
+
+  public removeDocumentEventListeners(): void {
+    document.removeEventListener('mousemove', this.documentListeners.mousemove);
+    document.removeEventListener('mouseup', this.documentListeners.mouseup);
   }
 }

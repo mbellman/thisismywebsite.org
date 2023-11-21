@@ -9,10 +9,16 @@ export interface Project {
 export const projects: Project[] = [
   {
     name: 'Panes (2023)',
-    imageUrl: '',
-    description: 'An experimental UI library.',
+    imageUrl: 'https://i.imgur.com/4bCDSWO.png',
+    description: 'An experimental web UI library written in TypeScript.',
     githubUrl: 'https://github.com/mbellman/panes',
     demoUrl: '/panes'
+  },
+  {
+    name: 'Ramen Cat (2022, 2023)',
+    imageUrl: 'https://i.imgur.com/ST7VgDi.png',
+    description: 'An unfinished 3D platformer game written in a custom C++/OpenGL engine.',
+    githubUrl: 'https://github.com/mbellman/ramen-cat'
   },
   {
     name: 'Gamma (2021, 2022)',

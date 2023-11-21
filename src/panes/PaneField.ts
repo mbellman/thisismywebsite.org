@@ -42,6 +42,13 @@ export default class PaneField extends Widget {
   /**
    * @override
    */
+  public destroy(): void {
+    this.drag.removeDocumentEventListeners();
+  }
+
+  /**
+   * @override
+   */
   public onAdded(): void {
     this.panes.forEach(pane => this.stage.add(pane, this.basePosition));
   }

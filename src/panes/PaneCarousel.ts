@@ -41,6 +41,13 @@ export default class PaneCarousel extends Widget {
     return this;
   }
 
+  /**
+   * @override
+   */
+  public destroy(): void {
+    this.drag.removeDocumentEventListeners();    
+  }
+
   public getCurrentIndex(): number {
     return this.currentIndex;
   }

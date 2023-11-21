@@ -197,13 +197,15 @@ export default function setup() {
 
   let running = true;
 
-  animate(dt => {
+  animate(dt => {    
+    if (!running) {
+      return false;
+    }
+    
     animateWidgets();
     updateStageBackgroundColor();
 
     stage.update(dt);
-
-    return running;
   });
 
   return () => {

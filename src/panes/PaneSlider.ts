@@ -52,6 +52,13 @@ export default class PaneSlider extends Widget {
   /**
    * @override
    */
+  public destroy(): void {
+    this.drag.removeDocumentEventListeners();    
+  }
+
+  /**
+   * @override
+   */
   public getHeight(): number {
     return Math.max(...this.panes.map(pane => pane.getHeight())) + window.innerHeight / 4 * (this.centeredY ? 1 : 0);
   }

@@ -238,12 +238,14 @@ export default function setup(analyzer?: GestureAnalyzer) {
   let running = true
 
   animate(dt => {
+    if (!running) {
+      return false;
+    }
+
     animateWidgets();
     updateStageBackgroundColor();
 
     stage.update(dt);
-
-    return running;
   });
 
   return () => {

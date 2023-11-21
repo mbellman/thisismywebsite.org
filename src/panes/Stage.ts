@@ -95,7 +95,16 @@ export default class Stage {
   }
 
   public destroy(): void {
+    for (const widget of this.widgets) {
+      widget.destroy();
+    }
+
+    this.drag.removeDocumentEventListeners();
+
     document.body.removeChild(this.$root);
+
+    this.widgets.length = 0;
+    this.widgetMap = {};
   }
 
   public find<T extends Widget = Widget>(name: string): T {
