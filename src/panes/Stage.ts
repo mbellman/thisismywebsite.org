@@ -94,6 +94,10 @@ export default class Stage {
     }
   }
 
+  public destroy(): void {
+    document.body.removeChild(this.$root);
+  }
+
   public find<T extends Widget = Widget>(name: string): T {
     return this.widgetMap[name] as T || null;
   }

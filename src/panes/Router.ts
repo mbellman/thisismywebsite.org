@@ -1,5 +1,5 @@
-type Routes = Record<string, () => void>
-
+type SetupFunction = () => void | (() => void);
+type Routes = Record<string, SetupFunction>;
 type RouteChangeHandler = (route: string) => void;
 
 export default class Router {
@@ -16,6 +16,10 @@ export default class Router {
 
   public static onRouteChange(handler: RouteChangeHandler): void {
     Router.routeChangeHandlers.push(handler);
+
+    window.addEventListener('popstate', () => {
+      handler(window.location.pathname)
+    });
   }
 
   public constructor(routes: Routes) {
@@ -26,14 +30,15 @@ export default class Router {
 
   private handleRouting(): void {
     // Set up initial route page
-    const setup = this.routes[window.location.pathname];
-
-    setup?.();
+    let setup = this.routes[window.location.pathname];
+    let teardown = setup?.() || (() => {});
 
     // Handle teardown/setup on route changes
     Router.onRouteChange(route => {
-      // @todo
-      console.log(route);
+      teardown();
+
+      setup = this.routes[window.location.pathname];
+      teardown = setup?.() || (() => {})
     });
   }
 }

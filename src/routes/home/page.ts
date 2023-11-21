@@ -235,10 +235,20 @@ export default function setup(analyzer?: GestureAnalyzer) {
     stage.$root.style.background = `linear-gradient(to bottom, ${toRgb(bgTop)}, ${toRgb(bgBottom)})`;
   }
 
+  let running = true
+
   animate(dt => {
     animateWidgets();
     updateStageBackgroundColor();
 
     stage.update(dt);
+
+    return running;
   });
+
+  return () => {
+    running = false;
+
+    stage.destroy();
+  };
 }
