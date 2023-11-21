@@ -1,6 +1,5 @@
-import Widget from '../../../panes/Widget';
+import { Widget, Router } from '@panes';
 import type { Project } from '../../../layout';
-
 import './ProjectBlock.scss';
 
 export default class ProjectBlock extends Widget {
@@ -11,6 +10,10 @@ export default class ProjectBlock extends Widget {
 
     this.$image.src = project.imageUrl;
     this.$description.innerHTML = project.description;
+
+    if (!project.imageUrl) {
+      this.$block.style.opacity = '1';
+    }
 
     if (!project.githubUrl) {
       this.$githubButton.remove();
@@ -36,7 +39,11 @@ export default class ProjectBlock extends Widget {
     });
 
     this.$demoButton?.addEventListener('click', () => {
-      window.open(this.project.demoUrl, '_blank');
+      if (this.project.demoUrl.startsWith('http')) {
+        window.open(this.project.demoUrl, '_blank');
+      } else {
+        Router.changeRoute(this.project.demoUrl);
+      }
     });
   }
 

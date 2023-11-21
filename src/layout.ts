@@ -8,6 +8,13 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    name: 'Panes (2023)',
+    imageUrl: '',
+    description: 'An experimental UI library.',
+    githubUrl: 'https://github.com/mbellman/panes',
+    demoUrl: '/panes'
+  },
+  {
     name: 'Gamma (2021, 2022)',
     imageUrl: 'https://i.imgur.com/yltQhss.png',
     description: 'A performance-oriented 3D engine in C++, using SDL for the video/multimedia layer and an OpenGL graphics backend.',

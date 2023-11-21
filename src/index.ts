@@ -39,9 +39,6 @@ async function main() {
     '/': setupHomePage,
     '/panes': setupPanesPage
   });
-
-  // setupHomePage();
-  setupPanesPage();
 }
 
 main();

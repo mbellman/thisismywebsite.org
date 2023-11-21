@@ -16,7 +16,8 @@ module.exports = {
   },
   devServer: {
     open: true,
-    port: 1234
+    port: 1234,
+    historyApiFallback: true
   },
   module: {
     rules: [
